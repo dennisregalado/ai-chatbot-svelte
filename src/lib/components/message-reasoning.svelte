@@ -4,7 +4,7 @@
 	import { Markdown } from './markdown';
 	import { slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
-	import { getLock } from '$lib/hooks/lock';
+	import { getLock } from '$hooks/lock';
 	import { tick } from 'svelte';
 	let { loading, reasoning }: { loading: boolean; reasoning: string } = $props();
 	let expanded = $state(false);

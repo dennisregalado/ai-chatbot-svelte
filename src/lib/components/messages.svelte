@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import PreviewMessage from './messages/preview-message.svelte';
 	import type { UIMessage } from '@ai-sdk/svelte';
-	import { getLock } from '$lib/hooks/lock';
+	import { getLock } from '$hooks/lock';
 
 	let containerRef = $state<HTMLDivElement | null>(null);
 	let endRef = $state<HTMLDivElement | null>(null);

@@ -11,7 +11,7 @@
 	import { cn } from '$lib/utils/shadcn';
 	import { chatModels } from '$ai/models';
 	import type { ClassValue } from 'svelte/elements';
-	import { SelectedModel } from '$lib/hooks/selected-model.svelte';
+	import { SelectedModel } from '$hooks/selected-model.svelte';
 
 	let {
 		class: c

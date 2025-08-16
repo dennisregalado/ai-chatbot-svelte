@@ -3,8 +3,8 @@ import { systemPrompt } from '$ai/prompts.js';
 import { generateTitleFromUserMessage } from '$server/ai/utils';
 import { deleteChatById, getChatById, saveChat, saveMessages } from '$server/db/queries.js';
 import type { Chat } from '$server/db/schema';
-import { getMostRecentUserMessage, getTrailingMessageId } from '$lib/utils/chat.js';
-import { allowAnonymousChats } from '$lib/utils/constants.js';
+import { getMostRecentUserMessage, getTrailingMessageId } from '$lib/utils';
+import { allowAnonymousChats } from '$lib/constants.js';
 import { error } from '@sveltejs/kit';
 import {
 	appendResponseMessages,
