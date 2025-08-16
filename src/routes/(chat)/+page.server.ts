@@ -1,21 +1,20 @@
-import { generateUUID } from "$lib/utils";
-import { redirect } from "@sveltejs/kit";
+import { generateUUID } from '$lib/utils';
+import { redirect } from '@sveltejs/kit';
 
 export async function load({ locals, cookies }) {
+	const session = await locals.auth();
 
-    const session = await locals.auth();
+	if (!session) {
+		//   redirect(302, '/api/auth/guest');
+	}
 
-    if (!session) {
-     //   redirect(302, '/api/auth/guest');
-    }
+	const id = generateUUID();
 
-    const id = generateUUID();
+	const modelIdFromCookie = cookies.get('chat-model');
 
-    const modelIdFromCookie = cookies.get('chat-model');
-
-    return {
-        id,
-        modelIdFromCookie,
-        session
-    }
+	return {
+		id,
+		modelIdFromCookie,
+		session
+	};
 }

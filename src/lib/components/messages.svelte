@@ -3,7 +3,7 @@
 	import Overview from './messages/overview.svelte';
 	import { onMount } from 'svelte';
 	import PreviewMessage from './messages/preview-message.svelte';
-	import type { UIMessage } from '@ai-sdk/svelte'; 
+	import type { UIMessage } from '@ai-sdk/svelte';
 
 	let containerRef = $state<HTMLDivElement | null>(null);
 	let endRef = $state<HTMLDivElement | null>(null);
@@ -23,7 +23,7 @@
 		mounted = true;
 	});
 
-//	const scrollLock = getLock('messages-scroll');
+	//	const scrollLock = getLock('messages-scroll');
 
 	$effect(() => {
 		if (!(containerRef && endRef)) return;

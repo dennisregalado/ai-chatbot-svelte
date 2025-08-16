@@ -117,13 +117,13 @@
 	</SidebarGroup>
 {:else if chatHistory.loading}
 	<SidebarGroup>
-		<div class="text-sidebar-foreground/50 px-2 py-1 text-xs">Today</div>
+		<div class="px-2 py-1 text-xs text-sidebar-foreground/50">Today</div>
 		<SidebarGroupContent>
 			<div class="flex flex-col">
 				{#each [44, 32, 28, 64, 52] as width (width)}
 					<div class="flex h-8 items-center gap-2 rounded-md px-2">
 						<Skeleton
-							class="bg-sidebar-accent-foreground/10 h-4 max-w-[--skeleton-width] flex-1"
+							class="h-4 max-w-[--skeleton-width] flex-1 bg-sidebar-accent-foreground/10"
 							style="--skeleton-width: {width}%"
 						/>
 					</div>
@@ -147,7 +147,7 @@
 			<SidebarMenu>
 				{#each Object.entries(groupedChats) as [group, chats] (group)}
 					{#if chats.length > 0}
-						<div class="text-sidebar-foreground/50 px-2 py-1 text-xs">
+						<div class="px-2 py-1 text-xs text-sidebar-foreground/50">
 							{chatGroupTitles[group as keyof typeof chatGroupTitles]}
 						</div>
 						{#each chats as chat (chat.id)}

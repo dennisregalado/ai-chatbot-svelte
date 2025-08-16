@@ -32,7 +32,7 @@
 	>
 		{#if message.role === 'assistant'}
 			<div
-				class="bg-background ring-border flex size-8 shrink-0 items-center justify-center rounded-full ring-1"
+				class="flex size-8 shrink-0 items-center justify-center rounded-full bg-background ring-1 ring-border"
 			>
 				<div class="translate-y-px">
 					<SparklesIcon size={14} />
@@ -63,7 +63,7 @@
 											<Button
 												{...props}
 												variant="ghost"
-												class="text-muted-foreground h-fit rounded-full px-2 opacity-0 group-hover/message:opacity-100"
+												class="h-fit rounded-full px-2 text-muted-foreground opacity-0 group-hover/message:opacity-100"
 												onclick={() => {
 													mode = 'edit';
 												}}
@@ -77,7 +77,7 @@
 							{/if}
 							<div
 								class={cn('flex flex-col gap-4', {
-									'bg-primary text-primary-foreground rounded-xl px-3 py-2': message.role === 'user'
+									'rounded-xl bg-primary px-3 py-2 text-primary-foreground': message.role === 'user'
 								})}
 							>
 								<Markdown md={part.text} />

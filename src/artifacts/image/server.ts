@@ -3,43 +3,43 @@ import { createDocumentHandler } from '$server/artifacts';
 import { experimental_generateImage } from 'ai';
 
 export const imageDocumentHandler = createDocumentHandler<'image'>({
-  kind: 'image',
-  onCreateDocument: async ({ title, dataStream }) => {
-    let draftContent = '';
+	kind: 'image',
+	onCreateDocument: async ({ title, dataStream }) => {
+		let draftContent = '';
 
-    const { image } = await experimental_generateImage({
-      model: myProvider.imageModel('small-model'),
-      prompt: title,
-      n: 1,
-    });
+		const { image } = await experimental_generateImage({
+			model: myProvider.imageModel('small-model'),
+			prompt: title,
+			n: 1
+		});
 
-    draftContent = image.base64;
+		draftContent = image.base64;
 
-    dataStream.write({
-      type: 'data-imageDelta',
-      data: image.base64,
-      transient: true,
-    });
+		dataStream.write({
+			type: 'data-imageDelta',
+			data: image.base64,
+			transient: true
+		});
 
-    return draftContent;
-  },
-  onUpdateDocument: async ({ description, dataStream }) => {
-    let draftContent = '';
+		return draftContent;
+	},
+	onUpdateDocument: async ({ description, dataStream }) => {
+		let draftContent = '';
 
-    const { image } = await experimental_generateImage({
-      model: myProvider.imageModel('small-model'),
-      prompt: description,
-      n: 1,
-    });
+		const { image } = await experimental_generateImage({
+			model: myProvider.imageModel('small-model'),
+			prompt: description,
+			n: 1
+		});
 
-    draftContent = image.base64;
+		draftContent = image.base64;
 
-    dataStream.write({
-      type: 'data-imageDelta',
-      data: image.base64,
-      transient: true,
-    });
+		dataStream.write({
+			type: 'data-imageDelta',
+			data: image.base64,
+			transient: true
+		});
 
-    return draftContent;
-  },
+		return draftContent;
+	}
 });

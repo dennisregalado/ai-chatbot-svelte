@@ -1,4 +1,3 @@
-  import type { Transport } from '@sveltejs/kit';
+import type { Transport } from '@sveltejs/kit';
 
-export const reroute = () => {}
- 
+export const reroute = () => {};

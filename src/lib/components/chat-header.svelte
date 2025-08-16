@@ -5,7 +5,7 @@
 	import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 	import { Button } from './ui/button';
 	import PlusIcon from './icons/plus.svelte';
-	import { goto } from '$app/navigation'; 
+	import { goto } from '$app/navigation';
 	import type { Chat, User } from '$server/db/schema';
 	import VisibilitySelector from './visibility-selector.svelte';
 	import VercelIcon from './icons/vercel.svelte';
@@ -23,7 +23,7 @@
 	const sidebar = useSidebar();
 </script>
 
-<header class="bg-background sticky top-0 flex items-center gap-2 p-2">
+<header class="sticky top-0 flex items-center gap-2 bg-background p-2">
 	<SidebarToggle />
 
 	{#if !sidebar.open || (innerWidth.current ?? 768) < 768}

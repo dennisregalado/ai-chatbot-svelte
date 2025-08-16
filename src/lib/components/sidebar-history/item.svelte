@@ -55,7 +55,7 @@
 			{#snippet child({ props })}
 				<SidebarMenuAction
 					{...props}
-					class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground mr-0.5"
+					class="mr-0.5 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 					showOnHover={!active}
 				>
 					<MoreHorizontalIcon />
@@ -103,7 +103,7 @@
 			</DropdownMenuSub>
 
 			<DropdownMenuItem
-				class="text-destructive focus:bg-destructive/15 focus:text-destructive cursor-pointer dark:text-red-500"
+				class="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
 				onclick={() => ondelete(chat.id)}
 			>
 				<TrashIcon />

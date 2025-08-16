@@ -15,7 +15,7 @@
 
 <div class="flex flex-col gap-2">
 	<div
-		class="bg-muted relative flex aspect-video h-16 w-20 flex-col items-center justify-center rounded-md"
+		class="relative flex aspect-video h-16 w-20 flex-col items-center justify-center rounded-md bg-muted"
 	>
 		{#if contentType && contentType.startsWith('image')}
 			<img

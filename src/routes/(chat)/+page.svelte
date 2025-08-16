@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Chat from '$components/chat.svelte';
 	import { DEFAULT_CHAT_MODEL } from '$ai/models';
-	
+
 	let { data } = $props();
 
 	let { modelIdFromCookie, id, session } = $derived(data);

@@ -10,15 +10,15 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		experimental: {
-			remoteFunctions: true,
+			remoteFunctions: true
 		},
 		alias: {
-			'$ai': './src/lib/ai',
-			'$server': './src/lib/server',
-			'$hooks': './src/hooks',
-			'$artifacts': './src/artifacts',
-			'$components': './src/lib/components',
-		},
+			$ai: './src/lib/ai',
+			$server: './src/lib/server',
+			$hooks: './src/hooks',
+			$artifacts: './src/artifacts',
+			$components: './src/lib/components'
+		}
 	},
 	compilerOptions: {
 		experimental: {
