@@ -2,7 +2,7 @@
 	import { Chat } from '@ai-sdk/svelte';
 	import type { Attachment } from 'ai';
 	import { toast } from 'svelte-sonner';
-	import { ChatHistory } from '$lib/hooks/chat-history.svelte';
+	import { ChatHistory } from '$lib/hooks/example';
 	import ChatHeader from './chat-header.svelte';
 	import type { Chat as DbChat, User } from '$lib/server/db/schema';
 	import Messages from './messages.svelte';
@@ -11,11 +11,13 @@
 	import type { UIMessage } from '@ai-sdk/svelte';
 
 	let {
+		id,
 		user,
 		chat,
 		readonly,
 		initialMessages
 	}: {
+		id: string;
 		user: User | undefined;
 		chat: DbChat | undefined;
 		initialMessages: UIMessage[];

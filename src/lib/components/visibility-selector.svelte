@@ -15,7 +15,7 @@
 	import LockIcon from './icons/lock.svelte';
 	import GlobeIcon from './icons/globe.svelte';
 	import CheckCircleFillIcon from './icons/check-circle-fill.svelte';
-	import { ChatHistory } from '$lib/hooks/chat-history.svelte';
+	import { ChatHistory } from '$lib/hooks/example';
 	import type { Chat } from '$lib/server/db/schema';
 	import type { ClassValue } from 'svelte/elements';
 

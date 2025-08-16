@@ -1,29 +1,37 @@
-import { genSaltSync, hashSync } from 'bcrypt-ts';
-import { and, asc, desc, eq, gt, gte, inArray } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gt,
+  gte,
+  inArray,
+  lt,
+  type SQL,
+} from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import { POSTGRES_URL } from '$env/static/private';
-import { ResultAsync, fromPromise, ok, safeTry } from 'neverthrow';
+
 import {
-	user,
-	chat,
-	type User,
-	document,
-	type Suggestion,
-	suggestion,
-	type Message,
-	message,
-	vote,
-	type Session,
-	session,
-	type AuthUser,
-	type Chat,
-	type Vote
+  user,
+  chat,
+  type User,
+  document,
+  type Suggestion,
+  suggestion,
+  message,
+  vote,
+  type DBMessage,
+  type Chat,
+  stream,
 } from './schema';
-import type { DbError } from '$lib/errors/db';
-import { DbInternalError } from '$lib/errors/db';
-import ms from 'ms';
-import { unwrapSingleQueryResult } from './utils';
+import type { ArtifactKind } from '$lib/components/artifact';
+import { generateUUID } from '$lib/utils';
+import { generateHashedPassword } from './utils';
+import type { VisibilityType } from '$lib/components/visibility-selector.svelte';
+import { ChatSDKError } from '$lib/errors';
+import { POSTGRES_URL } from '$env/static/private';
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -33,397 +41,497 @@ import { unwrapSingleQueryResult } from './utils';
 const client = postgres(POSTGRES_URL);
 const db = drizzle(client);
 
-export function getAuthUser(email: string): ResultAsync<AuthUser, DbError> {
-	return safeTry(async function* () {
-		const userResult = yield* fromPromise(
-			db.select().from(user).where(eq(user.email, email)),
-			(e) => new DbInternalError({ cause: e })
-		);
-		return unwrapSingleQueryResult(userResult, email, 'User');
-	});
+export async function getUser(email: string): Promise<Array<User>> {
+  try {
+    return await db.select().from(user).where(eq(user.email, email));
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to get user by email',
+    );
+  }
 }
 
-export function getUser(email: string): ResultAsync<User, DbError> {
-	return safeTry(async function* () {
-		const userResult = yield* fromPromise(
-			db.select().from(user).where(eq(user.email, email)),
-			(e) => new DbInternalError({ cause: e })
-		);
-		const { password: _, ...rest } = yield* unwrapSingleQueryResult(userResult, email, 'User');
+export async function createUser(email: string, password: string) {
+  const hashedPassword = generateHashedPassword(password);
 
-		return ok(rest);
-	});
+  try {
+    return await db.insert(user).values({ email, password: hashedPassword });
+  } catch (error) {
+    throw new ChatSDKError('bad_request:database', 'Failed to create user');
+  }
 }
 
-export function createAuthUser(email: string, password: string): ResultAsync<AuthUser, DbError> {
-	return safeTry(async function* () {
-		const salt = genSaltSync(10);
-		const hash = hashSync(password, salt);
+export async function createGuestUser() {
+  const email = `guest-${Date.now()}`;
+  const password = generateHashedPassword(generateUUID());
 
-		const userResult = yield* fromPromise(
-			db.insert(user).values({ email, password: hash }).returning(),
-			(e) => {
-				console.error(e);
-				return new DbInternalError({ cause: e });
-			}
-		);
-
-		return unwrapSingleQueryResult(userResult, email, 'User');
-	});
+  try {
+    return await db.insert(user).values({ email, password }).returning({
+      id: user.id,
+      email: user.email,
+    });
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to create guest user',
+    );
+  }
 }
 
-export function createSession(value: Session): ResultAsync<Session, DbError> {
-	return safeTry(async function* () {
-		const sessionResult = yield* fromPromise(
-			db.insert(session).values(value).returning(),
-			(e) => new DbInternalError({ cause: e })
-		);
-		return unwrapSingleQueryResult(sessionResult, value.id, 'Session');
-	});
-}
-
-export function getFullSession(
-	sessionId: string
-): ResultAsync<{ session: Session; user: User }, DbError> {
-	return safeTry(async function* () {
-		const sessionResult = yield* fromPromise(
-			db
-				.select({ user: { id: user.id, email: user.email }, session })
-				.from(session)
-				.innerJoin(user, eq(session.userId, user.id))
-				.where(eq(session.id, sessionId)),
-			(e) => new DbInternalError({ cause: e })
-		);
-		return unwrapSingleQueryResult(sessionResult, sessionId, 'Session');
-	});
-}
-
-export function deleteSession(sessionId: string): ResultAsync<undefined, DbError> {
-	return safeTry(async function* () {
-		yield* fromPromise(
-			db.delete(session).where(eq(session.id, sessionId)),
-			(e) => new DbInternalError({ cause: e })
-		);
-
-		return ok(undefined);
-	});
-}
-
-export function extendSession(sessionId: string): ResultAsync<Session, DbError> {
-	return safeTry(async function* () {
-		const sessionResult = yield* fromPromise(
-			db
-				.update(session)
-				.set({ expiresAt: new Date(Date.now() + ms('30d')) })
-				.where(eq(session.id, sessionId))
-				.returning(),
-			(e) => new DbInternalError({ cause: e })
-		);
-
-		return unwrapSingleQueryResult(sessionResult, sessionId, 'Session');
-	});
-}
-
-export function deleteSessionsForUser(userId: string): ResultAsync<undefined, DbError> {
-	return safeTry(async function* () {
-		yield* fromPromise(
-			db.delete(session).where(eq(session.userId, userId)),
-			(e) => new DbInternalError({ cause: e })
-		);
-
-		return ok(undefined);
-	});
-}
-
-export function saveChat({
-	id,
-	userId,
-	title
+export async function saveChat({
+  id,
+  userId,
+  title,
+  visibility,
 }: {
-	id: string;
-	userId: string;
-	title: string;
-}): ResultAsync<Chat, DbError> {
-	return safeTry(async function* () {
-		const insertResult = yield* fromPromise(
-			db
-				.insert(chat)
-				.values({
-					id,
-					createdAt: new Date(),
-					userId,
-					title
-				})
-				.returning(),
-			(e) => new DbInternalError({ cause: e })
-		);
-
-		return unwrapSingleQueryResult(insertResult, id, 'Chat');
-	});
+  id: string;
+  userId: string;
+  title: string;
+  visibility: VisibilityType;
+}) {
+  try {
+    return await db.insert(chat).values({
+      id,
+      createdAt: new Date(),
+      userId,
+      title,
+      visibility,
+    });
+  } catch (error) {
+    throw new ChatSDKError('bad_request:database', 'Failed to save chat');
+  }
 }
 
-export function deleteChatById({ id }: { id: string }): ResultAsync<undefined, DbError> {
-	return safeTry(async function* () {
-		const actions = [
-			() => db.delete(vote).where(eq(vote.chatId, id)),
-			() => db.delete(message).where(eq(message.chatId, id)),
-			() => db.delete(chat).where(eq(chat.id, id))
-		];
+export async function deleteChatById({ id }: { id: string }) {
+  try {
+    await db.delete(vote).where(eq(vote.chatId, id));
+    await db.delete(message).where(eq(message.chatId, id));
+    await db.delete(stream).where(eq(stream.chatId, id));
 
-		for (const action of actions) {
-			yield* fromPromise(action(), (e) => new DbInternalError({ cause: e }));
-		}
-
-		return ok(undefined);
-	});
+    const [chatsDeleted] = await db
+      .delete(chat)
+      .where(eq(chat.id, id))
+      .returning();
+    return chatsDeleted;
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to delete chat by id',
+    );
+  }
 }
 
-export function getChatsByUserId({ id }: { id: string }): ResultAsync<Chat[], DbError> {
-	return fromPromise(
-		db.select().from(chat).where(eq(chat.userId, id)).orderBy(desc(chat.createdAt)),
-		(e) => new DbInternalError({ cause: e })
-	);
-}
-
-export function getChatById({ id }: { id: string }): ResultAsync<Chat, DbError> {
-	return safeTry(async function* () {
-		const chatResult = yield* fromPromise(
-			db.select().from(chat).where(eq(chat.id, id)),
-			(e) => new DbInternalError({ cause: e })
-		);
-
-		return unwrapSingleQueryResult(chatResult, id, 'Chat');
-	});
-}
-
-export function saveMessages({
-	messages
+export async function getChatsByUserId({
+  id,
+  limit,
+  startingAfter,
+  endingBefore,
 }: {
-	messages: Array<Message>;
-}): ResultAsync<Message[], DbError> {
-	return safeTry(async function* () {
-		const insertResult = yield* fromPromise(
-			db.insert(message).values(messages).returning(),
-			(e) => new DbInternalError({ cause: e })
-		);
+  id: string;
+  limit: number;
+  startingAfter: string | null;
+  endingBefore: string | null;
+}) {
+  try {
+    const extendedLimit = limit + 1;
 
-		return ok(insertResult);
-	});
+    const query = (whereCondition?: SQL<any>) =>
+      db
+        .select()
+        .from(chat)
+        .where(
+          whereCondition
+            ? and(whereCondition, eq(chat.userId, id))
+            : eq(chat.userId, id),
+        )
+        .orderBy(desc(chat.createdAt))
+        .limit(extendedLimit);
+
+    let filteredChats: Array<Chat> = [];
+
+    if (startingAfter) {
+      const [selectedChat] = await db
+        .select()
+        .from(chat)
+        .where(eq(chat.id, startingAfter))
+        .limit(1);
+
+      if (!selectedChat) {
+        throw new ChatSDKError(
+          'not_found:database',
+          `Chat with id ${startingAfter} not found`,
+        );
+      }
+
+      filteredChats = await query(gt(chat.createdAt, selectedChat.createdAt));
+    } else if (endingBefore) {
+      const [selectedChat] = await db
+        .select()
+        .from(chat)
+        .where(eq(chat.id, endingBefore))
+        .limit(1);
+
+      if (!selectedChat) {
+        throw new ChatSDKError(
+          'not_found:database',
+          `Chat with id ${endingBefore} not found`,
+        );
+      }
+
+      filteredChats = await query(lt(chat.createdAt, selectedChat.createdAt));
+    } else {
+      filteredChats = await query();
+    }
+
+    const hasMore = filteredChats.length > limit;
+
+    return {
+      chats: hasMore ? filteredChats.slice(0, limit) : filteredChats,
+      hasMore,
+    };
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to get chats by user id',
+    );
+  }
 }
 
-export function getMessagesByChatId({ id }: { id: string }): ResultAsync<Message[], DbError> {
-	return safeTry(async function* () {
-		const messages = yield* fromPromise(
-			db.select().from(message).where(eq(message.chatId, id)).orderBy(asc(message.createdAt)),
-			(e) => new DbInternalError({ cause: e })
-		);
-
-		return ok(messages);
-	});
+export async function getChatById({ id }: { id: string }) {
+  try {
+    const [selectedChat] = await db.select().from(chat).where(eq(chat.id, id));
+    return selectedChat;
+  } catch (error) {
+    throw new ChatSDKError('bad_request:database', 'Failed to get chat by id');
+  }
 }
 
-export function voteMessage({
-	chatId,
-	messageId,
-	type
+export async function saveMessages({
+  messages,
 }: {
-	chatId: string;
-	messageId: string;
-	type: 'up' | 'down';
-}): ResultAsync<undefined, DbError> {
-	return safeTry(async function* () {
-		yield* fromPromise(
-			db
-				.insert(vote)
-				.values({
-					chatId,
-					messageId,
-					isUpvoted: type === 'up'
-				})
-				.onConflictDoUpdate({
-					target: [vote.messageId, vote.chatId],
-					set: { isUpvoted: type === 'up' }
-				}),
-			(e) => new DbInternalError({ cause: e })
-		);
-		return ok(undefined);
-	});
+  messages: Array<DBMessage>;
+}) {
+  try {
+    return await db.insert(message).values(messages);
+  } catch (error) {
+    throw new ChatSDKError('bad_request:database', 'Failed to save messages');
+  }
 }
 
-export function getVotesByChatId({ id }: { id: string }): ResultAsync<Vote[], DbError> {
-	return fromPromise(
-		db.select().from(vote).where(eq(vote.chatId, id)),
-		(e) => new DbInternalError({ cause: e })
-	);
+export async function getMessagesByChatId({ id }: { id: string }) {
+  try {
+    return await db
+      .select()
+      .from(message)
+      .where(eq(message.chatId, id))
+      .orderBy(asc(message.createdAt));
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to get messages by chat id',
+    );
+  }
+}
+
+export async function voteMessage({
+  chatId,
+  messageId,
+  type,
+}: {
+  chatId: string;
+  messageId: string;
+  type: 'up' | 'down';
+}) {
+  try {
+    const [existingVote] = await db
+      .select()
+      .from(vote)
+      .where(and(eq(vote.messageId, messageId)));
+
+    if (existingVote) {
+      return await db
+        .update(vote)
+        .set({ isUpvoted: type === 'up' })
+        .where(and(eq(vote.messageId, messageId), eq(vote.chatId, chatId)));
+    }
+    return await db.insert(vote).values({
+      chatId,
+      messageId,
+      isUpvoted: type === 'up',
+    });
+  } catch (error) {
+    throw new ChatSDKError('bad_request:database', 'Failed to vote message');
+  }
+}
+
+export async function getVotesByChatId({ id }: { id: string }) {
+  try {
+    return await db.select().from(vote).where(eq(vote.chatId, id));
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to get votes by chat id',
+    );
+  }
 }
 
 export async function saveDocument({
-	id,
-	title,
-	kind,
-	content,
-	userId
+  id,
+  title,
+  kind,
+  content,
+  userId,
 }: {
-	id: string;
-	title: string;
-	kind: never;
-	content: string;
-	userId: string;
+  id: string;
+  title: string;
+  kind: ArtifactKind;
+  content: string;
+  userId: string;
 }) {
-	try {
-		return await db.insert(document).values({
-			id,
-			title,
-			kind,
-			content,
-			userId,
-			createdAt: new Date()
-		});
-	} catch (error) {
-		console.error('Failed to save document in database');
-		throw error;
-	}
+  try {
+    return await db
+      .insert(document)
+      .values({
+        id,
+        title,
+        kind,
+        content,
+        userId,
+        createdAt: new Date(),
+      })
+      .returning();
+  } catch (error) {
+    throw new ChatSDKError('bad_request:database', 'Failed to save document');
+  }
 }
 
 export async function getDocumentsById({ id }: { id: string }) {
-	try {
-		const documents = await db
-			.select()
-			.from(document)
-			.where(eq(document.id, id))
-			.orderBy(asc(document.createdAt));
+  try {
+    const documents = await db
+      .select()
+      .from(document)
+      .where(eq(document.id, id))
+      .orderBy(asc(document.createdAt));
 
-		return documents;
-	} catch (error) {
-		console.error('Failed to get document by id from database');
-		throw error;
-	}
+    return documents;
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to get documents by id',
+    );
+  }
 }
 
 export async function getDocumentById({ id }: { id: string }) {
-	try {
-		const [selectedDocument] = await db
-			.select()
-			.from(document)
-			.where(eq(document.id, id))
-			.orderBy(desc(document.createdAt));
+  try {
+    const [selectedDocument] = await db
+      .select()
+      .from(document)
+      .where(eq(document.id, id))
+      .orderBy(desc(document.createdAt));
 
-		return selectedDocument;
-	} catch (error) {
-		console.error('Failed to get document by id from database');
-		throw error;
-	}
+    return selectedDocument;
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to get document by id',
+    );
+  }
 }
 
 export async function deleteDocumentsByIdAfterTimestamp({
-	id,
-	timestamp
+  id,
+  timestamp,
 }: {
-	id: string;
-	timestamp: Date;
+  id: string;
+  timestamp: Date;
 }) {
-	try {
-		await db
-			.delete(suggestion)
-			.where(and(eq(suggestion.documentId, id), gt(suggestion.documentCreatedAt, timestamp)));
+  try {
+    await db
+      .delete(suggestion)
+      .where(
+        and(
+          eq(suggestion.documentId, id),
+          gt(suggestion.documentCreatedAt, timestamp),
+        ),
+      );
 
-		return await db
-			.delete(document)
-			.where(and(eq(document.id, id), gt(document.createdAt, timestamp)));
-	} catch (error) {
-		console.error('Failed to delete documents by id after timestamp from database');
-		throw error;
-	}
+    return await db
+      .delete(document)
+      .where(and(eq(document.id, id), gt(document.createdAt, timestamp)))
+      .returning();
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to delete documents by id after timestamp',
+    );
+  }
 }
 
-export function saveSuggestions({
-	suggestions
+export async function saveSuggestions({
+  suggestions,
 }: {
-	suggestions: Array<Suggestion>;
-}): ResultAsync<Suggestion[], DbError> {
-	return fromPromise(
-		db.insert(suggestion).values(suggestions).returning(),
-		(e) => new DbInternalError({ cause: e })
-	);
+  suggestions: Array<Suggestion>;
+}) {
+  try {
+    return await db.insert(suggestion).values(suggestions);
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to save suggestions',
+    );
+  }
 }
 
-export function getSuggestionsByDocumentId({
-	documentId
+export async function getSuggestionsByDocumentId({
+  documentId,
 }: {
-	documentId: string;
-}): ResultAsync<Suggestion[], DbError> {
-	return fromPromise(
-		db.select().from(suggestion).where(eq(suggestion.documentId, documentId)),
-		(e) => new DbInternalError({ cause: e })
-	);
+  documentId: string;
+}) {
+  try {
+    return await db
+      .select()
+      .from(suggestion)
+      .where(and(eq(suggestion.documentId, documentId)));
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to get suggestions by document id',
+    );
+  }
 }
 
-export function getMessageById({ id }: { id: string }): ResultAsync<Message, DbError> {
-	return safeTry(async function* () {
-		const messageResult = yield* fromPromise(
-			db.select().from(message).where(eq(message.id, id)),
-			(e) => new DbInternalError({ cause: e })
-		);
-
-		return unwrapSingleQueryResult(messageResult, id, 'Message');
-	});
+export async function getMessageById({ id }: { id: string }) {
+  try {
+    return await db.select().from(message).where(eq(message.id, id));
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to get message by id',
+    );
+  }
 }
 
-export function deleteMessagesByChatIdAfterTimestamp({
-	chatId,
-	timestamp
+export async function deleteMessagesByChatIdAfterTimestamp({
+  chatId,
+  timestamp,
 }: {
-	chatId: string;
-	timestamp: Date;
-}): ResultAsync<undefined, DbError> {
-	return safeTry(async function* () {
-		const messagesToDelete = yield* fromPromise(
-			db
-				.select({ id: message.id })
-				.from(message)
-				.where(and(eq(message.chatId, chatId), gte(message.createdAt, timestamp))),
-			(e) => new DbInternalError({ cause: e })
-		);
-		const messageIds = messagesToDelete.map((message) => message.id);
-		if (messageIds.length > 0) {
-			const votes = fromPromise(
-				db.delete(vote).where(and(eq(vote.chatId, chatId), inArray(vote.messageId, messageIds))),
-				(e) => new DbInternalError({ cause: e })
-			);
-			const messages = fromPromise(
-				db.delete(message).where(and(eq(message.chatId, chatId), inArray(message.id, messageIds))),
-				(e) => new DbInternalError({ cause: e })
-			);
-			yield* votes;
-			yield* messages;
-		}
-		return ok(undefined);
-	});
+  chatId: string;
+  timestamp: Date;
+}) {
+  try {
+    const messagesToDelete = await db
+      .select({ id: message.id })
+      .from(message)
+      .where(
+        and(eq(message.chatId, chatId), gte(message.createdAt, timestamp)),
+      );
+
+    const messageIds = messagesToDelete.map((message) => message.id);
+
+    if (messageIds.length > 0) {
+      await db
+        .delete(vote)
+        .where(
+          and(eq(vote.chatId, chatId), inArray(vote.messageId, messageIds)),
+        );
+
+      return await db
+        .delete(message)
+        .where(
+          and(eq(message.chatId, chatId), inArray(message.id, messageIds)),
+        );
+    }
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to delete messages by chat id after timestamp',
+    );
+  }
 }
 
-export function deleteTrailingMessages({ id }: { id: string }): ResultAsync<undefined, DbError> {
-	return safeTry(async function* () {
-		const message = yield* getMessageById({ id });
-		yield* deleteMessagesByChatIdAfterTimestamp({
-			chatId: message.chatId,
-			timestamp: message.createdAt
-		});
-		return ok(undefined);
-	});
-}
-
-export function updateChatVisiblityById({
-	chatId,
-	visibility
+export async function updateChatVisiblityById({
+  chatId,
+  visibility,
 }: {
-	chatId: string;
-	visibility: 'private' | 'public';
-}): ResultAsync<undefined, DbError> {
-	return safeTry(async function* () {
-		yield* fromPromise(
-			db.update(chat).set({ visibility }).where(eq(chat.id, chatId)),
-			(e) => new DbInternalError({ cause: e })
-		);
-		return ok(undefined);
-	});
+  chatId: string;
+  visibility: 'private' | 'public';
+}) {
+  try {
+    return await db.update(chat).set({ visibility }).where(eq(chat.id, chatId));
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to update chat visibility by id',
+    );
+  }
+}
+
+export async function getMessageCountByUserId({
+  id,
+  differenceInHours,
+}: { id: string; differenceInHours: number }) {
+  try {
+    const twentyFourHoursAgo = new Date(
+      Date.now() - differenceInHours * 60 * 60 * 1000,
+    );
+
+    const [stats] = await db
+      .select({ count: count(message.id) })
+      .from(message)
+      .innerJoin(chat, eq(message.chatId, chat.id))
+      .where(
+        and(
+          eq(chat.userId, id),
+          gte(message.createdAt, twentyFourHoursAgo),
+          eq(message.role, 'user'),
+        ),
+      )
+      .execute();
+
+    return stats?.count ?? 0;
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to get message count by user id',
+    );
+  }
+}
+
+export async function createStreamId({
+  streamId,
+  chatId,
+}: {
+  streamId: string;
+  chatId: string;
+}) {
+  try {
+    await db
+      .insert(stream)
+      .values({ id: streamId, chatId, createdAt: new Date() });
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to create stream id',
+    );
+  }
+}
+
+export async function getStreamIdsByChatId({ chatId }: { chatId: string }) {
+  try {
+    const streamIds = await db
+      .select({ id: stream.id })
+      .from(stream)
+      .where(eq(stream.chatId, chatId))
+      .orderBy(asc(stream.createdAt))
+      .execute();
+
+    return streamIds.map(({ id }) => id);
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to get stream ids by chat id',
+    );
+  }
 }

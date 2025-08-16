@@ -17,7 +17,7 @@
 	import ShareIcon from '../icons/share.svelte';
 	import MoreHorizontalIcon from '../icons/more-horizontal.svelte';
 	import { goto } from '$app/navigation';
-	import { ChatHistory } from '$lib/hooks/chat-history.svelte';
+	import { ChatHistory } from '$lib/hooks/example';
 
 	let {
 		chat,

@@ -17,5 +17,4 @@ export const GET = async ({ request }) => {
 
     //   return signIn('guest', { redirect: true, redirectTo: redirectUrl });
 
-    return json({ message: 'Guest authentication not implemented', redirectUrl });
 };

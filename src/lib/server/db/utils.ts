@@ -1,13 +1,16 @@
-import { DbEntityNotFoundError } from '$lib/errors/db';
-import { err, ok, Result } from 'neverthrow';
+import { generateId } from 'ai';
+import { genSaltSync, hashSync } from 'bcrypt-ts';
 
-export function unwrapSingleQueryResult<T>(
-	rows: T[],
-	id: string,
-	entityType: string
-): Result<T, DbEntityNotFoundError> {
-	if (rows.length === 0) {
-		return err(new DbEntityNotFoundError(id, entityType));
-	}
-	return ok(rows[0]);
+export function generateHashedPassword(password: string) {
+  const salt = genSaltSync(10);
+  const hash = hashSync(password, salt);
+
+  return hash;
+}
+
+export function generateDummyPassword() {
+  const password = generateId();
+  const hashedPassword = generateHashedPassword(password);
+
+  return hashedPassword;
 }

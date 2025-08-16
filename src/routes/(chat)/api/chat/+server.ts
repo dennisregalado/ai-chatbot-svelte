@@ -1,5 +1,5 @@
-import { myProvider } from '$lib/server/ai/models';
-import { systemPrompt } from '$lib/server/ai/prompts.js';
+import { myProvider } from '$lib/ai/models';
+import { systemPrompt } from '$lib/ai/prompts.js';
 import { generateTitleFromUserMessage } from '$lib/server/ai/utils';
 import { deleteChatById, getChatById, saveChat, saveMessages } from '$lib/server/db/queries.js';
 import type { Chat } from '$lib/server/db/schema';

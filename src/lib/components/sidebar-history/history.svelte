@@ -14,7 +14,7 @@
 		AlertDialogHeader,
 		AlertDialogTitle
 	} from '../ui/alert-dialog';
-	import { ChatHistory } from '$lib/hooks/chat-history.svelte';
+	import { ChatHistory } from '$lib/hooks/example';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 	import { Skeleton } from '../ui/skeleton';
