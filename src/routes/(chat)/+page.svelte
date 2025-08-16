@@ -14,7 +14,7 @@
 			initialMessages={[]}
 			initialChatModel={DEFAULT_CHAT_MODEL}
 			initialVisibilityType="private"
-			isReadonly={false}
+			readonly={false}
 			{session}
 			autoResume={false}
 		/>
@@ -26,7 +26,7 @@
 			initialMessages={[]}
 			initialChatModel={modelIdFromCookie}
 			initialVisibilityType="private"
-			isReadonly={false}
+			readonly={false}
 			{session}
 			autoResume={false}
 		/>

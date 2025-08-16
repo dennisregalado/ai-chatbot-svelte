@@ -1,5 +1,5 @@
 import { tool, type UIMessageStreamWriter } from 'ai';
-import type { Session } from '@auth/sveltekit';
+import type { Session } from 'better-auth';
 import { z } from 'zod';
 import { getDocumentById } from '$server/db/queries';
 import { documentHandlersByArtifactKind } from '$server/artifacts';
@@ -44,7 +44,7 @@ export const updateDocument = ({ session, dataStream }: UpdateDocumentProps) =>
 				document,
 				description,
 				dataStream,
-				session
+				session: session.session
 			});
 
 			dataStream.write({ type: 'data-finish', data: null, transient: true });

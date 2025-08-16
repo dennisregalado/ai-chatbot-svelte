@@ -1,20 +1,32 @@
-import { getChatById, getMessagesByChatId } from '$server/db/queries';
-import { error } from '@sveltejs/kit';
-import { ok, safeTry } from 'neverthrow';
+import { getChatById } from '$server/db/queries';
+import { error, redirect } from '@sveltejs/kit';
 
-export async function load({ params: { chatId }, locals: { user } }) {
-	return safeTry(async function* () {
-		const chat = yield* getChatById({ id: chatId }).mapErr(() => error(404, 'Not found'));
-		if (chat.visibility === 'private') {
-			if (!user || chat.userId !== user.id) {
-				error(404, 'Not found');
-			}
+export async function load({ params: { id }, locals: { session }, cookies }) {
+	const chat = await getChatById({ id });
+
+	if (!chat) {
+		error(404, 'Not found');
+	}
+
+	if (!session) {
+		redirect(302, '/api/auth/guest');
+	}
+
+	if (chat.visibility === 'private') {
+		if (!session.userId) {
+			error(404, 'Not found');
 		}
-		const messages = yield* getMessagesByChatId({ id: chatId });
 
-		return ok({ chat, messages });
-	}).match(
-		(result) => result,
-		() => error(500, 'An error occurred while processing your request')
-	);
+		if (session.userId !== chat.userId) {
+			error(404, 'Not found');
+		}
+	}
+
+	const chatModelFromCookie = cookies.get('chat-model');
+
+	return {
+		chat,
+		chatModelFromCookie,
+		session
+	};
 }

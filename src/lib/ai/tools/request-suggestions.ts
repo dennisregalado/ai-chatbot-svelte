@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { Session } from '@auth/sveltekit';
+import type { Session } from 'better-auth';
 import { streamObject, tool, type UIMessageStreamWriter } from 'ai';
 import { getDocumentById, saveSuggestions } from '$server/db/queries';
 import type { Suggestion } from '$server/db/schema';
@@ -62,8 +62,8 @@ export const requestSuggestions = ({ session, dataStream }: RequestSuggestionsPr
 				suggestions.push(suggestion);
 			}
 
-			if (session.user?.id) {
-				const userId = session.user.id;
+			if (session.userId) {
+				const userId = session.userId;
 
 				await saveSuggestions({
 					suggestions: suggestions.map((suggestion) => ({

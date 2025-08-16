@@ -1,7 +1,13 @@
-import { command, query } from '$app/server';
+import { command, getRequestEvent, query } from '$app/server';
 import { z } from 'zod';
 import * as db from '$server/db/queries';
 import type { VisibilityType } from '$components/visibility-selector.svelte';
+import { auth } from '$lib/auth';
+
+export const signInAnonymous = command(async () => {
+	const event = getRequestEvent();
+	return auth.api.signInAnonymous({ headers: event.request.headers });
+});
 
 export const getUser = query(z.string(), async (email: string) => {
 	return db.getUser(email);

@@ -1,161 +1,216 @@
-import { myProvider } from '$ai/models';
-import { systemPrompt } from '$ai/prompts.js';
-import { generateTitleFromUserMessage } from '$server/ai/utils';
-import { deleteChatById, getChatById, saveChat, saveMessages } from '$server/db/queries.js';
-import type { Chat } from '$server/db/schema';
-import { getMostRecentUserMessage, getTrailingMessageId } from '$lib/utils';
-import { allowAnonymousChats } from '$lib/constants.js';
-import { error } from '@sveltejs/kit';
 import {
-	appendResponseMessages,
-	createDataStreamResponse,
+	convertToModelMessages,
+	createUIMessageStream,
+	JsonToSseTransformStream,
 	smoothStream,
-	streamText,
-	type UIMessage
+	stepCountIs,
+	streamText
 } from 'ai';
-import { ok, safeTry } from 'neverthrow';
+import { type RequestHints, systemPrompt } from '$ai/prompts';
+import {
+	createStreamId,
+	deleteChatById,
+	getChatById,
+	getMessageCountByUserId,
+	getMessagesByChatId,
+	saveChat,
+	saveMessages
+} from '$server/db/queries';
+import { convertToUIMessages, generateUUID } from '$lib/utils';
+import { generateTitleFromUserMessage } from '././../../data.remote';
+import { createDocument } from '$ai/tools/create-document';
+import { updateDocument } from '$ai/tools/update-document';
+import { requestSuggestions } from '$ai/tools/request-suggestions';
+import { getWeather } from '$ai/tools/get-weather';
+import { myProvider } from '$ai/providers';
+import { entitlementsByUserType } from '$ai/entitlements';
+import { postRequestBodySchema, type PostRequestBody } from './schema';
+import { geolocation } from '@vercel/functions';
+import { json } from '@sveltejs/kit';
+import { ChatSDKError } from '$lib/errors';
+import type { ChatMessage } from '$lib/types';
+import type { ChatModel } from '$ai/models';
+import type { VisibilityType } from '$components/visibility-selector.svelte';
+import { dev } from '$app/environment';
 
-export async function POST({ request, locals: { user }, cookies }) {
-	// TODO: zod?
-	const { id, messages }: { id: string; messages: UIMessage[] } = await request.json();
-	const selectedChatModel = cookies.get('selected-model');
+// const maxDuration = 60;
 
-	if (!user && !allowAnonymousChats) {
-		error(401, 'Unauthorized');
+export const POST = async ({ request, locals: { session, getStreamContext } }) => {
+	let requestBody: PostRequestBody;
+
+	try {
+		const json = await request.json();
+		requestBody = postRequestBodySchema.parse(json);
+	} catch (_) {
+		return new ChatSDKError('bad_request:api').toResponse();
 	}
 
-	if (!selectedChatModel) {
-		error(400, 'No chat model selected');
-	}
+	try {
+		const {
+			id,
+			message,
+			selectedChatModel,
+			selectedVisibilityType
+		}: {
+			id: string;
+			message: ChatMessage;
+			selectedChatModel: ChatModel['id'];
+			selectedVisibilityType: VisibilityType;
+		} = requestBody;
 
-	const userMessage = getMostRecentUserMessage(messages);
-
-	if (!userMessage) {
-		error(400, 'No user message found');
-	}
-
-	if (user) {
-		await safeTry(async function* () {
-			let chat: Chat;
-			const chatResult = await getChatById({ id });
-			if (chatResult.isErr()) {
-				if (chatResult.error._tag !== 'DbEntityNotFoundError') {
-					return chatResult;
-				}
-				const title = yield* generateTitleFromUserMessage({ message: userMessage });
-				chat = yield* saveChat({ id, userId: user.id, title });
-			} else {
-				chat = chatResult.value;
-			}
-
-			if (chat.userId !== user.id) {
-				error(403, 'Forbidden');
-			}
-
-			yield* saveMessages({
-				messages: [
-					{
-						chatId: id,
-						id: userMessage.id,
-						role: 'user',
-						parts: userMessage.parts,
-						attachments: userMessage.experimental_attachments ?? [],
-						createdAt: new Date()
-					}
-				]
-			});
-
-			return ok(undefined);
-		}).orElse(() => error(500, 'An error occurred while processing your request'));
-	}
-
-	return createDataStreamResponse({
-		execute: (dataStream) => {
-			const result = streamText({
-				model: myProvider.languageModel(selectedChatModel),
-				system: systemPrompt({ selectedChatModel }),
-				messages,
-				maxSteps: 5,
-				experimental_activeTools: [],
-				// TODO
-				// selectedChatModel === 'chat-model-reasoning'
-				// 	? []
-				// 	: ['getWeather', 'createDocument', 'updateDocument', 'requestSuggestions'],
-				experimental_transform: smoothStream({ chunking: 'word' }),
-				experimental_generateMessageId: crypto.randomUUID.bind(crypto),
-				// TODO
-				// tools: {
-				// 	getWeather,
-				// 	createDocument: createDocument({ session, dataStream }),
-				// 	updateDocument: updateDocument({ session, dataStream }),
-				// 	requestSuggestions: requestSuggestions({
-				// 		session,
-				// 		dataStream
-				// 	})
-				// },
-				onFinish: async ({ response }) => {
-					if (!user) return;
-					const assistantId = getTrailingMessageId({
-						messages: response.messages.filter((message) => message.role === 'assistant')
-					});
-
-					if (!assistantId) {
-						throw new Error('No assistant message found!');
-					}
-
-					const [, assistantMessage] = appendResponseMessages({
-						messages: [userMessage],
-						responseMessages: response.messages
-					});
-
-					await saveMessages({
-						messages: [
-							{
-								id: assistantId,
-								chatId: id,
-								role: assistantMessage.role,
-								parts: assistantMessage.parts,
-								attachments: assistantMessage.experimental_attachments ?? [],
-								createdAt: new Date()
-							}
-						]
-					});
-				},
-				experimental_telemetry: {
-					isEnabled: true,
-					functionId: 'stream-text'
-				}
-			});
-
-			result.consumeStream();
-
-			result.mergeIntoDataStream(dataStream, {
-				sendReasoning: true
-			});
-		},
-		onError: (e) => {
-			console.error(e);
-			return 'Oops!';
+		if (!session?.userId) {
+			return new ChatSDKError('unauthorized:chat').toResponse();
 		}
-	});
-}
 
-export async function DELETE({ locals: { user }, request }) {
-	// TODO: zod
-	const { id }: { id: string } = await request.json();
-	if (!user) {
-		error(401, 'Unauthorized');
+		const userType: UserType = 'guest';
+
+		const messageCount = await getMessageCountByUserId({
+			id: session.userId,
+			differenceInHours: 24
+		});
+
+		if (messageCount > entitlementsByUserType[userType].maxMessagesPerDay) {
+			return new ChatSDKError('rate_limit:chat').toResponse();
+		}
+
+		const chat = await getChatById({ id });
+
+		if (!chat) {
+			const title = await generateTitleFromUserMessage({
+				// @ts-ignore
+				message
+			});
+
+			await saveChat({
+				id,
+				userId: session.userId,
+				title,
+				visibility: selectedVisibilityType
+			});
+		} else {
+			if (chat.userId !== session.userId) {
+				return new ChatSDKError('forbidden:chat').toResponse();
+			}
+		}
+
+		const messagesFromDb = await getMessagesByChatId({ id });
+		const uiMessages = [...convertToUIMessages(messagesFromDb), message];
+
+		const { longitude, latitude, city, country } = geolocation(request);
+
+		const requestHints: RequestHints = {
+			longitude,
+			latitude,
+			city,
+			country
+		};
+
+		await saveMessages({
+			messages: [
+				{
+					chatId: id,
+					id: message.id,
+					role: 'user',
+					parts: message.parts,
+					attachments: [],
+					createdAt: new Date()
+				}
+			]
+		});
+
+		const streamId = generateUUID();
+		await createStreamId({ streamId, chatId: id });
+
+		const stream = createUIMessageStream({
+			execute: ({ writer: dataStream }) => {
+				const result = streamText({
+					model: myProvider.languageModel(selectedChatModel),
+					system: systemPrompt({ selectedChatModel, requestHints }),
+					messages: convertToModelMessages(uiMessages),
+					stopWhen: stepCountIs(5),
+					experimental_activeTools:
+						selectedChatModel === 'chat-model-reasoning'
+							? []
+							: ['getWeather', 'createDocument', 'updateDocument', 'requestSuggestions'],
+					experimental_transform: smoothStream({ chunking: 'word' }),
+					tools: {
+						getWeather,
+						createDocument: createDocument({ session, dataStream }),
+						updateDocument: updateDocument({ session, dataStream }),
+						requestSuggestions: requestSuggestions({
+							session,
+							dataStream
+						})
+					},
+					experimental_telemetry: {
+						isEnabled: !dev,
+						functionId: 'stream-text'
+					}
+				});
+
+				result.consumeStream();
+
+				dataStream.merge(
+					result.toUIMessageStream({
+						sendReasoning: true
+					})
+				);
+			},
+			generateId: generateUUID,
+			onFinish: async ({ messages }) => {
+				await saveMessages({
+					messages: messages.map((message) => ({
+						id: message.id,
+						role: message.role,
+						parts: message.parts,
+						createdAt: new Date(),
+						attachments: [],
+						chatId: id
+					}))
+				});
+			},
+			onError: () => {
+				return 'Oops, an error occurred!';
+			}
+		});
+
+		const streamContext = getStreamContext();
+
+		if (streamContext) {
+			return new Response(
+				await streamContext.resumableStream(streamId, () =>
+					stream.pipeThrough(new JsonToSseTransformStream())
+				)
+			);
+		} else {
+			return new Response(stream.pipeThrough(new JsonToSseTransformStream()));
+		}
+	} catch (error) {
+		if (error instanceof ChatSDKError) {
+			return error.toResponse();
+		}
+	}
+};
+
+export const DELETE = async ({ request, locals: { session } }) => {
+	const { searchParams } = new URL(request.url);
+	const id = searchParams.get('id');
+
+	if (!id) {
+		return new ChatSDKError('bad_request:api').toResponse();
 	}
 
-	return await getChatById({ id })
-		.andTee((chat) => {
-			if (chat.userId !== user.id) {
-				error(403, 'Forbidden');
-			}
-		})
-		.andThen(deleteChatById)
-		.match(
-			() => new Response('Chat deleted', { status: 200 }),
-			() => error(500, 'An error occurred while processing your request')
-		);
-}
+	if (!session?.userId) {
+		return new ChatSDKError('unauthorized:chat').toResponse();
+	}
+
+	const chat = await getChatById({ id });
+
+	if (chat.userId !== session.userId) {
+		return new ChatSDKError('forbidden:chat').toResponse();
+	}
+
+	const deletedChat = await deleteChatById({ id });
+
+	return json(deletedChat);
+};

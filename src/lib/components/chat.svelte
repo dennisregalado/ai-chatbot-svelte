@@ -7,7 +7,7 @@
 	import Messages from './messages.svelte';
 	import MultimodalInput from './multimodal-input.svelte';
 	import type { UIMessage } from '@ai-sdk/svelte';
-	import type { Session } from '@auth/sveltekit';
+	import type { Session } from 'better-auth';
 
 	// refactor
 	import { Chat } from '@ai-sdk/svelte';
@@ -30,7 +30,7 @@
 		initialChatModel: string;
 		initialVisibilityType: 'private' | 'public';
 		readonly: boolean;
-		session: Session | null;
+		session: Session | undefined;
 		autoResume: boolean;
 	} = $props();
 

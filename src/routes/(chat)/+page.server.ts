@@ -2,10 +2,10 @@ import { generateUUID } from '$lib/utils';
 import { redirect } from '@sveltejs/kit';
 
 export async function load({ locals, cookies }) {
-	const session = await locals.auth();
+	const { session } = locals;
 
 	if (!session) {
-		//   redirect(302, '/api/auth/guest');
+		//	redirect(302, '/api/auth/guest');
 	}
 
 	const id = generateUUID();
