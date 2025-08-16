@@ -99,7 +99,7 @@
 
 		alertDialogOpen = false;
 
-		if (chatIdToDelete === page.params.chatId) {
+		if (chatIdToDelete === page.params.id) {
 			await goto('/');
 		}
 	}

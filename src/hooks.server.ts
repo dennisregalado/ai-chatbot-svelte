@@ -1,2 +1,2 @@
-import { sequence } from '@sveltejs/kit/hooks';
 
+export { handle } from "./auth"
