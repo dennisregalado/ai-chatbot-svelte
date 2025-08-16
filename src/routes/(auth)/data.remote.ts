@@ -1,5 +1,5 @@
 import { form } from "$app/server";
-import { createUser, getUser } from "$lib/server/db/queries";
+import { createUser, getUser } from "$server/db/queries";
 import z from "zod";
 
 const authFormSchema = z.object({

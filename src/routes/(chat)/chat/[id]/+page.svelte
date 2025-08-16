@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Chat from '$lib/components/chat.svelte';
+	import Chat from '$components/chat.svelte';
 	import { convertToUIMessages } from '$lib/utils/chat';
 
 	let { data } = $props();

@@ -1,7 +1,7 @@
 import { command, query } from "$app/server";
 import { z } from "zod";
-import * as db from "$lib/server/db/queries";
-import type { VisibilityType } from "$lib/components/visibility-selector.svelte";
+import * as db from "$server/db/queries";
+import type { VisibilityType } from "$components/visibility-selector.svelte";
 
 export const getUser = query(z.string(), async (email: string) => {
     return db.getUser(email);

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SparklesIcon from '$lib/components/icons/sparkles.svelte';
+	import SparklesIcon from '$components/icons/sparkles.svelte';
 	import { fly } from 'svelte/transition';
 </script>
 

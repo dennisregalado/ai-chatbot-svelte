@@ -1,7 +1,6 @@
 import { redirect } from "@sveltejs/kit"
 import type { RequestEvent } from "@sveltejs/kit"
 import { env } from "$env/dynamic/private"
-
 import { Auth, createActionURL, raw } from "@auth/core"
 import type { ProviderType } from "@auth/core/providers"
 import type { SvelteKitAuthConfig } from "@auth/sveltekit"

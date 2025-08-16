@@ -1,4 +1,4 @@
-import { getChatById, getVotesByChatId } from '$lib/server/db/queries.js';
+import { getChatById, getVotesByChatId } from '$server/db/queries.js';
 import { error } from '@sveltejs/kit';
 import { ok, safeTry } from 'neverthrow';
 

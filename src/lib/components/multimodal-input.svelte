@@ -4,7 +4,7 @@
 	import { Textarea } from './ui/textarea';
 	import { cn } from '$lib/utils/shadcn';
 	import { onMount } from 'svelte';
-	import { LocalStorage } from '$lib/hooks/local-storage.svelte';
+	import { LocalStorage } from '../../hooks/local-storage.svelte';
 	import { innerWidth } from 'svelte/reactivity/window';
 	import type { Attachment } from 'ai';
 	import { toast } from 'svelte-sonner';
@@ -14,7 +14,7 @@
 	import ArrowUpIcon from './icons/arrow-up.svelte';
 	import SuggestedActions from './suggested-actions.svelte';
 	import { replaceState } from '$app/navigation';
-	import type { User } from '$lib/server/db/schema';
+	import type { User } from '$server/db/schema';
 
 	let {
 		attachments = $bindable(),

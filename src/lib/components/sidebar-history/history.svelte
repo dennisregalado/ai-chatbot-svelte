@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ChatItem from './item.svelte';
-	import type { Chat, User } from '$lib/server/db/schema';
+	import type { Chat, User } from '$server/db/schema';
 	import { SidebarGroup, SidebarGroupContent, SidebarMenu } from '../ui/sidebar';
 	import { page } from '$app/state';
 	import { subWeeks, subMonths, isToday, isYesterday } from 'date-fns';
@@ -14,7 +14,7 @@
 		AlertDialogHeader,
 		AlertDialogTitle
 	} from '../ui/alert-dialog';
-	import { ChatHistory } from '$lib/hooks/example';
+	import { ChatHistory } from '../../../hooks/example';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 	import { Skeleton } from '../ui/skeleton';

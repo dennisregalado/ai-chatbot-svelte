@@ -3,7 +3,7 @@
 	import { Button } from './ui/button';
 	import { fly } from 'svelte/transition';
 	import { replaceState } from '$app/navigation';
-	import type { User } from '$lib/server/db/schema';
+	import type { User } from '$server/db/schema';
 
 	let { user, chatClient }: { user: User | undefined; chatClient: Chat } = $props();
 

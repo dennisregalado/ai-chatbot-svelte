@@ -1,11 +1,14 @@
 <script module lang="ts">
 	import { getContext } from 'svelte';
-	import type { DataUIPart, CustomUIDataTypes } from '$lib/utils/types.js';
+	import type { DataUIPart } from 'ai';
+	import type { CustomUIDataTypes } from '$lib/types';
 
 	interface DataStreamContextValue {
 		dataStream: DataUIPart<CustomUIDataTypes>[];
 		setDataStream: (stream: DataUIPart<CustomUIDataTypes>[]) => void;
-		updateDataStream: (updater: (prev: DataUIPart<CustomUIDataTypes>[]) => DataUIPart<CustomUIDataTypes>[]) => void;
+		updateDataStream: (
+			updater: (prev: DataUIPart<CustomUIDataTypes>[]) => DataUIPart<CustomUIDataTypes>[]
+		) => void;
 	}
 
 	const DATA_STREAM_CONTEXT_KEY = Symbol('data-stream');
@@ -40,7 +43,9 @@
 		setDataStream: (stream: DataUIPart<CustomUIDataTypes>[]) => {
 			dataStream = stream;
 		},
-		updateDataStream: (updater: (prev: DataUIPart<CustomUIDataTypes>[]) => DataUIPart<CustomUIDataTypes>[]) => {
+		updateDataStream: (
+			updater: (prev: DataUIPart<CustomUIDataTypes>[]) => DataUIPart<CustomUIDataTypes>[]
+		) => {
 			dataStream = updater(dataStream);
 		}
 	};

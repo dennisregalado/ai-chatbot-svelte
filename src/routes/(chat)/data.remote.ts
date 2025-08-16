@@ -7,8 +7,8 @@ import {
     getMessageById,
     updateChatVisiblityById,
 } from '$lib/queries.remote';
-import type { VisibilityType } from '$lib/components/visibility-selector.svelte';
-import { myProvider } from '$lib/ai/providers';
+import type { VisibilityType } from '$components/visibility-selector.svelte';
+import { myProvider } from '$ai/providers';
 
 export const saveChatModelAsCookie = command(z.string(), async (model: string) => {
     const { cookies } = getRequestEvent();

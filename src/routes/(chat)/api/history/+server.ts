@@ -1,4 +1,4 @@
-import { getChatsByUserId } from '$lib/server/db/queries.js';
+import { getChatsByUserId } from '$server/db/queries.js';
 import { error } from '@sveltejs/kit';
 
 export async function GET({ locals: { user } }) {

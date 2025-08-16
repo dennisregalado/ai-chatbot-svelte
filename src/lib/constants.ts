@@ -1,5 +1,5 @@
 import { dev } from '$app/environment';
-import { generateDummyPassword } from '$lib/server/db/utils';
+import { generateDummyPassword } from '$server/db/utils';
 
 export const isProductionEnvironment = !dev;
 export const isDevelopmentEnvironment = dev;

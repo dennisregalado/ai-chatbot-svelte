@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { streamObject } from 'ai';
-import { myProvider } from '$lib/ai/providers';
-import { codePrompt, updateDocumentPrompt } from '$lib/ai/prompts';
-import { createDocumentHandler } from '$lib/server/artifacts';
+import { myProvider } from '$ai/providers';
+import { codePrompt, updateDocumentPrompt } from '$ai/prompts';
+import { createDocumentHandler } from '$server/artifacts';
 
 export const codeDocumentHandler = createDocumentHandler<'code'>({
   kind: 'code',

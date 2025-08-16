@@ -18,8 +18,8 @@
 
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
+	import { Input } from '$components/ui/input';
+	import { Label } from '$components/ui/label';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import type { Snippet } from 'svelte';
 	import { toast } from 'svelte-sonner';

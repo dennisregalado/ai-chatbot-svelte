@@ -1,5 +1,5 @@
-import type { VisibilityType } from '$lib/components/visibility-selector.svelte';
-import type { Chat } from '$lib/server/db/schema';
+import type { VisibilityType } from '$components/visibility-selector.svelte';
+import type { Chat } from '$server/db/schema';
 import { getContext, setContext } from 'svelte';
 import { toast } from 'svelte-sonner';
 

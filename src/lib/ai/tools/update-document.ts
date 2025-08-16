@@ -1,8 +1,8 @@
 import { tool, type UIMessageStreamWriter } from 'ai';
 import type { Session } from '@auth/sveltekit';
 import { z } from 'zod';
-import { getDocumentById } from '$lib/server/db/queries';
-import { documentHandlersByArtifactKind } from '$lib/server/artifacts';
+import { getDocumentById } from '$server/db/queries';
+import { documentHandlersByArtifactKind } from '$server/artifacts';
 import type { ChatMessage } from '$lib/types';
 
 interface UpdateDocumentProps {

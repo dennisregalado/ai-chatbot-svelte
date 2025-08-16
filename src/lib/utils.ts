@@ -6,9 +6,9 @@ import type {
 } from 'ai';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import type { DBMessage, Document } from '$lib/server/db/schema';
-import { ChatSDKError, type ErrorCode } from './errors';
-import type { ChatMessage, ChatTools, CustomUIDataTypes } from './types';
+import type { DBMessage, Document } from '$server/db/schema';
+import { ChatSDKError, type ErrorCode } from '$lib/errors';
+import type { ChatMessage, ChatTools, CustomUIDataTypes } from '$lib/types';
 import { formatISO } from 'date-fns';
 
 export function cn(...inputs: ClassValue[]) {

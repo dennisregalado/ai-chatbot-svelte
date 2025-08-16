@@ -3,7 +3,7 @@
 	import { toast } from 'svelte-sonner';
 	// import { ChatHistory } from '$lib/hooks/example';
 	import ChatHeader from './chat-header.svelte';
-	import type { Chat as DbChat, User } from '$lib/server/db/schema';
+	import type { Chat as DbChat, User } from '$server/db/schema';
 	import Messages from './messages.svelte';
 	import MultimodalInput from './multimodal-input.svelte';
 	import type { UIMessage } from '@ai-sdk/svelte';
@@ -12,7 +12,7 @@
 	// refactor
 	import { Chat } from '@ai-sdk/svelte';
 
-	import { useDataStream } from '$lib/components/data-stream-provider.svelte';
+	import { useDataStream } from '$components/data-stream-provider.svelte';
 	import { generateUUID } from '$lib/utils';
 	import type { ChatMessage } from '$lib/types';
 

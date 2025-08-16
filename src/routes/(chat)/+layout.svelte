@@ -1,10 +1,10 @@
 <script lang="ts">
-	import AppSidebar from '$lib/components/app-sidebar.svelte';
-	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-	import { Separator } from '$lib/components/ui/separator/index.js';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import AppSidebar from '$components/app-sidebar.svelte';
+	import * as Breadcrumb from '$components/ui/breadcrumb/index.js';
+	import { Separator } from '$components/ui/separator/index.js';
+	import * as Sidebar from '$components/ui/sidebar/index.js';
 
-	import DataStreamProvider from '$lib/components/data-stream-provider.svelte';
+	import DataStreamProvider from '$components/data-stream-provider.svelte';
 
 	let { data, children } = $props();
 
@@ -13,10 +13,10 @@
 
 <DataStreamProvider>
 	<script lang="ts">
-		import AppSidebar from '$lib/components/app-sidebar.svelte';
-		import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-		import { Separator } from '$lib/components/ui/separator/index.js';
-		import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+		import AppSidebar from '$components/app-sidebar.svelte';
+		import * as Breadcrumb from '$components/ui/breadcrumb/index.js';
+		import { Separator } from '$components/ui/separator/index.js';
+		import * as Sidebar from '$components/ui/sidebar/index.js';
 	</script>
 
 	<Sidebar.Provider open={!isCollapsed}>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Chat } from '$lib/server/db/schema';
+	import type { Chat } from '$server/db/schema';
 	import {
 		DropdownMenu,
 		DropdownMenuContent,
@@ -17,7 +17,7 @@
 	import ShareIcon from '../icons/share.svelte';
 	import MoreHorizontalIcon from '../icons/more-horizontal.svelte';
 	import { goto } from '$app/navigation';
-	import { ChatHistory } from '$lib/hooks/example';
+	import { ChatHistory } from '../../../hooks/example';
 
 	let {
 		chat,

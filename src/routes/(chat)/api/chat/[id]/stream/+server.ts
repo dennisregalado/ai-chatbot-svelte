@@ -1,5 +1,5 @@
-import type { VisibilityType } from '$lib/components/visibility-selector.svelte';
-import { updateChatVisiblityById } from '$lib/server/db/queries';
+import type { VisibilityType } from '$components/visibility-selector.svelte';
+import { updateChatVisiblityById } from '$server/db/queries';
 
 export async function POST({ request }) {
 	const { chatId, visibility }: { chatId: string; visibility: VisibilityType } =

@@ -1,10 +1,10 @@
-import { codeDocumentHandler } from '$lib/artifacts/code/server';
-import { imageDocumentHandler } from '$lib/artifacts/image/server';
-import { sheetDocumentHandler } from '$lib/artifacts/sheet/server';
-import { textDocumentHandler } from '$lib/artifacts/text/server';
-import type { ArtifactKind } from '$lib/components/artifact';
-import type { Document } from '$lib/server/db/schema';
-import { saveDocument } from '$lib/server/db/queries';
+import { codeDocumentHandler } from '$artifacts/code/server';
+import { imageDocumentHandler } from '$artifacts/image/server';
+import { sheetDocumentHandler } from '$artifacts/sheet/server';
+import { textDocumentHandler } from '$artifacts/text/server';
+import type { ArtifactKind } from '$components/artifact';
+import type { Document } from '$server/db/schema';
+import { saveDocument } from '$server/db/queries';
 import type { Session } from '@auth/sveltekit';
 import type { UIMessageStreamWriter } from 'ai';
 import type { ChatMessage } from '$lib/types';

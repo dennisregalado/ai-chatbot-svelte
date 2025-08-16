@@ -9,7 +9,7 @@
 	import CheckCircleFillIcon from './icons/check-circle-fill.svelte';
 	import ChevronDownIcon from './icons/chevron-down.svelte';
 	import { cn } from '$lib/utils/shadcn';
-	import { chatModels } from '$lib/ai/models';
+	import { chatModels } from '$ai/models';
 	import type { ClassValue } from 'svelte/elements';
 	import { SelectedModel } from '$lib/hooks/selected-model.svelte';
 

@@ -1,6 +1,6 @@
-import { myProvider } from '$lib/ai/providers';
-import { sheetPrompt, updateDocumentPrompt } from '$lib/ai/prompts';
-import { createDocumentHandler } from '$lib/server/artifacts';
+import { myProvider } from '$ai/providers';
+import { sheetPrompt, updateDocumentPrompt } from '$ai/prompts';
+import { createDocumentHandler } from '$server/artifacts';
 import { streamObject } from 'ai';
 import { z } from 'zod';
 

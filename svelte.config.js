@@ -12,6 +12,13 @@ const config = {
 		experimental: {
 			remoteFunctions: true,
 		},
+		alias: {
+			'$ai': './src/lib/ai',
+			'$server': './src/lib/server',
+			'$hooks': './src/lib/hooks',
+			'$artifacts': './src/artifacts',
+			'$components': './src/lib/components',
+		},
 	},
 	compilerOptions: {
 		experimental: {

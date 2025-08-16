@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { User } from '$lib/server/db/schema';
+	import type { User } from '$server/db/schema';
 	import { cn } from '$lib/utils/shadcn';
 	import ChevronUp from './icons/chevron-up.svelte';
 	import {

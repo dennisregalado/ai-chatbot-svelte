@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import type { Session } from '@auth/sveltekit';
 import { streamObject, tool, type UIMessageStreamWriter } from 'ai';
-import { getDocumentById, saveSuggestions } from '$lib/server/db/queries';
-import type { Suggestion } from '$lib/server/db/schema';
+import { getDocumentById, saveSuggestions } from '$server/db/queries';
+import type { Suggestion } from '$server/db/schema';
 import { generateUUID } from '$lib/utils';
 import { myProvider } from '../providers';
 import type { ChatMessage } from '$lib/types';

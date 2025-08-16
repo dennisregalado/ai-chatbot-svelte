@@ -1,5 +1,5 @@
 import { DUMMY_PASSWORD } from "$lib/constants";
-import { createGuestUser, getUser } from "$lib/server/db/queries";
+import { createGuestUser, getUser } from "$server/db/queries";
 import { SvelteKitAuth, type DefaultSession, type SvelteKitAuthConfig } from "@auth/sveltekit"
 import Credentials from "@auth/sveltekit/providers/credentials";
 import { compare } from "bcrypt-ts";

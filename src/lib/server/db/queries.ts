@@ -26,10 +26,10 @@ import {
   type Chat,
   stream,
 } from './schema';
-import type { ArtifactKind } from '$lib/components/artifact';
+import type { ArtifactKind } from '$components/artifact';
 import { generateUUID } from '$lib/utils';
 import { generateHashedPassword } from './utils';
-import type { VisibilityType } from '$lib/components/visibility-selector.svelte';
+import type { VisibilityType } from '$components/visibility-selector.svelte';
 import { ChatSDKError } from '$lib/errors';
 import { POSTGRES_URL } from '$env/static/private';
 

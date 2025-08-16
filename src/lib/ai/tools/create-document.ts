@@ -5,7 +5,7 @@ import type { Session } from '@auth/sveltekit';
 import {
   artifactKinds,
   documentHandlersByArtifactKind,
-} from '$lib/server/artifacts';
+} from '$server/artifacts';
 import type { ChatMessage } from '$lib/types';
 
 interface CreateDocumentProps {

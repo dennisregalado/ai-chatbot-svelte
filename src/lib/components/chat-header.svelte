@@ -7,7 +7,7 @@
 	import PlusIcon from './icons/plus.svelte';
 	import { goto } from '$app/navigation';
 	import ModelSelector from './model-selector.svelte';
-	import type { Chat, User } from '$lib/server/db/schema';
+	import type { Chat, User } from '$server/db/schema';
 	import VisibilitySelector from './visibility-selector.svelte';
 	import VercelIcon from './icons/vercel.svelte';
 

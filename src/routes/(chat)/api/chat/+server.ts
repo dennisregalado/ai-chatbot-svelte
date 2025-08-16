@@ -1,8 +1,8 @@
-import { myProvider } from '$lib/ai/models';
-import { systemPrompt } from '$lib/ai/prompts.js';
-import { generateTitleFromUserMessage } from '$lib/server/ai/utils';
-import { deleteChatById, getChatById, saveChat, saveMessages } from '$lib/server/db/queries.js';
-import type { Chat } from '$lib/server/db/schema';
+import { myProvider } from '$ai/models';
+import { systemPrompt } from '$ai/prompts.js';
+import { generateTitleFromUserMessage } from '$server/ai/utils';
+import { deleteChatById, getChatById, saveChat, saveMessages } from '$server/db/queries.js';
+import type { Chat } from '$server/db/schema';
 import { getMostRecentUserMessage, getTrailingMessageId } from '$lib/utils/chat.js';
 import { allowAnonymousChats } from '$lib/utils/constants.js';
 import { error } from '@sveltejs/kit';

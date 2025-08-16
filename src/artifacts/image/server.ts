@@ -1,5 +1,5 @@
-import { myProvider } from '$lib/ai/providers';
-import { createDocumentHandler } from '$lib/server/artifacts';
+import { myProvider } from '$ai/providers';
+import { createDocumentHandler } from '$server/artifacts';
 import { experimental_generateImage } from 'ai';
 
 export const imageDocumentHandler = createDocumentHandler<'image'>({

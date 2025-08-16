@@ -1,7 +1,7 @@
 import { redirect } from "@sveltejs/kit";
 
 import { getToken } from "@auth/core/jwt"
-import { signIn } from "$lib/server/auth"
+import { signIn } from "$server/auth"
 import { dev } from "$app/environment";
 import { config } from "$lib/auth";
 import { AUTH_SECRET } from "$env/static/private";

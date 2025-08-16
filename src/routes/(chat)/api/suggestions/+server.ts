@@ -1,4 +1,4 @@
-import { getSuggestionsByDocumentId } from '$lib/server/db/queries';
+import { getSuggestionsByDocumentId } from '$server/db/queries';
 import { error } from '@sveltejs/kit';
 
 export async function GET({ locals: { user }, params: { documentId } }) {
