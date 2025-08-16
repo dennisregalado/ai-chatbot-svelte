@@ -1,68 +1,179 @@
-<script lang="ts">
-	import { Button } from './ui/button';
-	import {
-		useSidebar,
-		Sidebar,
-		SidebarContent,
-		SidebarFooter,
-		SidebarHeader,
-		SidebarMenu
-	} from './ui/sidebar';
-	import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-	import { goto } from '$app/navigation';
-	import PlusIcon from './icons/plus.svelte';
-	import type { User } from '$lib/server/db/schema';
-	import SidebarUserNav from './sidebar-user-nav.svelte';
-	import { SidebarHistory } from './sidebar-history';
+<script lang="ts" module>
+	import BookOpenIcon from "@lucide/svelte/icons/book-open";
+	import BotIcon from "@lucide/svelte/icons/bot";
+	import ChartPieIcon from "@lucide/svelte/icons/chart-pie";
+	import FrameIcon from "@lucide/svelte/icons/frame";
+	import LifeBuoyIcon from "@lucide/svelte/icons/life-buoy";
+	import MapIcon from "@lucide/svelte/icons/map";
+	import SendIcon from "@lucide/svelte/icons/send";
+	import Settings2Icon from "@lucide/svelte/icons/settings-2";
+	import SquareTerminalIcon from "@lucide/svelte/icons/square-terminal";
 
-	let { user }: { user?: User } = $props();
-
-	const context = useSidebar();
+	const data = {
+		user: {
+			name: "shadcn",
+			email: "m@example.com",
+			avatar: "/avatars/shadcn.jpg",
+		},
+		navMain: [
+			{
+				title: "Playground",
+				url: "#",
+				icon: SquareTerminalIcon,
+				isActive: true,
+				items: [
+					{
+						title: "History",
+						url: "#",
+					},
+					{
+						title: "Starred",
+						url: "#",
+					},
+					{
+						title: "Settings",
+						url: "#",
+					},
+				],
+			},
+			{
+				title: "Models",
+				url: "#",
+				icon: BotIcon,
+				items: [
+					{
+						title: "Genesis",
+						url: "#",
+					},
+					{
+						title: "Explorer",
+						url: "#",
+					},
+					{
+						title: "Quantum",
+						url: "#",
+					},
+				],
+			},
+			{
+				title: "Documentation",
+				url: "#",
+				icon: BookOpenIcon,
+				items: [
+					{
+						title: "Introduction",
+						url: "#",
+					},
+					{
+						title: "Get Started",
+						url: "#",
+					},
+					{
+						title: "Tutorials",
+						url: "#",
+					},
+					{
+						title: "Changelog",
+						url: "#",
+					},
+				],
+			},
+			{
+				title: "Settings",
+				url: "#",
+				icon: Settings2Icon,
+				items: [
+					{
+						title: "General",
+						url: "#",
+					},
+					{
+						title: "Team",
+						url: "#",
+					},
+					{
+						title: "Billing",
+						url: "#",
+					},
+					{
+						title: "Limits",
+						url: "#",
+					},
+				],
+			},
+		],
+		navSecondary: [
+			{
+				title: "Support",
+				url: "#",
+				icon: LifeBuoyIcon,
+			},
+			{
+				title: "Feedback",
+				url: "#",
+				icon: SendIcon,
+			},
+		],
+		projects: [
+			{
+				name: "Design Engineering",
+				url: "#",
+				icon: FrameIcon,
+			},
+			{
+				name: "Sales & Marketing",
+				url: "#",
+				icon: ChartPieIcon,
+			},
+			{
+				name: "Travel",
+				url: "#",
+				icon: MapIcon,
+			},
+		],
+	};
 </script>
 
-<Sidebar class="group-data-[side=left]:border-r-0">
-	<SidebarHeader>
-		<SidebarMenu>
-			<div class="flex h-10 flex-row items-center justify-between md:h-[34px]">
-				<a
-					href="/"
-					onclick={() => {
-						context.setOpenMobile(false);
-					}}
-					class="flex flex-row items-center gap-3"
-				>
-					<span class="hover:bg-muted cursor-pointer rounded-md px-2 text-lg font-semibold">
-						Chatbot
-					</span>
-				</a>
-				<Tooltip>
-					<TooltipTrigger>
-						{#snippet child({ props })}
-							<Button
-								{...props}
-								variant="ghost"
-								type="button"
-								class="h-fit p-2"
-								onclick={() => {
-									context.setOpenMobile(false);
-									goto('/', { invalidateAll: true });
-								}}
+<script lang="ts">
+	import NavMain from "./nav-main.svelte";
+	import NavProjects from "./nav-projects.svelte";
+	import NavSecondary from "./nav-secondary.svelte";
+	import NavUser from "./nav-user.svelte";
+	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+	import CommandIcon from "@lucide/svelte/icons/command";
+	import type { ComponentProps } from "svelte";
+
+	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
+</script>
+
+<Sidebar.Root bind:ref variant="inset" {...restProps}>
+	<Sidebar.Header>
+		<Sidebar.Menu>
+			<Sidebar.MenuItem>
+				<Sidebar.MenuButton size="lg">
+					{#snippet child({ props })}
+						<a href="##" {...props}>
+							<div
+								class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"
 							>
-								<PlusIcon />
-							</Button>
-						{/snippet}
-					</TooltipTrigger>
-					<TooltipContent align="end">New Chat</TooltipContent>
-				</Tooltip>
-			</div>
-		</SidebarMenu>
-	</SidebarHeader>
-	<SidebarContent>
-		<SidebarHistory {user} />
-	</SidebarContent>
-	<SidebarFooter>
-		{#if user}
-			<SidebarUserNav {user} />
-		{/if}
-	</SidebarFooter>
-</Sidebar>
+								<CommandIcon class="size-4" />
+							</div>
+							<div class="grid flex-1 text-left text-sm leading-tight">
+								<span class="truncate font-medium">Acme Inc</span>
+								<span class="truncate text-xs">Enterprise</span>
+							</div>
+						</a>
+					{/snippet}
+				</Sidebar.MenuButton>
+			</Sidebar.MenuItem>
+		</Sidebar.Menu>
+	</Sidebar.Header>
+	<Sidebar.Content>
+		<NavMain items={data.navMain} />
+		<NavProjects projects={data.projects} />
+		<NavSecondary items={data.navSecondary} class="mt-auto" />
+	</Sidebar.Content>
+	<Sidebar.Footer>
+		<NavUser user={data.user} />
+	</Sidebar.Footer>
+</Sidebar.Root>
