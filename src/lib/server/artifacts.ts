@@ -1,14 +1,14 @@
-// import { codeDocumentHandler } from '@/artifacts/code/server';
-//import { imageDocumentHandler } from '@/artifacts/image/server';
-//import { sheetDocumentHandler } from '@/artifacts/sheet/server';
-    import { textDocumentHandler } from '/artifacts/text/server';
+import { codeDocumentHandler } from '$lib/artifacts/code/server';
+import { imageDocumentHandler } from '$lib/artifacts/image/server';
+import { sheetDocumentHandler } from '$lib/artifacts/sheet/server';
+import { textDocumentHandler } from '$lib/artifacts/text/server';
 import type { ArtifactKind } from '$lib/components/artifact';
 import type { Document } from '$lib/server/db/schema';
 import { saveDocument } from '$lib/server/db/queries';
-//import type { Session } from 'next-auth';
+import type { Session } from '@auth/sveltekit';
 import type { UIMessageStreamWriter } from 'ai';
 import type { ChatMessage } from '$lib/types';
- 
+
 export interface SaveDocumentProps {
     id: string;
     title: string;
@@ -91,10 +91,10 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
  * Use this array to define the document handlers for each artifact kind.
  */
 export const documentHandlersByArtifactKind: Array<DocumentHandler> = [
- //   textDocumentHandler,
- //   codeDocumentHandler,
- //   imageDocumentHandler,
- //   sheetDocumentHandler,
+    textDocumentHandler,
+    codeDocumentHandler,
+    imageDocumentHandler,
+    sheetDocumentHandler,
 ];
 
 export const artifactKinds = ['text', 'code', 'image', 'sheet'] as const;

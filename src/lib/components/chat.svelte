@@ -1,41 +1,57 @@
 <script lang="ts">
-	import { Chat } from '@ai-sdk/svelte';
 	import type { Attachment } from 'ai';
 	import { toast } from 'svelte-sonner';
-	import { ChatHistory } from '$lib/hooks/example';
+	// import { ChatHistory } from '$lib/hooks/example';
 	import ChatHeader from './chat-header.svelte';
 	import type { Chat as DbChat, User } from '$lib/server/db/schema';
 	import Messages from './messages.svelte';
 	import MultimodalInput from './multimodal-input.svelte';
-	import { untrack } from 'svelte';
 	import type { UIMessage } from '@ai-sdk/svelte';
+	import type { Session } from '@auth/sveltekit';
+
+	// refactor
+	import { Chat } from '@ai-sdk/svelte';
+
+	import { useDataStream } from '$lib/components/data-stream-provider.svelte';
+	import { generateUUID } from '$lib/utils';
+	import type { ChatMessage } from '$lib/types';
 
 	let {
 		id,
-		user,
-		chat,
+		initialMessages,
+		initialChatModel,
+		initialVisibilityType,
 		readonly,
-		initialMessages
+		session,
+		autoResume
 	}: {
 		id: string;
-		user: User | undefined;
-		chat: DbChat | undefined;
-		initialMessages: UIMessage[];
+		initialMessages: ChatMessage[];
+		initialChatModel: string;
+		initialVisibilityType: 'private' | 'public';
 		readonly: boolean;
+		session: Session | null;
+		autoResume: boolean;
 	} = $props();
 
-	const chatHistory = ChatHistory.fromContext();
+	const { dataStream } = useDataStream();
+
+	let input = $state('');
+
+	//const chatHistory = ChatHistory.fromContext();
 
 	const chatClient = $derived(
 		new Chat({
-			id: chat?.id,
+			id,
+			//	experimental_throttle: 100,
+			generateId: generateUUID,
+
 			// This way, the client is only recreated when the ID changes, allowing us to fully manage messages
 			// clientside while still SSRing them on initial load or when we navigate to a different chat.
-			initialMessages: untrack(() => initialMessages),
+
 			sendExtraMessageFields: true,
-			generateId: crypto.randomUUID.bind(crypto),
 			onFinish: async () => {
-				await chatHistory.refetch();
+				//	await chatHistory.refetch();
 			},
 			onError: (error) => {
 				try {
@@ -59,11 +75,19 @@
 		})
 	);
 
-	let attachments = $state<Attachment[]>([]);
+	$inspect(chatClient);
+
+	let attachments = $state<Array<Attachment>>([]);
 </script>
 
 <div class="bg-background flex h-dvh min-w-0 flex-col">
-	<ChatHeader {user} {chat} {readonly} />
+	<ChatHeader
+		chatId={id}
+		selectedModelId={initialChatModel}
+		selectedVisibilityType={initialVisibilityType}
+		{readonly}
+		{session}
+	/>
 	<Messages
 		{readonly}
 		loading={chatClient.status === 'streaming' || chatClient.status === 'submitted'}

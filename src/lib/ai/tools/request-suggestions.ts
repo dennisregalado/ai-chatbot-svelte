@@ -1,6 +1,6 @@
 import { z } from 'zod';
-//import type { Session } from 'next-auth';
-import { streamObject, tool } from 'ai';
+import type { Session } from '@auth/sveltekit';
+import { streamObject, tool, type UIMessageStreamWriter } from 'ai';
 import { getDocumentById, saveSuggestions } from '$lib/server/db/queries';
 import type { Suggestion } from '$lib/server/db/schema';
 import { generateUUID } from '$lib/utils';

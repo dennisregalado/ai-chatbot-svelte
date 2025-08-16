@@ -21,9 +21,9 @@
 		"db:up": "drizzle-kit up"
 	},
 	"devDependencies": {
-		"@ai-sdk/groq": "^1.2.0",
-		"@ai-sdk/svelte": "^2.1.0",
-		"@ai-sdk/xai": "^1.2.1",
+		"@ai-sdk/groq": "^2.0.10",
+		"@ai-sdk/svelte": "^3.0.15",
+		"@ai-sdk/xai": "^2.0.7",
 		"@eslint/compat": "^1.2.5",
 		"@eslint/js": "^9.18.0",
 		"@internationalized/date": "^3.5.6",
@@ -31,13 +31,13 @@
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
 		"@sejohnson/svelte-themes": "^0.0.6",
-		"@sveltejs/adapter-vercel": "^5.5.2",
-		"@sveltejs/kit": "^2.31.0",
+		"@sveltejs/adapter-vercel": "^5.9.1",
+		"@sveltejs/kit": "^2.31.1",
 		"@sveltejs/vite-plugin-svelte": "^6.1.2",
 		"@tailwindcss/vite": "^4.0.0",
 		"@types/ms": "^2.1.0",
 		"@vercel/blob": "^1.1.1",
-		"ai": "^4.2.0",
+		"ai": "^5.0.15",
 		"autoprefixer": "^10.4.20",
 		"bcrypt-ts": "^7.1.0",
 		"bits-ui": "^2.4.1",
@@ -77,6 +77,8 @@
 	},
 	"packageManager": "pnpm@10.11.1+sha512.e519b9f7639869dc8d5c3c5dfef73b3f091094b0a006d7317353c72b124e80e1afd429732e28705ad6bfa1ee879c1fce46c128ccebd3192101f43dd67c667912",
 	"dependencies": {
-		"@auth/sveltekit": "^1.10.0"
+		"@auth/core": "^0.40.0",
+		"@auth/sveltekit": "^1.10.0",
+		"set-cookie-parser": "^2.7.1"
 	}
 }

@@ -1,5 +1,5 @@
 import { tool, type UIMessageStreamWriter } from 'ai';
-//import type { Session } from 'next-auth';
+import type { Session } from '@auth/sveltekit';
 import { z } from 'zod';
 import { getDocumentById } from '$lib/server/db/queries';
 import { documentHandlersByArtifactKind } from '$lib/server/artifacts';

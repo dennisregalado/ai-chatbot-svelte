@@ -1,4 +1,5 @@
 import { form } from "$app/server";
+import { createUser, getUser } from "$lib/server/db/queries";
 import z from "zod";
 
 const authFormSchema = z.object({
@@ -37,12 +38,12 @@ export const register = form(async (formData) => {
             password: formData.get('password'),
         });
 
-        //    const [user] = await getUser(validatedData.email);
+        const [user] = await getUser(validatedData.email);
 
-        //    if (user) {
-        //        return { status: 'user_exists' } as RegisterActionState;
-        //    }
-        //    await createUser(validatedData.email, validatedData.password);
+        if (user) {
+            return { status: 'user_exists' } as RegisterActionState;
+        }
+        await createUser(validatedData.email, validatedData.password);
         //    await signIn('credentials', {
         //        email: validatedData.email,
         //        password: validatedData.password,
