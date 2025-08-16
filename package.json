@@ -79,6 +79,7 @@
 	"dependencies": {
 		"@vercel/functions": "^2.2.12",
 		"better-auth": "^1.3.6",
+		"redis": "^5.8.1",
 		"resumable-stream": "^2.2.3"
 	}
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { User } from '$server/db/schema';
+	import type { User } from 'better-auth';
 	import { goto } from '$app/navigation';
 	import {
 		Sidebar,

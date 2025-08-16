@@ -1,8 +1,8 @@
-export async function load({ cookies, locals: { session } }) {
+export async function load({ cookies, locals: { user } }) {
 	const isCollapsed = cookies.get('sidebar:state') !== 'true';
 
 	return {
 		isCollapsed,
-		session
+		user
 	};
 }

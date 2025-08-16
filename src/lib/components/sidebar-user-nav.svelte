@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { User } from '$server/db/schema';
+	import type { User } from 'better-auth';
 	import { cn } from '$lib/utils';
 	import ChevronUp from './icons/chevron-up.svelte';
 	import {

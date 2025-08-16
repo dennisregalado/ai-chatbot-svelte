@@ -6,12 +6,12 @@
 
 	let { data, children } = $props();
 
-	let { session, isCollapsed } = $derived(data);
+	let { user, isCollapsed } = $derived(data);
 </script>
 
 <DataStreamProvider>
 	<Sidebar.Provider open={!isCollapsed}>
-		<AppSidebar user={session?.user} />
+		<AppSidebar user={user} />
 		<Sidebar.Inset>
 			{@render children?.()}
 		</Sidebar.Inset>
