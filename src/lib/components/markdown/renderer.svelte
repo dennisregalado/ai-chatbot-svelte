@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Markdown from 'svelte-exmarkdown';
 	import { gfmPlugin } from 'svelte-exmarkdown/gfm';
-	import { cn } from '$lib/utils/shadcn';
+	import { cn } from '$lib/utils';
 	import CodeBlock from '../code-block.svelte';
 	let { md }: { md: string } = $props();
 </script>

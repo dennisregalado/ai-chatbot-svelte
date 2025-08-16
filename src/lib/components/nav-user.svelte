@@ -6,10 +6,10 @@
 	import LogOutIcon from "@lucide/svelte/icons/log-out";
 	import SparklesIcon from "@lucide/svelte/icons/sparkles";
 
-	import * as Avatar from "$components/ui/avatar/index.js";
-	import * as DropdownMenu from "$components/ui/dropdown-menu/index.js";
-	import * as Sidebar from "$components/ui/sidebar/index.js";
-	import { useSidebar } from "$components/ui/sidebar/index.js";
+	import * as Avatar from "$lib/components/ui/avatar/index.js";
+	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
+	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+	import { useSidebar } from "$lib/components/ui/sidebar/index.js";
 
 	let {
 		user,

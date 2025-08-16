@@ -3,20 +3,20 @@
 	import ChevronDownIcon from './icons/chevron-down.svelte';
 	import { Markdown } from './markdown';
 	import { slide } from 'svelte/transition';
-	import { cubicInOut } from 'svelte/easing';
-	import { getLock } from '$hooks/lock';
+	import { cubicInOut } from 'svelte/easing'; 
 	import { tick } from 'svelte';
 	let { loading, reasoning }: { loading: boolean; reasoning: string } = $props();
 	let expanded = $state(false);
-	const scrollLock = getLock('messages-scroll');
+
+	//const scrollLock = getLock('messages-scroll');
 
 	function lockScrolling() {
-		scrollLock.locked = true;
+	//	scrollLock.locked = true;
 	}
 
 	function unlockScrolling() {
 		tick().then(() => {
-			scrollLock.locked = false;
+			//scrollLock.locked = false;
 		});
 	}
 </script>

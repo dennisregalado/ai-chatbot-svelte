@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-	import { cn } from '$lib/utils/shadcn';
+	import { cn } from '$lib/utils';
 	import { Button } from './ui/button';
 	import {
 		DropdownMenu,

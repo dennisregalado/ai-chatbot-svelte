@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { Chat } from '@ai-sdk/svelte';
-	import PreviewAttachment from './preview-attachment.svelte';
-	import { Textarea } from './ui/textarea';
-	import { cn } from '$lib/utils/shadcn';
+	import PreviewAttachment from '$components/preview-attachment.svelte';
+	import { Textarea } from '$components/ui/textarea';
+	import { cn } from '$lib/utils';
 	import { onMount } from 'svelte';
-	import { LocalStorage } from '../../hooks/local-storage.svelte';
+	import { LocalStorage } from '$hooks/local-storage.svelte';
 	import { innerWidth } from 'svelte/reactivity/window';
 	import type { Attachment } from 'ai';
 	import { toast } from 'svelte-sonner';

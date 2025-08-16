@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn } from '$lib/utils/shadcn';
+	import { cn } from '$lib/utils';
 	import SparklesIcon from '../icons/sparkles.svelte';
 	import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 	import { Button } from '../ui/button';

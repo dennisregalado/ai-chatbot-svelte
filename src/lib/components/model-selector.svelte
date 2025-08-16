@@ -8,11 +8,10 @@
 	} from './ui/dropdown-menu';
 	import CheckCircleFillIcon from './icons/check-circle-fill.svelte';
 	import ChevronDownIcon from './icons/chevron-down.svelte';
-	import { cn } from '$lib/utils/shadcn';
+	import { cn } from '$lib/utils';
 	import { chatModels } from '$ai/models';
 	import type { ClassValue } from 'svelte/elements';
-	import { SelectedModel } from '$hooks/selected-model.svelte';
-
+ 
 	let {
 		class: c
 	}: {
@@ -20,10 +19,10 @@
 	} = $props();
 
 	let open = $state(false);
-	const selectedChatModel = SelectedModel.fromContext();
-	const selectedChatModelDetails = $derived(
-		chatModels.find((model) => model.id === selectedChatModel.value)
-	);
+	//const selectedChatModel = SelectedModel.fromContext();
+	// const selectedChatModelDetails = $derived(
+	//	chatModels.find((model) => model.id === selectedChatModel.value)
+	//);
 </script>
 
 <DropdownMenu {open} onOpenChange={(val) => (open = val)}>
@@ -37,7 +36,7 @@
 					c
 				)}
 			>
-				{selectedChatModelDetails?.name}
+				{"selectedChatMod	elDetails?.name"}
 				<ChevronDownIcon />
 			</Button>
 		{/snippet}

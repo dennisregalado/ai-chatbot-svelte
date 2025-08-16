@@ -5,8 +5,7 @@
 	import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 	import { Button } from './ui/button';
 	import PlusIcon from './icons/plus.svelte';
-	import { goto } from '$app/navigation';
-	import ModelSelector from './model-selector.svelte';
+	import { goto } from '$app/navigation'; 
 	import type { Chat, User } from '$server/db/schema';
 	import VisibilitySelector from './visibility-selector.svelte';
 	import VercelIcon from './icons/vercel.svelte';
@@ -51,7 +50,7 @@
 	{/if}
 
 	{#if !readonly}
-		<ModelSelector class="order-1 md:order-2" />
+		<!-- <ModelSelector class="order-1 md:order-2" /> -->
 	{/if}
 
 	{#if !readonly && chat}
