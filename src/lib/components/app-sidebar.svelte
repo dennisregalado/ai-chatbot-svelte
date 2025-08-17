@@ -11,7 +11,7 @@
 	import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 	import { Button } from './ui/button';
 	import PlusIcon from './icons/plus.svelte';
-	// import SidebarHistory from './sidebar-history/history.svelte';
+	import SidebarHistory from './sidebar-history.svelte';
 	import SidebarUserNav from './sidebar-user-nav.svelte';
 
 	const sidebar = useSidebar();
@@ -51,7 +51,7 @@
 		</SidebarMenu>
 	</SidebarHeader>
 	<SidebarContent>
-		<!-- <SidebarHistory /> -->
+		<SidebarHistory />
 	</SidebarContent>
 	<SidebarFooter>
 		<SidebarUserNav />

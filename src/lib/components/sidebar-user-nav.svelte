@@ -13,7 +13,7 @@
 	import { getTheme } from '@sejohnson/svelte-themes';
 	import { signOut, getUser } from '$remote/auth.remote';
 	import { Skeleton } from '$components/ui/skeleton';
-
+	import LoaderIcon from './icons/loader.svelte';
 	const theme = getTheme();
 </script>
 
@@ -30,6 +30,10 @@
 								<div class="flex flex-row items-center gap-2">
 									<Skeleton class="size-6 rounded-full" />
 									<Skeleton class="h-4 w-24" />
+								</div>
+
+								<div class="animate-spin text-zinc-500">
+									<LoaderIcon />
 								</div>
 							</SidebarMenuButton>
 						{/snippet}

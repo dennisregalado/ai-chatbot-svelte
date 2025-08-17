@@ -5,6 +5,9 @@ import { generateText } from 'ai';
 import type { VisibilityType } from '$components/visibility-selector.svelte';
 import { myProvider } from '$ai/providers';
 import { error } from '@sveltejs/kit';
+import { ChatSDKError } from '$lib/errors';
+
+// start new remote functions
 
 export const getModelFromCookie = query(async () => {
 	const { cookies } = getRequestEvent();
@@ -19,6 +22,52 @@ export const saveChatModelAsCookie = command(z.string(), async (model: string) =
 		path: '/'
 	});
 });
+
+export const getChatHistory = query(z.object({
+	userId: z.string(),
+	limit: z.number(),
+	startingAfter: z.string().nullable(),
+	endingBefore: z.string().nullable()
+}), async ({ userId, limit, startingAfter, endingBefore }) => {
+	const { locals: { session } } = getRequestEvent();
+
+	if (startingAfter && endingBefore) {
+		error(400, 'Only one of starting_after or ending_before can be provided.');
+	}
+
+	if (!session?.userId) {
+		error(401, 'Unauthorized');
+	}
+
+	const chats = await db.getChatsByUserId({
+		id: userId,
+		limit,
+		startingAfter,
+		endingBefore
+	});
+
+	return chats;
+});
+
+export const deleteChatById = command(z.string(), async (id: string) => {
+	const { locals: { session } } = getRequestEvent();
+
+	if (!session?.userId) {
+		return new ChatSDKError('unauthorized:chat').toResponse();
+	}
+
+	const chat = await db.getChatById({ id });
+
+	if (chat.userId !== session.userId) {
+		return new ChatSDKError('forbidden:chat').toResponse();
+	}
+
+	const deletedChat = await db.deleteChatById({ id });
+
+	return deletedChat;
+});
+
+// end new remote functions
 
 export const generateTitleFromUserMessage = command(
 	z.object({
@@ -94,10 +143,6 @@ export const saveChat = command(
 		return db.saveChat({ id, userId, title, visibility });
 	}
 );
-
-export const deleteChatById = command(z.string(), async (id: string) => {
-	return db.deleteChatById({ id });
-});
 
 export const getChatsByUserId = query(
 	z.object({
