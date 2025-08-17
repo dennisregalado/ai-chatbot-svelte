@@ -8,7 +8,7 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			user?: User;
+			user?: User & { isAnonymous?: boolean };
 			session?: Session;
 			getStreamContext: () => ResumableStreamContext;
 		}

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { login, type LoginActionState } from '../data.remote';
+	import { signInEmail } from '../data.remote';
 </script>
 
-<form {...login}>
+<form {...signInEmail}>
 	<input type="email" name="email" />
 	<input type="password" name="password" />
 	<button type="submit">Login</button>

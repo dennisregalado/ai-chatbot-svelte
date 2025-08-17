@@ -1,0 +1,16 @@
+import { form, getRequestEvent } from "$app/server";
+import { auth } from "$lib/auth";
+import { redirect } from "@sveltejs/kit";
+
+export const signInEmail = form(async (formData) => {
+    const email = formData.get('email');
+    const password = formData.get('password');
+});
+
+export const signOut = form(async () => {
+    const { request } = getRequestEvent();
+
+    await auth.api.signOut({ headers: request.headers });
+
+    redirect(307, '/');
+});

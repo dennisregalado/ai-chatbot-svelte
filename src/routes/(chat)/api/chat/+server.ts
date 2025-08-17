@@ -62,7 +62,9 @@ export const POST = async ({ request, locals: { session, getStreamContext } }) =
 			return new ChatSDKError('unauthorized:chat').toResponse();
 		}
 
-		const userType: UserType = 'guest';
+		// Determine user type based on Better Auth session
+		// For now, assume all users are regular until we can determine anonymous status
+		const userType = 'regular';
 
 		const messageCount = await getMessageCountByUserId({
 			id: session.userId,

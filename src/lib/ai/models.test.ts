@@ -1,6 +1,6 @@
 import { simulateReadableStream } from 'ai';
 import { MockLanguageModelV2 } from 'ai/test';
-import { getResponseChunksByPrompt } from '@/tests/prompts/utils';
+//import { getResponseChunksByPrompt } from '@/tests/prompts/utils';
 
 export const chatModel = new MockLanguageModelV2({
 	doGenerate: async () => ({
@@ -32,7 +32,8 @@ export const reasoningModel = new MockLanguageModelV2({
 		stream: simulateReadableStream({
 			chunkDelayInMs: 500,
 			initialDelayInMs: 1000,
-			chunks: getResponseChunksByPrompt(prompt, true)
+			chunks: []
+			//		chunks: getResponseChunksByPrompt(prompt, true)
 		}),
 		rawCall: { rawPrompt: null, rawSettings: {} }
 	})

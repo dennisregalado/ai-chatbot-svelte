@@ -12,6 +12,8 @@
 	import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './ui/sidebar';
 	import { getTheme } from '@sejohnson/svelte-themes';
 
+	import { signOut } from '$lib/remote/auth.remote';
+
 	let { user }: { user: User } = $props();
 	const theme = getTheme();
 </script>
@@ -32,7 +34,11 @@
 							height={24}
 							class="rounded-full"
 						/>
-						<span class="truncate">{user?.email}</span>
+										{#if user?.email?.startsWith('guest-')}
+					<span class="truncate">Guest</span>
+						{:else}
+							<span class="truncate">{user?.email}</span>
+						{/if}
 						<ChevronUp class="ml-auto" />
 					</SidebarMenuButton>
 				{/snippet}
@@ -48,13 +54,17 @@
 				<DropdownMenuSeparator />
 				<DropdownMenuItem>
 					{#snippet child({ props })}
-						<a
-							{...props}
-							href="/signout"
-							class={cn('w-full cursor-pointer', props.class as string)}
-							data-sveltekit-preload-data="false"
-							data-sveltekit-reload>Sign out</a
-						>
+										{#if user?.email?.startsWith('guest-')}
+					<form {...signOut}>
+								<button {...props} type="submit" class={cn('w-full cursor-pointer', props.class as string)}>
+									Sign out
+								</button>
+							</form>
+						{:else}
+							<a {...props} href="/login" class={cn('w-full cursor-pointer', props.class as string)}
+								>Login to your account
+							</a>
+						{/if}
 					{/snippet}
 				</DropdownMenuItem>
 			</DropdownMenuContent>

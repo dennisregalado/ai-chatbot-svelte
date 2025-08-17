@@ -16,8 +16,6 @@ import {
 	stream
 } from './schema';
 import type { ArtifactKind } from '$components/artifact';
-import { generateUUID } from '$lib/utils';
-import { generateHashedPassword } from './utils';
 import type { VisibilityType } from '$components/visibility-selector.svelte';
 import { ChatSDKError } from '$lib/errors';
 import { POSTGRES_URL } from '$env/static/private';
@@ -30,37 +28,7 @@ import { POSTGRES_URL } from '$env/static/private';
 export const client = postgres(POSTGRES_URL);
 export const db = drizzle(client);
 
-export async function getUser(email: string): Promise<Array<User>> {
-	try {
-		return await db.select().from(user).where(eq(user.email, email));
-	} catch (error) {
-		throw new ChatSDKError('bad_request:database', 'Failed to get user by email');
-	}
-}
 
-export async function createUser(email: string, password: string) {
-	const hashedPassword = generateHashedPassword(password);
-
-	try {
-		return await db.insert(user).values({ email, password: hashedPassword });
-	} catch (error) {
-		throw new ChatSDKError('bad_request:database', 'Failed to create user');
-	}
-}
-
-export async function createGuestUser() {
-	const email = `guest-${Date.now()}`;
-	const password = generateHashedPassword(generateUUID());
-
-	try {
-		return await db.insert(user).values({ email, password }).returning({
-			id: user.id,
-			email: user.email
-		});
-	} catch (error) {
-		throw new ChatSDKError('bad_request:database', 'Failed to create guest user');
-	}
-}
 
 export async function saveChat({
 	id,

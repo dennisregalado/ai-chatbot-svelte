@@ -9,24 +9,6 @@ export const signInAnonymous = command(async () => {
 	return auth.api.signInAnonymous({ headers: event.request.headers });
 });
 
-export const getUser = query(z.string(), async (email: string) => {
-	return db.getUser(email);
-});
-
-export const createUser = command(
-	z.object({
-		email: z.string(),
-		password: z.string()
-	}),
-	async ({ email, password }: { email: string; password: string }) => {
-		return db.createUser(email, password);
-	}
-);
-
-export const createGuestUser = command(async () => {
-	return db.createGuestUser();
-});
-
 export const saveChat = command(
 	z.object({
 		id: z.string(),

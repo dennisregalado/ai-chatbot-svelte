@@ -1,4 +1,3 @@
-import type { UserType } from '$lib/legacy-auth';
 import type { ChatModel } from './models';
 
 interface Entitlements {
@@ -6,9 +5,9 @@ interface Entitlements {
 	availableChatModelIds: Array<ChatModel['id']>;
 }
 
-export const entitlementsByUserType: Record<UserType, Entitlements> = {
+export const entitlementsByUserType: Record<'guest' | 'regular', Entitlements> = {
 	/*
-	 * For users without an account
+	 * For users without an account (anonymous users)
 	 */
 	guest: {
 		maxMessagesPerDay: 20,
