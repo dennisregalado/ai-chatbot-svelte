@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { signInEmail } from '../data.remote';
+	import { signInEmail } from '$remote/auth.remote';
 </script>
 
 <form {...signInEmail}>

@@ -1,4 +1,4 @@
-<script lang="ts"> 
+<script lang="ts">
 	import { goto } from '$app/navigation';
 	import {
 		Sidebar,
@@ -14,7 +14,7 @@
 	// import SidebarHistory from './sidebar-history/history.svelte';
 	import SidebarUserNav from './sidebar-user-nav.svelte';
 
- 	const sidebar = useSidebar();
+	const sidebar = useSidebar();
 
 	function newChat() {
 		sidebar.setOpenMobile(false);

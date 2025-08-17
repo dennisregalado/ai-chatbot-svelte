@@ -13,7 +13,7 @@ export async function GET({ request, locals: { session } }) {
 	if (!session?.userId) {
 		return new ChatSDKError('unauthorized:vote').toResponse();
 	}
- 
+
 	const chat = await getChatById({ id: chatId });
 
 	if (!chat) {

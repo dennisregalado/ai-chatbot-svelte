@@ -11,7 +11,7 @@
 	} from '$components/ui/dropdown-menu';
 	import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '$components/ui/sidebar';
 	import { getTheme } from '@sejohnson/svelte-themes';
-	import { signOut, getUser } from '$remote/auth.remote'; 
+	import { signOut, getUser } from '$remote/auth.remote';
 	import { Skeleton } from '$components/ui/skeleton';
 
 	const theme = getTheme();
@@ -30,7 +30,7 @@
 								<div class="flex flex-row items-center gap-2">
 									<Skeleton class="size-6 rounded-full" />
 									<Skeleton class="h-4 w-24" />
-								</div> 
+								</div>
 							</SidebarMenuButton>
 						{/snippet}
 						<SidebarMenuButton
@@ -44,7 +44,7 @@
 									<div class="flex flex-row items-center gap-2">
 										<Skeleton class="size-6 rounded-full" />
 										<Skeleton class="h-4 w-24" />
-									</div> 
+									</div>
 								{/if}
 							{/await}
 						</SidebarMenuButton>

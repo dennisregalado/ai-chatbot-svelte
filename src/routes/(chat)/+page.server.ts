@@ -5,7 +5,7 @@ export async function load({ locals, cookies }) {
 	const { session } = locals;
 
 	if (!session) {
-	 redirect(302, '/guest');
+		redirect(302, '/guest');
 	}
 
 	const id = generateUUID();

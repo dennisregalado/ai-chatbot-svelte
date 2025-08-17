@@ -19,7 +19,11 @@
 	import type { Chat } from '$server/db/schema';
 	import type { ClassValue } from 'svelte/elements';
 
-	let { chat, class: c }: { chat: Chat; class?: ClassValue } = $props();
+	let {
+		chatId,
+		selectedVisibilityType,
+		class: c
+	}: { chatId: string; selectedVisibilityType: VisibilityType; class?: ClassValue } = $props();
 
 	let open = $state(false);
 
@@ -39,7 +43,7 @@
 	] as const;
 
 	const chatHistory = ChatHistory.fromContext();
-	const chatFromHistory = $derived(chatHistory.getChatDetails(chat.id));
+	const chatFromHistory = $derived(chatHistory.getChatDetails(chatId));
 	const { label, Icon } = $derived(
 		(chatFromHistory && visibilities.find((v) => v.id === chatFromHistory.visibility)) ??
 			visibilities[0]
@@ -68,7 +72,7 @@
 		{#each visibilities as visibility (visibility.id)}
 			<DropdownMenuItem
 				onSelect={() => {
-					chatHistory.updateVisibility(chat.id, visibility.id);
+					chatHistory.updateVisibility(chatId, visibility.id);
 					open = false;
 				}}
 				class="group/item flex flex-row items-center justify-between gap-4"

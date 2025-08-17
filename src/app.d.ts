@@ -12,7 +12,9 @@ declare global {
 			session?: Session;
 			getStreamContext: () => ResumableStreamContext;
 		}
-		// interface PageData {}
+		interface PageData {
+			user?: User & { isAnonymous?: boolean };
+		}
 		// interface PageState {}
 		// interface Platform {}
 	}

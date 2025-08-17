@@ -1,3 +1,4 @@
+<!-- completed -->
 <script lang="ts">
 	import { Button } from './ui/button';
 	import {
@@ -10,46 +11,60 @@
 	import ChevronDownIcon from './icons/chevron-down.svelte';
 	import { cn } from '$lib/utils';
 	import { chatModels } from '$ai/models';
+	import { getModelFromCookie, saveChatModelAsCookie } from '$remote/chat.remote';
+	import { entitlementsByUserType } from '$ai/entitlements';
 	import type { ClassValue } from 'svelte/elements';
+	import { page } from '$app/state';
 
 	let {
-		class: c
+		class: c,
+		selectedModelId
 	}: {
 		class: ClassValue;
+		selectedModelId: string;
 	} = $props();
 
 	let open = $state(false);
-	//const selectedChatModel = SelectedModel.fromContext();
-	// const selectedChatModelDetails = $derived(
-	//	chatModels.find((model) => model.id === selectedChatModel.value)
-	//);
+	let isAnonymous = $derived(page.data.user?.isAnonymous);
+
+	const { availableChatModelIds } = $derived(
+		entitlementsByUserType[isAnonymous ? 'guest' : 'regular']
+	);
+
+	let serverModelId = getModelFromCookie();
+
+	let optimisticModelId = $derived(serverModelId.current ?? selectedModelId);
+
+	let availableChatModels = $derived(
+		chatModels.filter((chatModel) => availableChatModelIds.includes(chatModel.id))
+	);
+
+	let selectedChatModel = $derived(
+		availableChatModels.find((chatModel) => chatModel.id === optimisticModelId)
+	);
 </script>
 
 <DropdownMenu {open} onOpenChange={(val) => (open = val)}>
-	<DropdownMenuTrigger>
+	<DropdownMenuTrigger
+		class={cn('w-fit data-[state=open]:bg-accent data-[state=open]:text-accent-foreground', c)}
+	>
 		{#snippet child({ props })}
-			<Button
-				{...props}
-				variant="outline"
-				class={cn(
-					'w-fit data-[state=open]:bg-accent data-[state=open]:text-accent-foreground md:h-[34px] md:px-2',
-					c
-				)}
-			>
-				{'selectedChatMod	elDetails?.name'}
+			<Button {...props} variant="outline" class="md:h-[34px] md:px-2">
+				{selectedChatModel?.name}
 				<ChevronDownIcon />
 			</Button>
 		{/snippet}
 	</DropdownMenuTrigger>
 	<DropdownMenuContent align="start" class="min-w-[300px]">
-		{#each chatModels as chatModel (chatModel.id)}
+		{#each availableChatModels as chatModel (chatModel.id)}
+			{@const id = chatModel.id}
 			<DropdownMenuItem
-				onSelect={() => {
+				onSelect={async () => {
 					open = false;
-					selectedChatModel.value = chatModel.id;
+					saveChatModelAsCookie(id).updates(getModelFromCookie().withOverride((current) => id));
 				}}
 				class="group/item flex flex-row items-center justify-between gap-4"
-				data-active={chatModel.id === selectedChatModel.value}
+				data-active={id === selectedChatModel?.id}
 			>
 				<div class="flex flex-col items-start gap-1">
 					<div>{chatModel.name}</div>
@@ -57,7 +72,6 @@
 						{chatModel.description}
 					</div>
 				</div>
-
 				<div
 					class="text-foreground opacity-0 group-data-[active=true]/item:opacity-100 dark:text-foreground"
 				>

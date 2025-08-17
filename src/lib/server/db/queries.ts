@@ -28,8 +28,6 @@ import { POSTGRES_URL } from '$env/static/private';
 export const client = postgres(POSTGRES_URL);
 export const db = drizzle(client);
 
-
-
 export async function saveChat({
 	id,
 	userId,

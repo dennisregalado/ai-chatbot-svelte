@@ -11,30 +11,14 @@
 	const uiMessages = convertToUIMessages(messagesFromDb);
 </script>
 
-{#if !chatModelFromCookie}
-	{#key params.id}
-		<Chat
-			id={chat.id}
-			initialMessages={uiMessages}
-			initialChatModel={DEFAULT_CHAT_MODEL}
-			initialVisibilityType={chat.visibility}
-			readonly={session?.userId !== chat.userId}
-			{session}
-			autoResume={true}
-		/>
-		<!-- <DataStreamHandler {id} /> -->
-	{/key}
-{:else}
-	{#key params.id}
-		<Chat
-			id={chat.id}
-			initialMessages={uiMessages}
-			initialChatModel={chatModelFromCookie}
-			initialVisibilityType={chat.visibility}
-			readonly={session?.userId !== chat.userId}
-			{session}
-			autoResume={true}
-		/>
-		<!-- <DataStreamHandler {id} /> -->
-	{/key}
-{/if}
+{#key params.id}
+	<Chat
+		id={chat.id}
+		initialMessages={uiMessages}
+		initialChatModel={chatModelFromCookie || DEFAULT_CHAT_MODEL}
+		initialVisibilityType={chat.visibility}
+		readonly={session?.userId !== chat.userId}
+		autoResume
+	/>
+	<!-- <DataStreamHandler {id} /> -->
+{/key}

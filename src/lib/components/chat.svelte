@@ -22,7 +22,6 @@
 		initialChatModel,
 		initialVisibilityType,
 		readonly,
-		session,
 		autoResume
 	}: {
 		id: string;
@@ -86,7 +85,6 @@
 		selectedModelId={initialChatModel}
 		selectedVisibilityType={initialVisibilityType}
 		{readonly}
-		{session}
 	/>
 	<Messages
 		{readonly}

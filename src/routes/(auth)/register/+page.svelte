@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { register, type RegisterActionState } from '../data.remote';
+	import { signInEmail } from '$remote/auth.remote';
 </script>
 
-<form {...register}>
+<form {...signInEmail}>
 	<input type="email" name="email" />
 	<input type="password" name="password" />
 	<button type="submit">Register</button>

@@ -2,8 +2,7 @@ import { getChatById } from '$remote/chat.remote.js';
 import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ params: { id }, locals: { session }, cookies }) {
-	
-	const chat = await getChatById(id)
+	const chat = await getChatById(id);
 
 	if (!session) {
 		redirect(302, '/guest');
