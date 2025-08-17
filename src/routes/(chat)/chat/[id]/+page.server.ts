@@ -1,15 +1,12 @@
-import { getChatById } from '$server/db/queries';
+import { getChatById } from '$remote/chat.remote.js';
 import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ params: { id }, locals: { session }, cookies }) {
-	const chat = await getChatById({ id });
-
-	if (!chat) {
-		error(404, 'Not found');
-	}
+	
+	const chat = await getChatById(id)
 
 	if (!session) {
-		redirect(302, '/api/auth/guest');
+		redirect(302, '/guest');
 	}
 
 	if (chat.visibility === 'private') {

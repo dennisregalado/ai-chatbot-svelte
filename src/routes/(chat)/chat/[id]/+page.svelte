@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Chat from '$components/chat.svelte';
 	import { convertToUIMessages } from '$lib/utils';
-	import { getMessagesByChatId } from '$lib/queries.remote.js';
+	import { getMessagesByChatId } from '$remote/chat.remote';
 	import { DEFAULT_CHAT_MODEL } from '$ai/models';
 
 	let { params, data } = $props();

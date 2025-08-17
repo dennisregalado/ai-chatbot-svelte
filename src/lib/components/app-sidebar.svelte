@@ -1,5 +1,4 @@
-<script lang="ts">
-	import type { User } from 'better-auth';
+<script lang="ts"> 
 	import { goto } from '$app/navigation';
 	import {
 		Sidebar,
@@ -15,8 +14,7 @@
 	// import SidebarHistory from './sidebar-history/history.svelte';
 	import SidebarUserNav from './sidebar-user-nav.svelte';
 
-	let { user }: { user?: User } = $props();
-	const sidebar = useSidebar();
+ 	const sidebar = useSidebar();
 
 	function newChat() {
 		sidebar.setOpenMobile(false);
@@ -53,11 +51,9 @@
 		</SidebarMenu>
 	</SidebarHeader>
 	<SidebarContent>
-		<!-- <SidebarHistory {user} /> -->
+		<!-- <SidebarHistory /> -->
 	</SidebarContent>
 	<SidebarFooter>
-		{#if user}
-			<SidebarUserNav {user} />
-		{/if}
+		<SidebarUserNav />
 	</SidebarFooter>
 </Sidebar>

@@ -14,6 +14,7 @@ const config = {
 		},
 		alias: {
 			$ai: './src/lib/ai',
+			$remote: './src/lib/remote',
 			$server: './src/lib/server',
 			$hooks: './src/hooks',
 			$artifacts: './src/artifacts',

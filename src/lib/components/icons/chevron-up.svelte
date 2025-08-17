@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { WithElementRef } from '$lib/utils/types.js';
+	import type { WithElementRef } from '$lib/types.js';
 	import type { SVGAttributes } from 'svelte/elements';
 
 	let {
@@ -19,5 +19,5 @@
 	stroke-width="2"
 	stroke-linecap="round"
 	stroke-linejoin="round"
-	class="lucide lucide-chevron-up"><path d="m18 15-6-6-6 6" bind:this={ref} {...rest} /></svg
+	class="lucide lucide-chevron-up ml-auto"><path d="m18 15-6-6-6 6" bind:this={ref} {...rest} /></svg
 >

@@ -17,7 +17,7 @@ import {
 	saveMessages
 } from '$server/db/queries';
 import { convertToUIMessages, generateUUID } from '$lib/utils';
-import { generateTitleFromUserMessage } from '././../../data.remote';
+import { generateTitleFromUserMessage } from '$remote/chat.remote';
 import { createDocument } from '$ai/tools/create-document';
 import { updateDocument } from '$ai/tools/update-document';
 import { requestSuggestions } from '$ai/tools/request-suggestions';
