@@ -35,7 +35,7 @@ import { dev } from '$app/environment';
 
 // const maxDuration = 60;
 
-export const POST = async ({ request, locals: { session, getStreamContext } }) => {
+export const POST = async ({ request, locals: { session, user, getStreamContext } }) => {
 	let requestBody: PostRequestBody;
 
 	try {
@@ -64,7 +64,7 @@ export const POST = async ({ request, locals: { session, getStreamContext } }) =
 
 		// Determine user type based on Better Auth session
 		// For now, assume all users are regular until we can determine anonymous status
-		const userType = 'regular';
+		const userType = user?.isAnonymous ? 'guest' : 'regular';
 
 		const messageCount = await getMessageCountByUserId({
 			id: session.userId,

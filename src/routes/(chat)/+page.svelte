@@ -6,29 +6,32 @@
 	let { modelIdFromCookie, id, session } = $derived(data);
 </script>
 
-{#if !modelIdFromCookie}
-	{#key id}
-		<Chat
-			{id}
-			initialMessages={[]}
-			initialChatModel={DEFAULT_CHAT_MODEL}
-			initialVisibilityType="private"
-			readonly={false}
-			{session}
-			autoResume={false}
-		/>
-	{/key}
-{:else}
-	{#key id}
-		<Chat
-			{id}
-			initialMessages={[]}
-			initialChatModel={modelIdFromCookie}
-			initialVisibilityType="private"
-			readonly={false}
-			{session}
-			autoResume={false}
-		/>
-	{/key}
-{/if}
-<!-- TODO <DataStreamHandler {id} /> -->
+<svelte:boundary>
+	{#snippet pending()}{/snippet}
+	{#if !modelIdFromCookie}
+		{#key id}
+			<Chat
+				{id}
+				initialMessages={[]}
+				initialChatModel={DEFAULT_CHAT_MODEL}
+				initialVisibilityType="private"
+				readonly={false}
+				{session}
+				autoResume={false}
+			/>
+		{/key}
+	{:else}
+		{#key id}
+			<Chat
+				{id}
+				initialMessages={[]}
+				initialChatModel={modelIdFromCookie}
+				initialVisibilityType="private"
+				readonly={false}
+				{session}
+				autoResume={false}
+			/>
+		{/key}
+	{/if}
+	<!-- TODO <DataStreamHandler {id} /> -->
+</svelte:boundary>

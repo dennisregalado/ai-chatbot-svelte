@@ -11,7 +11,7 @@
 	import ChevronDownIcon from './icons/chevron-down.svelte';
 	import { cn } from '$lib/utils';
 	import { chatModels } from '$ai/models';
-	import { getModelFromCookie, saveChatModelAsCookie } from '$remote/chat.remote';
+	import { getChatModel, saveChatModel } from '$remote/chat.remote';
 	import { entitlementsByUserType } from '$ai/entitlements';
 	import type { ClassValue } from 'svelte/elements';
 	import { page } from '$app/state';
@@ -31,7 +31,7 @@
 		entitlementsByUserType[isAnonymous ? 'guest' : 'regular']
 	);
 
-	let serverModelId = getModelFromCookie();
+	let serverModelId = getChatModel();
 
 	let optimisticModelId = $derived(serverModelId.current ?? selectedModelId);
 
@@ -61,7 +61,7 @@
 			<DropdownMenuItem
 				onSelect={async () => {
 					open = false;
-					saveChatModelAsCookie(id).updates(getModelFromCookie().withOverride((current) => id));
+					saveChatModel(id).updates(getChatModel().withOverride((current) => id));
 				}}
 				class="group/item flex flex-row items-center justify-between gap-4"
 				data-active={id === selectedChatModel?.id}

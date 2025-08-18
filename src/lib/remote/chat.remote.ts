@@ -5,17 +5,16 @@ import { generateText } from 'ai';
 import type { VisibilityType } from '$components/visibility-selector.svelte';
 import { myProvider } from '$ai/providers';
 import { error } from '@sveltejs/kit';
-import { ChatSDKError } from '$lib/errors';
 
 // start new remote functions
 
-export const getModelFromCookie = query(async () => {
+export const getChatModel = query(async () => {
 	const { cookies } = getRequestEvent();
 	const model = cookies.get('chat-model');
 	return model;
 });
 
-export const saveChatModelAsCookie = command(z.string(), async (model: string) => {
+export const saveChatModel = command(z.string(), async (model: string) => {
 	const { cookies } = getRequestEvent();
 
 	cookies.set('chat-model', model, {
@@ -53,18 +52,40 @@ export const deleteChatById = command(z.string(), async (id: string) => {
 	const { locals: { session } } = getRequestEvent();
 
 	if (!session?.userId) {
-		return new ChatSDKError('unauthorized:chat').toResponse();
+		error(401, 'Unauthorized');
 	}
 
 	const chat = await db.getChatById({ id });
 
 	if (chat.userId !== session.userId) {
-		return new ChatSDKError('forbidden:chat').toResponse();
+		error(403, 'Forbidden');
 	}
 
 	const deletedChat = await db.deleteChatById({ id });
 
 	return deletedChat;
+});
+
+export const getVotesByChatId = query(z.string(), async (chatId: string) => {
+	const { locals: { session } } = getRequestEvent();
+
+	if (!session?.userId) {
+		error(401, 'Unauthorized');
+	}
+
+	const chat = await db.getChatById({ id: chatId });
+
+	if (!chat) {
+		error(404, 'Not found');
+	}
+
+	if (chat.userId !== session.userId) {
+		error(403, 'Forbidden');
+	}
+
+	const votes = await db.getVotesByChatId({ id: chatId });
+
+	return votes;
 });
 
 // end new remote functions
@@ -218,9 +239,7 @@ export const voteMessage = command(
 	}
 );
 
-export const getVotesByChatId = query(z.string(), async (id: string) => {
-	return db.getVotesByChatId({ id });
-});
+
 
 export const saveDocument = command(
 	z.object({

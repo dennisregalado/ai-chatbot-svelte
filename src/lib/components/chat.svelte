@@ -1,20 +1,27 @@
 <script lang="ts">
-	import type { Attachment } from 'ai';
-	import { toast } from 'svelte-sonner';
-	// import { ChatHistory } from '$hooks/example';
-	import ChatHeader from './chat-header.svelte';
-	import type { Chat as DbChat, User } from '$server/db/schema';
-	import Messages from './messages.svelte';
-	import MultimodalInput from './multimodal-input.svelte';
-	import type { UIMessage } from '@ai-sdk/svelte';
-	import type { Session } from 'better-auth';
-
 	// refactor
-	import { Chat } from '@ai-sdk/svelte';
+	import { getChatHistory, getVotesByChatId } from '$remote/chat.remote';
+	import { page } from '$app/state';
+	import { replaceState } from '$app/navigation';
 
+	import { DefaultChatTransport } from 'ai';
+	import { Chat } from '@ai-sdk/svelte';
+	import ChatHeader from './chat-header.svelte';
+	import { fetchWithErrorHandlers, generateUUID } from '$lib/utils';
+	//	import { Artifact } from './artifact';
+	import MultimodalInput from './multimodal-input.svelte';
+	import Messages from './messages.svelte';
+	import type { VisibilityType } from '$components/visibility-selector.svelte';
+	//	import { useArtifactSelector } from '@/hooks/use-artifact';
+	//	import { getChatHistoryPaginationKey } from './sidebar-history';
+	import { toast } from 'svelte-sonner';
+	import type { Session } from 'better-auth';
+	//	import { useChatVisibility } from '@/hooks/use-chat-visibility';
+	//	import { useAutoResume } from '@/hooks/use-auto-resume';
+	import { ChatSDKError } from '$lib/errors';
+	import type { Attachment, ChatMessage } from '$lib/types';
 	import { useDataStream } from '$components/data-stream-provider.svelte';
-	import { generateUUID } from '$lib/utils';
-	import type { ChatMessage } from '$lib/types';
+	import { AutoResume } from '$hooks/auto-resume.svelte';
 
 	let {
 		id,
@@ -33,50 +40,72 @@
 		autoResume: boolean;
 	} = $props();
 
-	const { dataStream } = useDataStream();
+	const { setDataStream } = useDataStream();
 
-	let input = $state('');
-
-	//const chatHistory = ChatHistory.fromContext();
-
-	const chatClient = $derived(
+	const chat = $derived(
 		new Chat({
 			id,
-			//	experimental_throttle: 100,
+			messages: initialMessages,
+			// @ts-ignore
+			experimental_throttle: 100,
 			generateId: generateUUID,
-
-			// This way, the client is only recreated when the ID changes, allowing us to fully manage messages
-			// clientside while still SSRing them on initial load or when we navigate to a different chat.
-
-			sendExtraMessageFields: true,
+			transport: new DefaultChatTransport({
+				api: '/api/chat',
+				fetch: fetchWithErrorHandlers,
+				prepareSendMessagesRequest({ messages, id, body }) {
+					return {
+						body: {
+							id,
+							message: messages.at(-1),
+							selectedChatModel: initialChatModel,
+							selectedVisibilityType: initialVisibilityType,
+							//	selectedVisibilityType: visibilityType,
+							...body
+						}
+					};
+				}
+			}),
+			onData: (dataPart) => {
+				setDataStream((ds) => [...ds, dataPart]);
+			},
 			onFinish: async () => {
-				//	await chatHistory.refetch();
+				//	getChatHistory().refresh();
 			},
 			onError: (error) => {
-				try {
-					// If there's an API error, its message will be JSON-formatted
-					const jsonError = JSON.parse(error.message);
-					console.log(jsonError);
-					if (
-						typeof jsonError === 'object' &&
-						jsonError !== null &&
-						'message' in jsonError &&
-						typeof jsonError.message === 'string'
-					) {
-						toast.error(jsonError.message);
-					} else {
-						toast.error(error.message);
-					}
-				} catch {
+				if (error instanceof ChatSDKError) {
 					toast.error(error.message);
 				}
 			}
 		})
 	);
 
-	$inspect(chatClient);
-
+	let input = $state('');
 	let attachments = $state<Array<Attachment>>([]);
+	let searchParams = $derived(page.url.searchParams);
+	let query = $derived(searchParams.get('query'));
+	let hasAppendedQuery = $state(false);
+
+	$effect(() => {
+		if (query && !hasAppendedQuery) {
+			chat.sendMessage({
+				role: 'user' as const,
+				parts: [{ type: 'text', text: query }]
+			});
+
+			hasAppendedQuery = true;
+			replaceState('/chat/' + id, {});
+		}
+	});
+
+	let votes = $derived(chat.messages.length >= 2 ? await getVotesByChatId(id) : []);
+	
+	new AutoResume({
+		autoResume,
+		initialMessages,
+		get chat() {
+			return chat;
+		}
+	});
 </script>
 
 <div class="flex h-dvh min-w-0 flex-col bg-background">
@@ -88,8 +117,8 @@
 	/>
 	<Messages
 		{readonly}
-		loading={chatClient.status === 'streaming' || chatClient.status === 'submitted'}
-		messages={chatClient.messages}
+		loading={chat.status === 'streaming' || chat.status === 'submitted'}
+		messages={chat.messages}
 	/>
 
 	<form class="mx-auto flex w-full gap-2 bg-background px-4 pb-4 md:max-w-3xl md:pb-6">
