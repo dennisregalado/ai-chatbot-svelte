@@ -8,7 +8,8 @@
 		lastWeek: Chat[];
 		lastMonth: Chat[];
 		older: Chat[];
-	};3
+	};
+	3;
 
 	export interface ChatHistory {
 		chats: Array<Chat>;
@@ -55,9 +56,14 @@
 	import { page } from '$app/state';
 	import { Button } from './ui/button';
 	import { SidebarGroup, SidebarGroupContent } from './ui/sidebar';
-	import {  getChatHistory, deleteChatById } from '$remote/chat.remote';
+	import { getChatHistory, deleteChatById } from '$remote/chat.remote';
 
 	let user = $derived(page.data.user);
+	let chats = $derived(await getChatHistory());
+	let groupedChats = $derived(groupChatsByDate(chats));
+	$inspect({
+		groupedChats
+	});
 </script>
 
 {#if !user}

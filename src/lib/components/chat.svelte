@@ -66,7 +66,7 @@
 				setDataStream((ds) => [...ds, dataPart]);
 			},
 			onFinish: async () => {
-			//	getChatHistory().refresh();
+				getChatHistory().refresh();
 			},
 			onError: (error) => {
 				if (error instanceof ChatSDKError) {

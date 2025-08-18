@@ -51,7 +51,10 @@
 		</SidebarMenu>
 	</SidebarHeader>
 	<SidebarContent>
-		<SidebarHistory />
+		<svelte:boundary>
+			{#snippet pending()}{/snippet}
+			<SidebarHistory />
+		</svelte:boundary>
 	</SidebarContent>
 	<SidebarFooter>
 		<SidebarUserNav />

@@ -3,8 +3,8 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
 import {
-	user, 
-	chat, 
+	user,
+	chat,
 	document,
 	type Suggestion,
 	suggestion,
@@ -64,60 +64,16 @@ export async function deleteChatById({ id }: { id: string }) {
 	}
 }
 
+// todo: add pagination support
 export async function getChatsByUserId({
-	id,
-	limit,
-	startingAfter,
-	endingBefore
+	id
 }: {
 	id: string;
-	limit: number;
-	startingAfter: string | null;
-	endingBefore: string | null;
 }) {
+
 	try {
-		const extendedLimit = limit + 1;
-
-		const query = (whereCondition?: SQL<any>) =>
-			db
-				.select()
-				.from(chat)
-				.where(whereCondition ? and(whereCondition, eq(chat.userId, id)) : eq(chat.userId, id))
-				.orderBy(desc(chat.createdAt))
-				.limit(extendedLimit);
-
-		let filteredChats: Array<Chat> = [];
-
-		if (startingAfter) {
-			const [selectedChat] = await db
-				.select()
-				.from(chat)
-				.where(eq(chat.id, startingAfter))
-				.limit(1);
-
-			if (!selectedChat) {
-				throw new ChatSDKError('not_found:database', `Chat with id ${startingAfter} not found`);
-			}
-
-			filteredChats = await query(gt(chat.createdAt, selectedChat.createdAt));
-		} else if (endingBefore) {
-			const [selectedChat] = await db.select().from(chat).where(eq(chat.id, endingBefore)).limit(1);
-
-			if (!selectedChat) {
-				throw new ChatSDKError('not_found:database', `Chat with id ${endingBefore} not found`);
-			}
-
-			filteredChats = await query(lt(chat.createdAt, selectedChat.createdAt));
-		} else {
-			filteredChats = await query();
-		}
-
-		const hasMore = filteredChats.length > limit;
-
-		return {
-			chats: hasMore ? filteredChats.slice(0, limit) : filteredChats,
-			hasMore
-		};
+		const chats = await db.select().from(chat).where(eq(chat.userId, id)).orderBy(desc(chat.createdAt))
+		return chats;
 	} catch (error) {
 		throw new ChatSDKError('bad_request:database', 'Failed to get chats by user id');
 	}

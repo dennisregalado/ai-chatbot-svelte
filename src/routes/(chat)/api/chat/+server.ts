@@ -16,7 +16,7 @@ import {
 	saveChat,
 	saveMessages
 } from '$server/db/queries';
-import { convertToUIMessages, generateUUID } from '$lib/utils';
+import { convertToUIMessages, generateUUID, getTextFromMessage } from '$lib/utils';
 import { generateTitleFromUserMessage } from '$remote/chat.remote.js';
 import { createDocument } from '$ai/tools/create-document';
 import { updateDocument } from '$ai/tools/update-document';
@@ -41,7 +41,7 @@ export const POST = async ({ request, locals: { session, user, getStreamContext 
 	try {
 		const json = await request.json();
 		requestBody = postRequestBodySchema.parse(json);
-	} catch (_) {
+	} catch (error) {
 		return new ChatSDKError('bad_request:api').toResponse();
 	}
 
@@ -78,9 +78,9 @@ export const POST = async ({ request, locals: { session, user, getStreamContext 
 		const chat = await getChatById({ id });
 
 		if (!chat) {
+			const messageText = getTextFromMessage(message);
 			const title = await generateTitleFromUserMessage({
-				// @ts-ignore
-				message
+				message: messageText
 			});
 
 			await saveChat({
@@ -191,6 +191,9 @@ export const POST = async ({ request, locals: { session, user, getStreamContext 
 		if (error instanceof ChatSDKError) {
 			return error.toResponse();
 		}
+		// Handle any other unexpected errors
+		console.error('Unexpected error in chat API:', error);
+		return new ChatSDKError('bad_request:api').toResponse();
 	}
 };
 

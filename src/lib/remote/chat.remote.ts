@@ -20,29 +20,18 @@ export const saveChatModel = command(z.string(), async (model: string) => {
 	});
 });
 
-export const getChatHistory = query(z.object({ 
-	limit: z.number(),
-	startingAfter: z.string().nullable(),
-	endingBefore: z.string().nullable()
-}), async ({ limit, startingAfter, endingBefore }) => {
+export const getChatHistory = query(async () => {
 	const { locals: { session } } = getRequestEvent();
-
-	if (startingAfter && endingBefore) {
-		error(400, 'Only one of starting_after or ending_before can be provided.');
-	}
 
 	if (!session?.userId) {
 		error(401, 'Unauthorized');
 	}
 
 	const chats = await db.getChatsByUserId({
-		id: session.userId,
-		limit,
-		startingAfter,
-		endingBefore
+		id: session.userId
 	});
 
-	return chats;
+	return chats ?? [];
 });
 
 export const getChatById = query(z.string(), async (id: string) => {
@@ -151,7 +140,7 @@ export const updateVoteByChatId = command(z.object({
 	return 'Message voted';
 });
 
-export const generateTitleFromUserMessage = command(
+export const generateTitleFromUserMessage = query(
 	z.object({
 		message: z.string()
 	}),

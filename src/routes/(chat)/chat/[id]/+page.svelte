@@ -7,11 +7,17 @@
 
 	let { params } = $props();
 
-	const chat = $derived(await getChatById(params.id));
-	const session = $derived(await getSession()); 
-	const messagesFromDb = $derived(await getMessagesByChatId(params.id));
-
+	const chat = await getChatById(params.id)
+	const session = await getSession()
+	const messagesFromDb = await getMessagesByChatId(params.id)
 	const uiMessages = $derived(convertToUIMessages(messagesFromDb));
+
+	$inspect({
+		chat,
+		session,
+		messagesFromDb,
+		uiMessages
+	});
 </script>
 
 <Chat
