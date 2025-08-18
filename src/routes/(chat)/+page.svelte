@@ -3,35 +3,16 @@
 	import { DEFAULT_CHAT_MODEL } from '$ai/models';
 
 	let { data } = $props();
-	let { modelIdFromCookie, id, session } = $derived(data);
+	let { id } = $derived(data);
 </script>
 
-<svelte:boundary>
-	{#snippet pending()}{/snippet}
-	{#if !modelIdFromCookie}
-		{#key id}
-			<Chat
-				{id}
-				initialMessages={[]}
-				initialChatModel={DEFAULT_CHAT_MODEL}
-				initialVisibilityType="private"
-				readonly={false}
-				{session}
-				autoResume={false}
-			/>
-		{/key}
-	{:else}
-		{#key id}
-			<Chat
-				{id}
-				initialMessages={[]}
-				initialChatModel={modelIdFromCookie}
-				initialVisibilityType="private"
-				readonly={false}
-				{session}
-				autoResume={false}
-			/>
-		{/key}
-	{/if}
-	<!-- TODO <DataStreamHandler {id} /> -->
-</svelte:boundary>
+{#key id}
+	<Chat
+		{id}
+		initialMessages={[]}
+		initialVisibilityType="private"
+		readonly={false}
+		autoResume={false}
+	/>
+{/key}
+<!-- TODO <DataStreamHandler {id} /> -->

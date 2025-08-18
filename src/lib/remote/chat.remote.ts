@@ -4,7 +4,7 @@ import * as db from '$server/db/queries';
 import { generateText } from 'ai';
 import type { VisibilityType } from '$components/visibility-selector.svelte';
 import { myProvider } from '$ai/providers';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 
 // start new remote functions
 
@@ -88,6 +88,32 @@ export const getVotesByChatId = query(z.string(), async (chatId: string) => {
 	return votes;
 });
 
+export const getChatById = query(z.string(), async (id: string) => {
+	const { locals: { session } } = getRequestEvent();
+	const chat = await db.getChatById({ id });
+
+	if (!chat) {
+		error(404, 'Not found');
+	}
+
+
+	if (!session) {
+		redirect(302, '/guest');
+	}
+
+	if (chat.visibility === 'private') {
+		if (!session.userId) {
+			error(404, 'Not found');
+		}
+
+		if (session.userId !== chat.userId) {
+			error(404, 'Not found');
+		}
+	}
+
+	return chat;
+});
+
 // end new remote functions
 
 export const generateTitleFromUserMessage = command(
@@ -133,15 +159,7 @@ export const updateChatVisibility = command(
 	}
 );
 
-export const getChatById = query(z.string(), async (id: string) => {
-	const chat = await db.getChatById({ id });
 
-	if (!chat) {
-		error(404, 'Not found');
-	}
-
-	return chat;
-});
 
 export const saveChat = command(
 	z.object({

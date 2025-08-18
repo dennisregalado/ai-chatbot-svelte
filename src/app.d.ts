@@ -13,6 +13,7 @@ declare global {
 			getStreamContext: () => ResumableStreamContext;
 		}
 		interface PageData {
+			selectedModelId: string;
 			user?: User & { isAnonymous?: boolean };
 		}
 		// interface PageState {}

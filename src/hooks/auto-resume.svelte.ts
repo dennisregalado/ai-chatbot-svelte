@@ -44,7 +44,6 @@ export class AutoResume {
 				const message = JSON.parse(dataPart.data);
 				this.#chat.messages = [...this.#initialMessages, message];
 			}
-
 		});
 
 		// Note: Message appending is handled automatically by the Chat's onData callback

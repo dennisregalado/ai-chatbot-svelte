@@ -1,24 +1,24 @@
 <script lang="ts">
 	import Chat from '$components/chat.svelte';
 	import { convertToUIMessages } from '$lib/utils';
-	import { getMessagesByChatId } from '$remote/chat.remote';
-	import { DEFAULT_CHAT_MODEL } from '$ai/models';
+	import { getChatById, getMessagesByChatId } from '$remote/chat.remote';
+	
 
 	let { params, data } = $props();
-	let { chat, chatModelFromCookie, session } = $derived(data);
 
-	const messagesFromDb = await getMessagesByChatId(params.id);
-	const uiMessages = convertToUIMessages(messagesFromDb);
+	const chat = $derived(await getChatById(params.id));
+
+	let { chatModelFromCookie, session } = $derived(data);
+
+	const messagesFromDb = $derived(await getMessagesByChatId(params.id));
+	const uiMessages = $derived(convertToUIMessages(messagesFromDb));
 </script>
 
-{#key params.id}
-	<Chat
-		id={chat.id}
-		initialMessages={uiMessages}
-		initialChatModel={chatModelFromCookie || DEFAULT_CHAT_MODEL}
-		initialVisibilityType={chat.visibility}
-		readonly={session?.userId !== chat.userId}
-		autoResume
-	/>
-	<!-- <DataStreamHandler {id} /> -->
-{/key}
+<Chat
+	id={chat.id}
+	initialMessages={uiMessages} 
+	initialVisibilityType={chat.visibility}
+	readonly={session?.userId !== chat.userId}
+	autoResume
+/>
+<!-- <DataStreamHandler {id} /> -->

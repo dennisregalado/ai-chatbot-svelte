@@ -4,58 +4,25 @@
 	import { onMount } from 'svelte';
 	import PreviewMessage from './messages/preview-message.svelte';
 	import type { UIMessage } from '@ai-sdk/svelte';
+	import type { Chat } from '@ai-sdk/svelte';
+	import type { Vote } from '$server/db/schema';
 
 	let containerRef = $state<HTMLDivElement | null>(null);
 	let endRef = $state<HTMLDivElement | null>(null);
 
 	let {
+		chatId,
+		status,
+		votes,
 		readonly,
-		loading,
 		messages
 	}: {
+		chatId: string;
+		status: Chat['status'];
+		votes: Array<Vote> | undefined;
+		messages: Chat['messages'];
+		regenerate: Chat['regenerate'];
 		readonly: boolean;
-		loading: boolean;
-		messages: UIMessage[];
+		isArtifactVisible: boolean;
 	} = $props();
-
-	let mounted = $state(false);
-	onMount(() => {
-		mounted = true;
-	});
-
-	//	const scrollLock = getLock('messages-scroll');
-
-	$effect(() => {
-		if (!(containerRef && endRef)) return;
-
-		const observer = new MutationObserver(() => {
-			if (!endRef) return;
-			endRef.scrollIntoView({ behavior: 'instant', block: 'end' });
-		});
-
-		observer.observe(containerRef, {
-			childList: true,
-			subtree: true,
-			attributes: true,
-			characterData: true
-		});
-
-		return () => observer.disconnect();
-	});
 </script>
-
-<div bind:this={containerRef} class="flex min-w-0 flex-1 flex-col gap-6 overflow-y-scroll pt-4">
-	{#if mounted && messages.length === 0}
-		<Overview />
-	{/if}
-
-	{#each messages as message (message.id)}
-		<PreviewMessage {message} {readonly} {loading} />
-	{/each}
-
-	{#if loading && messages.length > 0 && messages[messages.length - 1].role === 'user'}
-		<ThinkingMessage />
-	{/if}
-
-	<div bind:this={endRef} class="min-h-[24px] min-w-[24px] shrink-0"></div>
-</div>

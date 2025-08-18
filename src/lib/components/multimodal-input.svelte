@@ -17,14 +17,22 @@
 	import type { User } from '$server/db/schema';
 
 	let {
+		chatId,
+		input = $bindable(),
 		attachments = $bindable(),
 		user,
-		chatClient,
+		chat,
+		status,
+		stop,
 		class: c
 	}: {
+		chatId: string;
+		input: string;
 		attachments: Attachment[];
 		user: User | undefined;
-		chatClient: Chat;
+		chat: Chat;
+		status: Chat['status'];
+		stop: Chat['stop'];
 		class?: string;
 	} = $props();
 
@@ -33,7 +41,7 @@
 	let fileInputRef = $state<HTMLInputElement | null>(null);
 	let uploadQueue = $state<string[]>([]);
 	const storedInput = new LocalStorage('input', '');
-	const loading = $derived(chatClient.status === 'streaming' || chatClient.status === 'submitted');
+	const loading = $derived(chat.status === 'streaming' || chat.status === 'submitted');
 
 	const adjustHeight = () => {
 		if (textareaRef) {
@@ -50,16 +58,16 @@
 	};
 
 	function setInput(value: string) {
-		chatClient.input = value;
+		input = value;
 		adjustHeight();
 	}
 
 	async function submitForm(event?: Event) {
 		if (user) {
-			replaceState(`/chat/${chatClient.id}`, {});
+			replaceState(`/chat/${chat.id}`, {});
 		}
 
-		await chatClient.handleSubmit(event, {
+		await chat.handleSubmit(event, {
 			experimental_attachments: attachments
 		});
 
@@ -122,19 +130,19 @@
 	}
 
 	onMount(() => {
-		chatClient.input = storedInput.value;
+	//	input = storedInput.value;
 		adjustHeight();
 		mounted = true;
 	});
 
 	$effect.pre(() => {
-		storedInput.value = chatClient.input;
+	//	storedInput.value = input;
 	});
 </script>
 
 <div class="relative flex w-full flex-col gap-4">
-	{#if mounted && chatClient.messages.length === 0 && attachments.length === 0 && uploadQueue.length === 0}
-		<SuggestedActions {user} {chatClient} />
+	{#if mounted && chat.messages.length === 0 && attachments.length === 0 && uploadQueue.length === 0}
+		<SuggestedActions {user} {chat} />
 	{/if}
 
 	<input
@@ -168,7 +176,7 @@
 	<Textarea
 		bind:ref={textareaRef}
 		placeholder="Send a message..."
-		bind:value={() => chatClient.input, setInput}
+		bind:value={() => input, setInput}
 		class={cn(
 			'max-h-[calc(75dvh)] min-h-[24px] resize-none overflow-hidden rounded-2xl bg-muted pb-10 !text-base dark:border-zinc-700',
 			c
@@ -221,7 +229,7 @@
 		onclick={(event) => {
 			event.preventDefault();
 			stop();
-			chatClient.messages = chatClient.messages;
+			chat.messages = chat.messages;
 		}}
 	>
 		<StopIcon size={14} />
@@ -235,7 +243,7 @@
 			event.preventDefault();
 			submitForm();
 		}}
-		disabled={chatClient.input.length === 0 || uploadQueue.length > 0}
+		disabled={input.length === 0 || uploadQueue.length > 0}
 	>
 		<ArrowUpIcon size={14} />
 	</Button>

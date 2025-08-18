@@ -11,7 +11,10 @@
 	<Sidebar.Provider open={!isCollapsed}>
 		<AppSidebar />
 		<Sidebar.Inset>
-			{@render children?.()}
+			<svelte:boundary>
+				{#snippet pending()}{/snippet}
+				{@render children?.()}
+			</svelte:boundary>
 		</Sidebar.Inset>
 	</Sidebar.Provider>
 </DataStreamProvider>

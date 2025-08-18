@@ -15,32 +15,29 @@
 	//	import { useArtifactSelector } from '@/hooks/use-artifact';
 	//	import { getChatHistoryPaginationKey } from './sidebar-history';
 	import { toast } from 'svelte-sonner';
-	import type { Session } from 'better-auth';
 	//	import { useChatVisibility } from '@/hooks/use-chat-visibility';
-	//	import { useAutoResume } from '@/hooks/use-auto-resume';
+	import { AutoResume } from '$hooks/auto-resume.svelte';
 	import { ChatSDKError } from '$lib/errors';
 	import type { Attachment, ChatMessage } from '$lib/types';
 	import { useDataStream } from '$components/data-stream-provider.svelte';
-	import { AutoResume } from '$hooks/auto-resume.svelte';
 
 	let {
 		id,
-		initialMessages,
-		initialChatModel,
+		initialMessages, 
 		initialVisibilityType,
 		readonly,
 		autoResume
 	}: {
 		id: string;
-		initialMessages: ChatMessage[];
-		initialChatModel: string;
-		initialVisibilityType: 'private' | 'public';
+		initialMessages: ChatMessage[]; 
+		initialVisibilityType: VisibilityType;
 		readonly: boolean;
-		session: Session | undefined;
 		autoResume: boolean;
 	} = $props();
 
 	const { setDataStream } = useDataStream();
+
+	let input = $state('');
 
 	const chat = $derived(
 		new Chat({
@@ -57,7 +54,7 @@
 						body: {
 							id,
 							message: messages.at(-1),
-							selectedChatModel: initialChatModel,
+							selectedChatModel: page.data.selectedModelId,
 							selectedVisibilityType: initialVisibilityType,
 							//	selectedVisibilityType: visibilityType,
 							...body
@@ -79,10 +76,9 @@
 		})
 	);
 
-	let input = $state('');
-	let attachments = $state<Array<Attachment>>([]);
 	let searchParams = $derived(page.url.searchParams);
 	let query = $derived(searchParams.get('query'));
+
 	let hasAppendedQuery = $state(false);
 
 	$effect(() => {
@@ -98,7 +94,11 @@
 	});
 
 	let votes = $derived(chat.messages.length >= 2 ? await getVotesByChatId(id) : []);
-	
+
+	let attachments = $state<Array<Attachment>>([]);
+	//	const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
+	let isArtifactVisible = $state(false);
+
 	new AutoResume({
 		autoResume,
 		initialMessages,
@@ -110,21 +110,34 @@
 
 <div class="flex h-dvh min-w-0 flex-col bg-background">
 	<ChatHeader
-		chatId={id}
-		selectedModelId={initialChatModel}
+		chatId={id} 
 		selectedVisibilityType={initialVisibilityType}
 		{readonly}
 	/>
 	<Messages
-		{readonly}
-		loading={chat.status === 'streaming' || chat.status === 'submitted'}
+		chatId={id}
+		status={chat.status}
+		{votes}
 		messages={chat.messages}
+		regenerate={chat.regenerate}
+		{readonly}
+		{isArtifactVisible}
 	/>
 
 	<form class="mx-auto flex w-full gap-2 bg-background px-4 pb-4 md:max-w-3xl md:pb-6">
 		{#if !readonly}
-			<!-- TODO -->
-			<!-- <MultimodalInput {attachments} {user} {chatClient} class="flex-1" /> -->
+			<!--
+			<MultimodalInput
+				chatId={id}
+				bind:input
+				status={chat.status}
+				stop={chat.stop}
+				{attachments}
+				messages={chat.messages}
+				sendMessage={chat.sendMessage}
+				selectedVisibilityType={initialVisibilityType}
+			/>
+		-->
 		{/if}
 	</form>
 </div>

@@ -2,6 +2,12 @@ import { form, getRequestEvent, query } from '$app/server';
 import { auth } from '$lib/auth';
 import { redirect } from '@sveltejs/kit';
 
+export const getSession = query(async () => {
+	const { locals } = getRequestEvent();
+	const { session } = locals;
+	return session;
+});
+
 export const getUser = query(async () => {
 	const { locals } = getRequestEvent();
 	const { user } = locals;

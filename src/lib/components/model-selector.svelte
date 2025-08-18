@@ -17,14 +17,14 @@
 	import { page } from '$app/state';
 
 	let {
-		class: c,
-		selectedModelId
+		class: c
 	}: {
 		class: ClassValue;
-		selectedModelId: string;
 	} = $props();
 
 	let open = $state(false);
+
+	let selectedModelId = $derived(page.data.selectedModelId); 
 	let isAnonymous = $derived(page.data.user?.isAnonymous);
 
 	const { availableChatModelIds } = $derived(
