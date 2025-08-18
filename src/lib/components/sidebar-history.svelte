@@ -55,7 +55,7 @@
 	import { page } from '$app/state';
 	import { Button } from './ui/button';
 	import { SidebarGroup, SidebarGroupContent } from './ui/sidebar';
-	import { getChatsByUserId, getChatHistory, deleteChatById } from '$remote/chat.remote';
+	import {  getChatHistory, deleteChatById } from '$remote/chat.remote';
 
 	let user = $derived(page.data.user);
 </script>

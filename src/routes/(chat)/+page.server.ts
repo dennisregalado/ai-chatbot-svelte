@@ -1,7 +1,7 @@
 import { generateUUID } from '$lib/utils';
 import { redirect } from '@sveltejs/kit';
 
-export async function load({ locals, cookies }) {
+export async function load({ locals }) {
 	const { session } = locals;
 
 	if (!session) {
@@ -9,11 +9,8 @@ export async function load({ locals, cookies }) {
 	}
 
 	const id = generateUUID();
-	const modelIdFromCookie = cookies.get('chat-model');
 
 	return {
-		id,
-		modelIdFromCookie,
-		session
+		id
 	};
 }

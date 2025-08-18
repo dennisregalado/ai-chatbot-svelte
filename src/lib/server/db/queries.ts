@@ -2,10 +2,8 @@ import { and, asc, count, desc, eq, gt, gte, inArray, lt, type SQL } from 'drizz
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
-import {
-	user,
-	chat,
-	type User,
+import { 
+	chat, 
 	document,
 	type Suggestion,
 	suggestion,
