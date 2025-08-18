@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import SidebarLeftIcon from './icons/sidebar-left.svelte';
 	import { Button } from './ui/button';
 	import { useSidebar } from './ui/sidebar';

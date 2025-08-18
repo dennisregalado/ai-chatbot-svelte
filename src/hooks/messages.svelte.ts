@@ -1,7 +1,7 @@
 export class Messages {
-    #key: string;
+	#key: string;
 
-    constructor(key: string) {
-        this.#key = key;
-    }
+	constructor(key: string) {
+		this.#key = key;
+	}
 }

@@ -8,7 +8,7 @@
 	import { goto } from '$app/navigation';
 	import VisibilitySelector from './visibility-selector.svelte';
 	import VercelIcon from './icons/vercel.svelte';
-	import ModelSelector from './model-selector.svelte'; 
+	import ModelSelector from './model-selector.svelte';
 
 	let {
 		chatId,

@@ -73,7 +73,7 @@
 										getChatHistory().withOverride((chats) =>
 											chats.map((c) => (c.id === chat.id ? { ...c, visibility: visibility.id } : c))
 										),
-										getChatVisibility(chat.id).withOverride((v) => visibility.id)
+										getChatVisibility(chat.id).withOverride(() => visibility.id)
 									);
 								} catch (error) {
 									toast.error('Failed to update chat visibility');

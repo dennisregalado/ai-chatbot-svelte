@@ -13,7 +13,7 @@
 	import PlusIcon from './icons/plus.svelte';
 	import SidebarHistory from './sidebar-history.svelte';
 	import SidebarUserNav from './sidebar-user-nav.svelte';
-	
+
 	const sidebar = useSidebar();
 
 	function newChat() {

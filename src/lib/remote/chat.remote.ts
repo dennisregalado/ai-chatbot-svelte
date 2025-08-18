@@ -21,7 +21,9 @@ export const saveChatModel = command(z.string(), async (model: string) => {
 });
 
 export const getChatHistory = query(async () => {
-	const { locals: { session } } = getRequestEvent();
+	const {
+		locals: { session }
+	} = getRequestEvent();
 
 	if (!session?.userId) {
 		error(401, 'Unauthorized');
@@ -31,17 +33,18 @@ export const getChatHistory = query(async () => {
 		id: session.userId
 	});
 
-	return chats
+	return chats;
 });
 
 export const getChatById = query(z.string(), async (id: string) => {
-	const { locals: { session } } = getRequestEvent();
+	const {
+		locals: { session }
+	} = getRequestEvent();
 	const chat = await db.getChatById({ id });
 
 	if (!chat) {
 		error(404, 'Not found');
 	}
-
 
 	if (!session) {
 		redirect(302, '/guest');
@@ -66,7 +69,9 @@ export const getMessagesByChatId = query(z.string(), async (id: string) => {
 });
 
 export const deleteChatById = command(z.string(), async (id: string) => {
-	const { locals: { session } } = getRequestEvent();
+	const {
+		locals: { session }
+	} = getRequestEvent();
 
 	if (!session?.userId) {
 		error(401, 'Unauthorized');
@@ -84,7 +89,9 @@ export const deleteChatById = command(z.string(), async (id: string) => {
 });
 
 export const getVotesByChatId = query(z.string(), async (chatId: string) => {
-	const { locals: { session } } = getRequestEvent();
+	const {
+		locals: { session }
+	} = getRequestEvent();
 
 	if (!session?.userId) {
 		error(401, 'Unauthorized');
@@ -105,38 +112,42 @@ export const getVotesByChatId = query(z.string(), async (chatId: string) => {
 	return votes;
 });
 
-export const updateVoteByChatId = command(z.object({
-	chatId: z.string(),
-	messageId: z.string(),
-	type: z.enum(['up', 'down'])
-}), async ({ chatId, messageId, type }) => {
+export const updateVoteByChatId = command(
+	z.object({
+		chatId: z.string(),
+		messageId: z.string(),
+		type: z.enum(['up', 'down'])
+	}),
+	async ({ chatId, messageId, type }) => {
+		const {
+			locals: { session }
+		} = getRequestEvent();
 
-	const { locals: { session } } = getRequestEvent();
+		if (!chatId || !messageId || !type) {
+			error(400, 'Parameters chatId, messageId, and type are required.');
+		}
 
-	if (!chatId || !messageId || !type) {
-		error(400, 'Parameters chatId, messageId, and type are required.');
+		if (!session?.userId) {
+			error(401, 'Unauthorized');
+		}
+
+		const chat = await db.getChatById({ id: chatId });
+
+		if (!chat) {
+			error(404, 'Not found');
+		}
+
+		if (chat.userId !== session.userId) {
+			error(403, 'Forbidden');
+		}
+
+		await db.voteMessage({
+			chatId,
+			messageId,
+			type
+		});
 	}
-
-	if (!session?.userId) {
-		error(401, 'Unauthorized');
-	}
-
-	const chat = await db.getChatById({ id: chatId });
-
-	if (!chat) {
-		error(404, 'Not found');
-	}
-
-	if (chat.userId !== session.userId) {
-		error(403, 'Forbidden');
-	}
-
-	await db.voteMessage({
-		chatId,
-		messageId,
-		type
-	});
-});
+);
 
 export const generateTitleFromUserMessage = query(
 	z.object({
@@ -185,7 +196,6 @@ export const updateChatVisibility = command(
 		visibility: z.enum(['public', 'private'])
 	}),
 	async ({ chatId, visibility }: { chatId: string; visibility: VisibilityType }) => {
-
 		const { cookies } = getRequestEvent();
 
 		const result = await db.updateChatVisiblityById({ chatId, visibility });
@@ -203,7 +213,9 @@ export const getSuggestionsByDocumentId = query(
 		documentId: z.string()
 	}),
 	async ({ documentId }) => {
-		const { locals: { session } } = getRequestEvent();
+		const {
+			locals: { session }
+		} = getRequestEvent();
 
 		if (!session?.userId) {
 			error(401, 'Unauthorized');

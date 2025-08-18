@@ -19,4 +19,4 @@ export const myProvider = customProvider({
 	imageModels: {
 		'small-model': xai.imageModel('grok-2-image')
 	}
-})
+});

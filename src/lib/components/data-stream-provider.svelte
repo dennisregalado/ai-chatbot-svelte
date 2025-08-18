@@ -6,7 +6,9 @@
 	interface DataStreamContextValue {
 		dataStream: DataUIPart<CustomUIDataTypes>[];
 		setDataStream: (
-			stream: DataUIPart<CustomUIDataTypes>[] | ((prev: DataUIPart<CustomUIDataTypes>[]) => DataUIPart<CustomUIDataTypes>[])
+			stream:
+				| DataUIPart<CustomUIDataTypes>[]
+				| ((prev: DataUIPart<CustomUIDataTypes>[]) => DataUIPart<CustomUIDataTypes>[])
 		) => void;
 	}
 
@@ -40,7 +42,9 @@
 			return dataStream;
 		},
 		setDataStream: (
-			stream: DataUIPart<CustomUIDataTypes>[] | ((prev: DataUIPart<CustomUIDataTypes>[]) => DataUIPart<CustomUIDataTypes>[])
+			stream:
+				| DataUIPart<CustomUIDataTypes>[]
+				| ((prev: DataUIPart<CustomUIDataTypes>[]) => DataUIPart<CustomUIDataTypes>[])
 		) => {
 			if (typeof stream === 'function') {
 				dataStream = stream(dataStream);

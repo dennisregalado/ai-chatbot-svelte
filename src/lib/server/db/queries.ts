@@ -65,14 +65,13 @@ export async function deleteChatById({ id }: { id: string }) {
 }
 
 // todo: add pagination support
-export async function getChatsByUserId({
-	id
-}: {
-	id: string;
-}) {
-
+export async function getChatsByUserId({ id }: { id: string }) {
 	try {
-		const chats = await db.select().from(chat).where(eq(chat.userId, id)).orderBy(desc(chat.createdAt))
+		const chats = await db
+			.select()
+			.from(chat)
+			.where(eq(chat.userId, id))
+			.orderBy(desc(chat.createdAt));
 		return chats;
 	} catch (error) {
 		throw new ChatSDKError('bad_request:database', 'Failed to get chats by user id');

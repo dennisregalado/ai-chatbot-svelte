@@ -225,7 +225,7 @@
 					</div>
 				</SidebarMenu>
 				<div
-					class="px-2 text-zinc-500 w-full flex flex-row justify-center items-center text-sm gap-2 mt-8"
+					class="mt-8 flex w-full flex-row items-center justify-center gap-2 px-2 text-sm text-zinc-500"
 				>
 					You have reached the end of your chat history.
 				</div>

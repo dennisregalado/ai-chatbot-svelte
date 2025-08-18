@@ -19,17 +19,17 @@
 	let {
 		chatId,
 		input = $bindable(),
-		attachments = $bindable(), 
-		chat, 
+		attachments = $bindable(),
+		chat,
 		class: c
 	}: {
 		chatId: string;
 		input: string;
-		attachments: Attachment[]; 
-		chat: Chat; 
+		attachments: Attachment[];
+		chat: Chat;
 		class?: string;
 	} = $props();
- 
+
 	let textareaRef = $state<HTMLTextAreaElement | null>(null);
 	let fileInputRef = $state<HTMLInputElement | null>(null);
 	let uploadQueue = $state<string[]>([]);
@@ -50,7 +50,7 @@
 		}
 	};
 
-	const localStorageInput = new LocalStorage('input', ''); 
+	const localStorageInput = new LocalStorage('input', '');
 
 	function setInput(value: string) {
 		input = value;
@@ -137,14 +137,13 @@
 
 	onMount(() => {
 		input = localStorageInput.value;
-		adjustHeight(); 
+		adjustHeight();
 	});
 
 	$effect.pre(() => {
 		localStorageInput.value = input;
 	});
 </script>
-
 
 <div class="relative flex w-full flex-col gap-4">
 	{#if chat.messages.length === 0 && attachments.length === 0 && uploadQueue.length === 0}
