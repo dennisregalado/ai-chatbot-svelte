@@ -34,6 +34,8 @@ export class AutoResume {
 			}
 		});
 
+		// Note: Message appending is handled automatically by the Chat's onData callback
+		// which processes the dataStream and updates the messages internally
 		$effect(() => {
 			if (!dataStream) return;
 			if (dataStream.length === 0) return;
@@ -45,8 +47,5 @@ export class AutoResume {
 				this.#chat.messages = [...this.#initialMessages, message];
 			}
 		});
-
-		// Note: Message appending is handled automatically by the Chat's onData callback
-		// which processes the dataStream and updates the messages internally
 	}
 }
