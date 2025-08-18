@@ -8,18 +8,13 @@
 	import { goto } from '$app/navigation';
 	import VisibilitySelector from './visibility-selector.svelte';
 	import VercelIcon from './icons/vercel.svelte';
-	import ModelSelector from './model-selector.svelte';
-	import type { VisibilityType } from './visibility-selector.svelte';
+	import ModelSelector from './model-selector.svelte'; 
 
 	let {
 		chatId,
-		selectedModelId,
-		selectedVisibilityType,
 		readonly
 	}: {
 		chatId: string;
-		selectedModelId: string;
-		selectedVisibilityType: VisibilityType;
 		readonly: boolean;
 	} = $props();
 
@@ -54,14 +49,11 @@
 	{/if}
 
 	{#if !readonly}
-		<ModelSelector {selectedModelId} class="order-1 md:order-2" />
+		<ModelSelector class="order-1 md:order-2" />
 	{/if}
 
 	{#if !readonly}
-		<!--
-		<VisibilitySelector {chatId} {selectedVisibilityType} class="order-1 md:order-3" />
-	
--->
+		<VisibilitySelector {chatId} class="order-1 md:order-3" />
 	{/if}
 	<Button
 		class="order-4 hidden h-fit bg-zinc-900 px-2 py-1.5 text-zinc-50 hover:bg-zinc-800 md:ml-auto md:flex md:h-[34px] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"

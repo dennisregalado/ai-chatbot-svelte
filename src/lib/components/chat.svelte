@@ -39,6 +39,11 @@
 
 	let visibilityType = $derived(await getChatVisibility(id));
 
+	$inspect('chat.svelte', {
+		id,
+		visibilityType
+	});
+
 	let input = $state('');
 
 	const chat = $derived(

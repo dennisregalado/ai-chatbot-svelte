@@ -24,7 +24,7 @@
 
 	let open = $state(false);
 
-	let selectedModelId = $derived(page.data.selectedModelId); 
+	let selectedModelId = $derived(page.data.selectedModelId);
 	let isAnonymous = $derived(page.data.user?.isAnonymous);
 
 	const { availableChatModelIds } = $derived(
@@ -61,7 +61,7 @@
 			<DropdownMenuItem
 				onSelect={async () => {
 					open = false;
-					saveChatModel(id).updates(getChatModel().withOverride((current) => id));
+					saveChatModel(id).updates(getChatModel().withOverride(() => id));
 				}}
 				class="group/item flex flex-row items-center justify-between gap-4"
 				data-active={id === selectedChatModel?.id}

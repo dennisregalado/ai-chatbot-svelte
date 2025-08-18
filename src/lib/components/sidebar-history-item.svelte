@@ -17,8 +17,9 @@
 	import LockIcon from '$components/icons/lock.svelte';
 	import ShareIcon from '$components/icons/share.svelte';
 	import MoreHorizontalIcon from '$components/icons/more-horizontal.svelte';
-	import { getChatHistory, updateChatVisibility } from '$remote/chat.remote';
+	import { getChatHistory, getChatVisibility, updateChatVisibility } from '$remote/chat.remote';
 	import { toast } from 'svelte-sonner';
+	import { visibilities } from '$components/visibility-selector.svelte';
 
 	let {
 		chat,
@@ -61,56 +62,38 @@
 					<span>Share</span>
 				</DropdownMenuSubTrigger>
 				<DropdownMenuSubContent>
-					<DropdownMenuItem
-						class="cursor-pointer flex-row justify-between"
-						onclick={async () => {
-							try {
-								await updateChatVisibility({
-									chatId: chat.id,
-									visibility: 'private'
-								}).updates(
-									getChatHistory().withOverride((chats) =>
-										chats.map((c) => (c.id === chat.id ? { ...c, visibility: 'private' } : c))
-									)
-								);
-							} catch (error) {
-								toast.error('Failed to update chat visibility');
-							}
-						}}
-					>
-						<div class="flex flex-row items-center gap-2">
-							<LockIcon size={12} />
-							<span>Private</span>
-						</div>
-						{#if chat.visibility === 'private'}
-							<CheckCircleFillIcon />
-						{/if}
-					</DropdownMenuItem>
-					<DropdownMenuItem
-						class="cursor-pointer flex-row justify-between"
-						onclick={async () => {
-							try {
-								await updateChatVisibility({
-									chatId: chat.id,
-									visibility: 'public'
-								}).updates(
-									getChatHistory().withOverride((chats) =>
-										chats.map((c) => (c.id === chat.id ? { ...c, visibility: 'public' } : c))
-									)
-								);
-							} catch (error) {
-								toast.error('Failed to update chat visibility');
-							}
-						}}
-					>
-						<div class="flex flex-row items-center gap-2">
-							<GlobeIcon />
-							<span>Public</span>
-						</div>
-						{#if chat.visibility === 'public'}
-							<CheckCircleFillIcon />
-						{/if}
-					</DropdownMenuItem>
+					{#each visibilities as visibility (visibility.id)}
+						<DropdownMenuItem
+							onSelect={async () => {
+								try {
+									await updateChatVisibility({
+										chatId: chat.id,
+										visibility: visibility.id
+									}).updates(
+										getChatHistory().withOverride((chats) =>
+											chats.map((c) => (c.id === chat.id ? { ...c, visibility: visibility.id } : c))
+										),
+										getChatVisibility(chat.id).withOverride((v) => visibility.id)
+									);
+								} catch (error) {
+									toast.error('Failed to update chat visibility');
+								}
+							}}
+							class="cursor-pointer flex-row justify-between"
+						>
+							<div class="flex flex-row items-center gap-2">
+								{#if visibility.id === 'public'}
+									<GlobeIcon />
+								{:else}
+									<LockIcon size={12} />
+								{/if}
+								<span>{visibility.label}</span>
+							</div>
+							{#if visibility.id === chat.visibility}
+								<CheckCircleFillIcon />
+							{/if}
+						</DropdownMenuItem>
+					{/each}
 				</DropdownMenuSubContent>
 			</DropdownMenuSub>
 			<DropdownMenuItem

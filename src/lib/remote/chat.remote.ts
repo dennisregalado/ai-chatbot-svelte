@@ -31,7 +31,7 @@ export const getChatHistory = query(async () => {
 		id: session.userId
 	});
 
-	return chats ?? [];
+	return chats
 });
 
 export const getChatById = query(z.string(), async (id: string) => {
@@ -134,10 +134,8 @@ export const updateVoteByChatId = command(z.object({
 	await db.voteMessage({
 		chatId,
 		messageId,
-		type: type
+		type
 	});
-
-	return 'Message voted';
 });
 
 export const generateTitleFromUserMessage = query(
@@ -174,8 +172,11 @@ export const deleteTrailingMessages = command(
 );
 
 export const getChatVisibility = query(z.string(), async (id: string) => {
+	const { cookies } = getRequestEvent();
+
 	const chat = await db.getChatById({ id });
-	return chat?.visibility;
+
+	return chat?.visibility || cookies.get('chat-visibility') || 'private';
 });
 
 export const updateChatVisibility = command(
@@ -184,7 +185,16 @@ export const updateChatVisibility = command(
 		visibility: z.enum(['public', 'private'])
 	}),
 	async ({ chatId, visibility }: { chatId: string; visibility: VisibilityType }) => {
-		await db.updateChatVisiblityById({ chatId, visibility });
+
+		const { cookies } = getRequestEvent();
+
+		const result = await db.updateChatVisiblityById({ chatId, visibility });
+
+		if (result.length === 0) {
+			cookies.set('chat-visibility', visibility, {
+				path: '/'
+			});
+		}
 	}
 );
 

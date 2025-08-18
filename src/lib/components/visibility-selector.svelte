@@ -1,5 +1,28 @@
 <script module lang="ts">
+	import LockIcon from './icons/lock.svelte';
+	import GlobeIcon from './icons/globe.svelte';
+
 	export type VisibilityType = 'private' | 'public';
+
+	export const visibilities: Array<{
+		id: VisibilityType;
+		label: string;
+		description: string;
+		icon: any;
+	}> = [
+		{
+			id: 'private',
+			label: 'Private',
+			description: 'Only you can access this chat',
+			icon: LockIcon
+		},
+		{
+			id: 'public',
+			label: 'Public',
+			description: 'Anyone with the link can access this chat',
+			icon: GlobeIcon
+		}
+	];
 </script>
 
 <script lang="ts">
@@ -12,41 +35,19 @@
 		DropdownMenuTrigger
 	} from './ui/dropdown-menu';
 	import ChevronDownIcon from './icons/chevron-down.svelte';
-	import LockIcon from './icons/lock.svelte';
-	import GlobeIcon from './icons/globe.svelte';
 	import CheckCircleFillIcon from './icons/check-circle-fill.svelte';
-//	import { ChatHistory } from '../../hooks/example';
-	import type { Chat } from '$server/db/schema';
+	import { updateChatVisibility, getChatHistory, getChatVisibility } from '$remote/chat.remote';
 	import type { ClassValue } from 'svelte/elements';
+	import { toast } from 'svelte-sonner';
 
-	let {
-		chatId,
-		selectedVisibilityType,
-		class: c
-	}: { chatId: string; selectedVisibilityType: VisibilityType; class?: ClassValue } = $props();
+	let { chatId, class: c }: { chatId: string; class?: ClassValue } = $props();
 
 	let open = $state(false);
 
-	const visibilities = [
-		{
-			id: 'private',
-			label: 'Private',
-			description: 'Only you can access this chat',
-			Icon: LockIcon
-		},
-		{
-			id: 'public',
-			label: 'Public',
-			description: 'Anyone with the link can access this chat',
-			Icon: GlobeIcon
-		}
-	] as const;
+	let chatVisibility = $derived(await getChatVisibility(chatId));
 
-	const chatHistory = ChatHistory.fromContext();
-	const chatFromHistory = $derived(chatHistory.getChatDetails(chatId));
-	const { label, Icon } = $derived(
-		(chatFromHistory && visibilities.find((v) => v.id === chatFromHistory.visibility)) ??
-			visibilities[0]
+	let selectedVisibility = $derived(
+		visibilities.find((visibility) => visibility.id === chatVisibility)
 	);
 </script>
 
@@ -61,22 +62,38 @@
 					c
 				)}
 			>
-				<Icon />
-				{label}
+				{#if selectedVisibility?.id === 'public'}
+					<GlobeIcon />
+				{:else}
+					<LockIcon />
+				{/if}
+				{selectedVisibility?.label}
 				<ChevronDownIcon />
 			</Button>
 		{/snippet}
 	</DropdownMenuTrigger>
-
 	<DropdownMenuContent align="start" class="min-w-[300px]">
 		{#each visibilities as visibility (visibility.id)}
 			<DropdownMenuItem
-				onSelect={() => {
-					chatHistory.updateVisibility(chatId, visibility.id);
-					open = false;
+				onSelect={async () => {
+					try {
+						await updateChatVisibility({
+							chatId,
+							visibility: visibility.id
+						}).updates(
+							getChatHistory().withOverride((chats) =>
+								chats.map((c) => (c.id === chatId ? { ...c, visibility: visibility.id } : c))
+							),
+							getChatVisibility(chatId).withOverride((v) => visibility.id)
+						);
+					} catch (error) {
+						toast.error('Failed to update chat visibility');
+					} finally {
+						open = false;
+					}
 				}}
 				class="group/item flex flex-row items-center justify-between gap-4"
-				data-active={visibility.id === chatFromHistory?.visibility}
+				data-active={visibility.id === selectedVisibility?.id}
 			>
 				<div class="flex flex-col items-start gap-1">
 					{visibility.label}
