@@ -23,13 +23,13 @@
 
 	let {
 		id,
-		initialMessages, 
+		initialMessages,
 		initialVisibilityType,
 		readonly,
 		autoResume
 	}: {
 		id: string;
-		initialMessages: ChatMessage[]; 
+		initialMessages: ChatMessage[];
 		initialVisibilityType: VisibilityType;
 		readonly: boolean;
 		autoResume: boolean;
@@ -66,7 +66,7 @@
 				setDataStream((ds) => [...ds, dataPart]);
 			},
 			onFinish: async () => {
-				//	getChatHistory().refresh();
+				//getChatHistory().refresh();
 			},
 			onError: (error) => {
 				if (error instanceof ChatSDKError) {
@@ -109,11 +109,7 @@
 </script>
 
 <div class="flex h-dvh min-w-0 flex-col bg-background">
-	<ChatHeader
-		chatId={id} 
-		selectedVisibilityType={initialVisibilityType}
-		{readonly}
-	/>
+	<ChatHeader chatId={id} selectedVisibilityType={initialVisibilityType} {readonly} />
 	<Messages
 		chatId={id}
 		status={chat.status}
@@ -126,18 +122,7 @@
 
 	<form class="mx-auto flex w-full gap-2 bg-background px-4 pb-4 md:max-w-3xl md:pb-6">
 		{#if !readonly}
-			<!--
-			<MultimodalInput
-				chatId={id}
-				bind:input
-				status={chat.status}
-				stop={chat.stop}
-				{attachments}
-				messages={chat.messages}
-				sendMessage={chat.sendMessage}
-				selectedVisibilityType={initialVisibilityType}
-			/>
-		-->
+			<MultimodalInput bind:input {chat} {attachments} />
 		{/if}
 	</form>
 </div>

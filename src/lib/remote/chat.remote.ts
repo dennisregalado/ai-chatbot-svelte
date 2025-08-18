@@ -20,12 +20,11 @@ export const saveChatModel = command(z.string(), async (model: string) => {
 	});
 });
 
-export const getChatHistory = query(z.object({
-	userId: z.string(),
+export const getChatHistory = query(z.object({ 
 	limit: z.number(),
 	startingAfter: z.string().nullable(),
 	endingBefore: z.string().nullable()
-}), async ({ userId, limit, startingAfter, endingBefore }) => {
+}), async ({ limit, startingAfter, endingBefore }) => {
 	const { locals: { session } } = getRequestEvent();
 
 	if (startingAfter && endingBefore) {
@@ -37,7 +36,7 @@ export const getChatHistory = query(z.object({
 	}
 
 	const chats = await db.getChatsByUserId({
-		id: userId,
+		id: session.userId,
 		limit,
 		startingAfter,
 		endingBefore

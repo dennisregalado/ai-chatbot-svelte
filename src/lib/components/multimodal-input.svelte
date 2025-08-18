@@ -6,7 +6,7 @@
 	import { onMount } from 'svelte';
 	import { LocalStorage } from '$hooks/local-storage.svelte';
 	import { innerWidth } from 'svelte/reactivity/window';
-	import type { Attachment } from 'ai';
+	import type { Attachment } from '$lib/types';
 	import { toast } from 'svelte-sonner';
 	import { Button } from './ui/button';
 	import PaperclipIcon from './icons/paperclip.svelte';
@@ -19,28 +19,21 @@
 	let {
 		chatId,
 		input = $bindable(),
-		attachments = $bindable(),
-		user,
-		chat,
-		status,
-		stop,
+		attachments = $bindable(), 
+		chat, 
 		class: c
 	}: {
 		chatId: string;
 		input: string;
-		attachments: Attachment[];
-		user: User | undefined;
-		chat: Chat;
-		status: Chat['status'];
-		stop: Chat['stop'];
+		attachments: Attachment[]; 
+		chat: Chat; 
 		class?: string;
 	} = $props();
-
-	let mounted = $state(false);
+ 
 	let textareaRef = $state<HTMLTextAreaElement | null>(null);
 	let fileInputRef = $state<HTMLInputElement | null>(null);
 	let uploadQueue = $state<string[]>([]);
-	const storedInput = new LocalStorage('input', '');
+
 	const loading = $derived(chat.status === 'streaming' || chat.status === 'submitted');
 
 	const adjustHeight = () => {
@@ -57,22 +50,35 @@
 		}
 	};
 
+	const localStorageInput = new LocalStorage('input', ''); 
+
 	function setInput(value: string) {
 		input = value;
 		adjustHeight();
 	}
 
 	async function submitForm(event?: Event) {
-		if (user) {
-			replaceState(`/chat/${chat.id}`, {});
-		}
+		replaceState(`/chat/${chat.id}`, {});
 
-		await chat.handleSubmit(event, {
-			experimental_attachments: attachments
+		await chat.sendMessage({
+			role: 'user',
+			parts: [
+				...attachments.map((attachment) => ({
+					type: 'file' as const,
+					url: attachment.url,
+					name: attachment.name,
+					mediaType: attachment.contentType
+				})),
+				{
+					type: 'text',
+					text: input
+				}
+			]
 		});
 
 		attachments = [];
 		resetHeight();
+		setInput('');
 
 		if (innerWidth.current && innerWidth.current > 768) {
 			textareaRef?.focus();
@@ -130,19 +136,21 @@
 	}
 
 	onMount(() => {
-	//	input = storedInput.value;
-		adjustHeight();
-		mounted = true;
+		input = localStorageInput.value;
+		adjustHeight(); 
 	});
 
 	$effect.pre(() => {
-	//	storedInput.value = input;
+		localStorageInput.value = input;
 	});
 </script>
 
+
 <div class="relative flex w-full flex-col gap-4">
-	{#if mounted && chat.messages.length === 0 && attachments.length === 0 && uploadQueue.length === 0}
-		<SuggestedActions {user} {chat} />
+	{#if chat.messages.length === 0 && attachments.length === 0 && uploadQueue.length === 0}
+		<!--
+		<SuggestedActions {chat} />
+		-->
 	{/if}
 
 	<input
@@ -228,7 +236,7 @@
 		class="h-fit rounded-full border p-1.5 dark:border-zinc-600"
 		onclick={(event) => {
 			event.preventDefault();
-			stop();
+			chat.stop();
 			chat.messages = chat.messages;
 		}}
 	>
