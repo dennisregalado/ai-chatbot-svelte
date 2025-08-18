@@ -1,6 +1,6 @@
 // completed
 import type { ChatMessage } from '$lib/types';
-import { useDataStream } from '$components/data-stream-provider.svelte';
+// import { useDataStream } from '$components/data-stream-provider.svelte';
 import type { Chat } from '@ai-sdk/svelte';
 
 export interface AutoResumeParams {
@@ -19,7 +19,7 @@ export class AutoResume {
 		this.#initialMessages = initialMessages;
 		this.#chat = chat;
 
-		const { dataStream } = useDataStream();
+	//	const { dataStream } = useDataStream();
 
 		// Effect to resume stream if auto-resume is enabled and last message is from user
 		// We run this once on initialization
