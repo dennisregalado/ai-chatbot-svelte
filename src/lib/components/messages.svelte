@@ -7,6 +7,8 @@
 	import type { Chat } from '@ai-sdk/svelte';
 	import type { Vote } from '$server/db/schema';
 
+	import Greeting from './greeting.svelte';
+
 	let containerRef = $state<HTMLDivElement | null>(null);
 	let endRef = $state<HTMLDivElement | null>(null);
 
@@ -25,4 +27,17 @@
 		readonly: boolean;
 		isArtifactVisible: boolean;
 	} = $props();
+
+	let messagesEndRef = $state<HTMLDivElement | null>(null);
 </script>
+
+<div class="relative flex min-w-0 flex-1 flex-col gap-6 overflow-y-scroll pt-4">
+	{#if messages.length === 0}
+		<Greeting />
+	{/if}
+	{#each messages as message, index (message.id)}{/each}
+	{#if status === 'submitted' && messages.length > 0 && messages[messages.length - 1].role === 'user'}
+		<ThinkingMessage />
+	{/if}
+	<div bind:this={messagesEndRef} class="min-h-[24px] min-w-[24px] shrink-0" />
+</div>
