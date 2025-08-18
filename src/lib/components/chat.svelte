@@ -16,10 +16,10 @@
 	//	import { getChatHistoryPaginationKey } from './sidebar-history';
 	import { toast } from 'svelte-sonner';
 	//	import { useChatVisibility } from '@/hooks/use-chat-visibility';
-	import { AutoResume } from '$hooks/auto-resume.svelte';
+	//	import { AutoResume } from '$hooks/auto-resume.svelte';
 	import { ChatSDKError } from '$lib/errors';
 	import type { Attachment, ChatMessage } from '$lib/types';
-	import { useDataStream } from '$components/data-stream-provider.svelte';
+	//import { useDataStream } from '$components/data-stream-provider.svelte';
 
 	let {
 		id,
@@ -35,7 +35,7 @@
 		autoResume: boolean;
 	} = $props();
 
-	const { setDataStream } = useDataStream();
+	// const { setDataStream } = useDataStream();
 
 	let visibilityType = $derived(await getChatVisibility(id));
 
@@ -69,7 +69,8 @@
 				}
 			}),
 			onData: (dataPart) => {
-				setDataStream((ds) => [...ds, dataPart]);
+				console.log('dataPart', dataPart);
+			//	setDataStream((ds) => [...ds, dataPart]);
 			},
 			onFinish: async () => {
 				getChatHistory().refresh();
@@ -105,17 +106,17 @@
 	//	const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 	let isArtifactVisible = $state(false);
 
-	new AutoResume({
+	/* new AutoResume({
 		autoResume,
 		initialMessages,
 		get chat() {
 			return chat;
 		}
-	});
+	});*/
 </script>
 
 <div class="flex h-dvh min-w-0 flex-col bg-background">
-	<ChatHeader chatId={id} selectedVisibilityType={initialVisibilityType} {readonly} />
+	<ChatHeader chatId={id} {readonly} />
 	<Messages
 		chatId={id}
 		status={chat.status}
@@ -128,7 +129,7 @@
 
 	<form class="mx-auto flex w-full gap-2 bg-background px-4 pb-4 md:max-w-3xl md:pb-6">
 		{#if !readonly}
-			<MultimodalInput bind:input {chat} {attachments} selectedVisibilityType={visibilityType} />
+			<MultimodalInput bind:input {chat} {attachments} />
 		{/if}
 	</form>
 </div>

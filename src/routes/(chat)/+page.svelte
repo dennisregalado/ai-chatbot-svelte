@@ -5,13 +5,16 @@
 	let { id } = $derived(data);
 </script>
 
-{#key id}
-	<Chat
-		{id}
-		initialMessages={[]}
-		initialVisibilityType="private"
-		readonly={false}
-		autoResume={false}
-	/>
-{/key}
-<!-- TODO <DataStreamHandler {id} /> -->
+<svelte:boundary>
+	{#snippet pending()}{/snippet}
+	{#key id}
+		<Chat
+			{id}
+			initialMessages={[]}
+			initialVisibilityType="private"
+			readonly={false}
+			autoResume={false}
+		/>
+	{/key}
+	<!-- TODO <DataStreamHandler {id} /> -->
+</svelte:boundary>

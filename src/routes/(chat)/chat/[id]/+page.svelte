@@ -20,11 +20,14 @@
 	});
 </script>
 
-<Chat
-	id={chat.id}
-	initialMessages={uiMessages}
-	initialVisibilityType={chat.visibility}
-	readonly={session?.userId !== chat.userId}
-	autoResume
-/>
-<!-- <DataStreamHandler {id} /> -->
+<svelte:boundary>
+	{#snippet pending()}{/snippet}
+	<Chat
+		id={chat.id}
+		initialMessages={uiMessages}
+		initialVisibilityType={chat.visibility}
+		readonly={session?.userId !== chat.userId}
+		autoResume
+	/>
+	<!-- <DataStreamHandler {id} /> -->
+</svelte:boundary>
