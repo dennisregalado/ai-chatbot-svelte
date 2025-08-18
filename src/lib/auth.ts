@@ -4,7 +4,7 @@ import { db } from '$server/db/queries';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 import { anonymous } from 'better-auth/plugins';
-import * as schema from '../../auth-schema';
+import * as schema from '$server/db/schema';
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
