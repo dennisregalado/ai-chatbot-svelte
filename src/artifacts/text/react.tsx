@@ -12,7 +12,7 @@ import {
 } from '@/components/icons';
 import type { Suggestion } from '@/lib/db/schema';
 import { toast } from 'sonner';
-import { getSuggestions } from '../actions';
+import { getSuggestionsByDocumentId } from '$remote/chat.remote.js';
 
 interface TextArtifactMetadata {
 	suggestions: Array<Suggestion>;

@@ -72,6 +72,11 @@ export const getChatById = query(z.string(), async (id: string) => {
 	return chat;
 });
 
+export const getMessagesByChatId = query(z.string(), async (id: string) => {
+	const messages = await db.getMessagesByChatId({ id });
+	return messages;
+});
+
 export const deleteChatById = command(z.string(), async (id: string) => {
 	const { locals: { session } } = getRequestEvent();
 
@@ -187,5 +192,34 @@ export const updateChatVisibility = command(
 	}),
 	async ({ chatId, visibility }: { chatId: string; visibility: VisibilityType }) => {
 		await db.updateChatVisiblityById({ chatId, visibility });
+	}
+);
+
+export const getSuggestionsByDocumentId = query(
+	z.object({
+		documentId: z.string()
+	}),
+	async ({ documentId }) => {
+		const { locals: { session } } = getRequestEvent();
+
+		if (!session?.userId) {
+			error(401, 'Unauthorized');
+		}
+
+		const suggestions = await db.getSuggestionsByDocumentId({
+			documentId
+		});
+
+		const [suggestion] = suggestions;
+
+		if (!suggestion) {
+			return [];
+		}
+
+		if (suggestion.userId !== session.userId) {
+			error(403, 'Forbidden');
+		}
+
+		return suggestions;
 	}
 );
