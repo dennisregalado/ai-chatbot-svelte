@@ -54,7 +54,6 @@
 				</SidebarMenuAction>
 			{/snippet}
 		</DropdownMenuTrigger>
-
 		<DropdownMenuContent side="bottom" align="end">
 			<DropdownMenuSub>
 				<DropdownMenuSubTrigger class="cursor-pointer">
@@ -69,7 +68,11 @@
 								await updateChatVisibility({
 									chatId: chat.id,
 									visibility: 'private'
-								}).updates(getChatHistory().withOverride((chats) => chats.map((c) => c.id === chat.id ? { ...c, visibility: 'private' } : c)));
+								}).updates(
+									getChatHistory().withOverride((chats) =>
+										chats.map((c) => (c.id === chat.id ? { ...c, visibility: 'private' } : c))
+									)
+								);
 							} catch (error) {
 								toast.error('Failed to update chat visibility');
 							}
@@ -90,7 +93,11 @@
 								await updateChatVisibility({
 									chatId: chat.id,
 									visibility: 'public'
-								}).updates(getChatHistory().withOverride((chats) => chats.map((c) => c.id === chat.id ? { ...c, visibility: 'public' } : c)));
+								}).updates(
+									getChatHistory().withOverride((chats) =>
+										chats.map((c) => (c.id === chat.id ? { ...c, visibility: 'public' } : c))
+									)
+								);
 							} catch (error) {
 								toast.error('Failed to update chat visibility');
 							}
@@ -106,7 +113,6 @@
 					</DropdownMenuItem>
 				</DropdownMenuSubContent>
 			</DropdownMenuSub>
-
 			<DropdownMenuItem
 				class="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
 				onclick={() => ondelete(chat.id)}

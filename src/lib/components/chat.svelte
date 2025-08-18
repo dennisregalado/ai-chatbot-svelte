@@ -1,6 +1,6 @@
 <script lang="ts">
 	// refactor
-	import { getChatHistory, getVotesByChatId } from '$remote/chat.remote';
+	import { getChatHistory, getVotesByChatId, getChatVisibility } from '$remote/chat.remote';
 	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
 
@@ -37,6 +37,8 @@
 
 	const { setDataStream } = useDataStream();
 
+	let visibilityType = $derived(await getChatVisibility(id));
+
 	let input = $state('');
 
 	const chat = $derived(
@@ -55,8 +57,7 @@
 							id,
 							message: messages.at(-1),
 							selectedChatModel: page.data.selectedModelId,
-							selectedVisibilityType: initialVisibilityType,
-							//	selectedVisibilityType: visibilityType,
+							selectedVisibilityType: visibilityType || initialVisibilityType,
 							...body
 						}
 					};
@@ -122,7 +123,7 @@
 
 	<form class="mx-auto flex w-full gap-2 bg-background px-4 pb-4 md:max-w-3xl md:pb-6">
 		{#if !readonly}
-			<MultimodalInput bind:input {chat} {attachments} />
+			<MultimodalInput bind:input {chat} {attachments} selectedVisibilityType={visibilityType} />
 		{/if}
 	</form>
 </div>

@@ -173,6 +173,11 @@ export const deleteTrailingMessages = command(
 	}
 );
 
+export const getChatVisibility = query(z.string(), async (id: string) => {
+	const chat = await db.getChatById({ id });
+	return chat?.visibility;
+});
+
 export const updateChatVisibility = command(
 	z.object({
 		chatId: z.string(),
