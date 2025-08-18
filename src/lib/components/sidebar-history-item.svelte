@@ -17,6 +17,9 @@
 	import LockIcon from '$components/icons/lock.svelte';
 	import ShareIcon from '$components/icons/share.svelte';
 	import MoreHorizontalIcon from '$components/icons/more-horizontal.svelte';
+	import { getChatHistory, updateChatVisibility } from '$remote/chat.remote';
+	import { toast } from 'svelte-sonner';
+
 	let {
 		chat,
 		active,
@@ -61,8 +64,15 @@
 				<DropdownMenuSubContent>
 					<DropdownMenuItem
 						class="cursor-pointer flex-row justify-between"
-						onclick={() => {
-							//	chatHistory.updateVisibility(chat.id, 'private');
+						onclick={async () => {
+							try {
+								await updateChatVisibility({
+									chatId: chat.id,
+									visibility: 'private'
+								}).updates(getChatHistory().withOverride((chats) => chats.map((c) => c.id === chat.id ? { ...c, visibility: 'private' } : c)));
+							} catch (error) {
+								toast.error('Failed to update chat visibility');
+							}
 						}}
 					>
 						<div class="flex flex-row items-center gap-2">
@@ -75,8 +85,15 @@
 					</DropdownMenuItem>
 					<DropdownMenuItem
 						class="cursor-pointer flex-row justify-between"
-						onclick={() => {
-							//	chatHistory.updateVisibility(chat.id, 'public');
+						onclick={async () => {
+							try {
+								await updateChatVisibility({
+									chatId: chat.id,
+									visibility: 'public'
+								}).updates(getChatHistory().withOverride((chats) => chats.map((c) => c.id === chat.id ? { ...c, visibility: 'public' } : c)));
+							} catch (error) {
+								toast.error('Failed to update chat visibility');
+							}
 						}}
 					>
 						<div class="flex flex-row items-center gap-2">
