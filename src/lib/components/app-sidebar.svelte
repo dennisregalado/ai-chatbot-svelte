@@ -13,7 +13,7 @@
 	import PlusIcon from './icons/plus.svelte';
 	import SidebarHistory from './sidebar-history.svelte';
 	import SidebarUserNav from './sidebar-user-nav.svelte';
-
+	
 	const sidebar = useSidebar();
 
 	function newChat() {
@@ -51,10 +51,7 @@
 		</SidebarMenu>
 	</SidebarHeader>
 	<SidebarContent>
-		<svelte:boundary>
-			{#snippet pending()}{/snippet}
-			<SidebarHistory />
-		</svelte:boundary>
+		<SidebarHistory />
 	</SidebarContent>
 	<SidebarFooter>
 		<SidebarUserNav />
