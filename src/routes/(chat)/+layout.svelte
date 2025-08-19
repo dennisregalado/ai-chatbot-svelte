@@ -6,10 +6,10 @@
 	let { data, children } = $props();
 	let { isCollapsed } = $derived(data);
 </script>
- 
-	<Sidebar.Provider open={!isCollapsed}>
-		<AppSidebar />
-		<Sidebar.Inset>
-			{@render children?.()}
-		</Sidebar.Inset>
-	</Sidebar.Provider> 
+
+<Sidebar.Provider open={!isCollapsed}>
+	<AppSidebar />
+	<Sidebar.Inset>
+		{@render children?.()}
+	</Sidebar.Inset>
+</Sidebar.Provider>

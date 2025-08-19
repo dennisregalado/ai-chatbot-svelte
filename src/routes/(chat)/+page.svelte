@@ -7,14 +7,5 @@
 
 <svelte:boundary>
 	{#snippet pending()}{/snippet}
-	{#key id}
-		<Chat
-			{id}
-			initialMessages={[]}
-			initialVisibilityType="private"
-			readonly={false}
-			autoResume={false}
-		/>
-	{/key}
-	<!-- TODO <DataStreamHandler {id} /> -->
+	<Chat {id} />
 </svelte:boundary>

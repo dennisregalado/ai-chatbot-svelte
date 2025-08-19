@@ -23,26 +23,21 @@
 
 	let {
 		id,
-		initialMessages,
-		initialVisibilityType,
-		readonly,
+		initialMessages = [],
+		initialVisibilityType = 'private',
+		readonly = false,
 		autoResume
 	}: {
 		id: string;
-		initialMessages: ChatMessage[];
-		initialVisibilityType: VisibilityType;
-		readonly: boolean;
-		autoResume: boolean;
+		initialMessages?: ChatMessage[];
+		initialVisibilityType?: VisibilityType;
+		readonly?: boolean;
+		autoResume?: boolean;
 	} = $props();
 
 	// const { setDataStream } = useDataStream();
 
-	let visibilityType = $derived(await getChatVisibility(id));
-
-	$inspect('chat.svelte', {
-		id,
-		visibilityType
-	});
+	let visibilityType = await getChatVisibility(id) || initialVisibilityType;
 
 	let input = $state('');
 
@@ -62,7 +57,7 @@
 							id,
 							message: messages.at(-1),
 							selectedChatModel: page.data.selectedModelId,
-							selectedVisibilityType: visibilityType || initialVisibilityType,
+							selectedVisibilityType: visibilityType,
 							...body
 						}
 					};
@@ -70,7 +65,7 @@
 			}),
 			onData: (dataPart) => {
 				console.log('dataPart', dataPart);
-			//	setDataStream((ds) => [...ds, dataPart]);
+				//	setDataStream((ds) => [...ds, dataPart]);
 			},
 			onFinish: async () => {
 				getChatHistory().refresh();
@@ -100,7 +95,7 @@
 		}
 	});
 
-	let votes = $derived(chat.messages.length >= 2 ? await getVotesByChatId(id) : []);
+ let votes = $derived(chat.messages.length >= 2 ? await getVotesByChatId(id) : []);
 
 	let attachments = $state<Array<Attachment>>([]);
 	//	const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
@@ -115,23 +110,31 @@
 	});*/
 </script>
 
+<svelte:boundary>
+	{#snippet pending()}{/snippet}
+</svelte:boundary>
 <div class="flex h-dvh min-w-0 flex-col bg-background">
-	<ChatHeader chatId={id} {readonly} />
-	<Messages
-		chatId={id}
-		status={chat.status}
-		{votes}
-		messages={chat.messages}
-		regenerate={chat.regenerate}
-		{readonly}
-		{isArtifactVisible}
-	/>
 
-	<form class="mx-auto flex w-full gap-2 bg-background px-4 pb-4 md:max-w-3xl md:pb-6">
-		{#if !readonly}
-			<MultimodalInput bind:input {chat} {attachments} />
-		{/if}
-	</form>
+	<ChatHeader chatId={id} {readonly} />
+	<p>{chat.id}</p>
+	<svelte:boundary>
+		{#snippet pending()}{/snippet}
+		<Messages
+			chatId={id}
+			status={chat.status}
+			votes={[]}
+			messages={chat.messages}
+			regenerate={chat.regenerate}
+			{readonly}
+			{isArtifactVisible}
+		/>
+
+		<form class="mx-auto flex w-full gap-2 bg-background px-4 pb-4 md:max-w-3xl md:pb-6">
+			{#if !readonly}
+				<MultimodalInput bind:input {chat} {attachments} />
+			{/if}
+		</form>
+	</svelte:boundary>
 </div>
 
 <!-- TODO -->
