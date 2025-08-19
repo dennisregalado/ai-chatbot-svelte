@@ -14,6 +14,8 @@
 		$props();
 
 	let mode = $state<'view' | 'edit'>('view');
+
+	let attachmentsFromMessage = $derived(message.parts.filter((part) => part.type === 'file'));
 </script>
 
 <div
@@ -41,18 +43,27 @@
 		{/if}
 
 		<div class="flex w-full flex-col gap-4">
-			{#if message.experimental_attachments && message.experimental_attachments.length > 0}
+			{#if attachmentsFromMessage.length > 0}
 				<div class="flex flex-row justify-end gap-2">
-					{#each message.experimental_attachments as attachment (attachment.url)}
-						<PreviewAttachment {attachment} />
+					{#each attachmentsFromMessage as attachment (attachment.url)}
+						<PreviewAttachment
+							attachment={{
+								name: attachment.filename ?? 'file',
+								contentType: attachment.mediaType,
+								url: attachment.url
+							}}
+						/>
 					{/each}
 				</div>
 			{/if}
 
-			{#each message.parts as part, i (`${message.id}-${i}`)}
+			{#each message.parts as part, index (`${message.id}-${index}`)}
+				{@const key = `message-${message.id}-part-${index}`}
 				{@const { type } = part}
-				{#if type === 'reasoning'}
-					<MessageReasoning {loading} reasoning={part.reasoning} />
+				{#if type === 'reasoning' && part.text?.trim().length > 0}
+					{#key key}
+						<MessageReasoning {loading} reasoning={part.text} />
+					{/key}
 				{:else if type === 'text'}
 					{#if mode === 'view'}
 						<div class="flex flex-row items-start gap-2">

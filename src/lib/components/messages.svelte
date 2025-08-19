@@ -29,7 +29,7 @@
 	} = $props();
 
 	let messagesEndRef = $state<HTMLDivElement | null>(null);
-	let animate = $state(false); 
+	let animate = $state(false);
 
 	onMount(() => {
 		if (messages.length === 0) {
@@ -43,9 +43,11 @@
 	{#if animate}
 		<Greeting />
 	{/if}
-	{#each messages as message, index (message.id)}{/each}
+	{#each messages as message, index (message.id)}
+		<PreviewMessage {message} readonly={readonly} loading={status === 'submitted'} />
+	{/each}
 	{#if status === 'submitted' && messages.length > 0 && messages[messages.length - 1].role === 'user'}
 		<ThinkingMessage />
 	{/if}
-	<div bind:this={messagesEndRef} class="min-h-[24px] min-w-[24px] shrink-0" />
+	<div bind:this={messagesEndRef} class="min-h-[24px] min-w-[24px] shrink-0"></div>
 </div>
