@@ -98,8 +98,8 @@
 
 {#snippet user(user: (User & { isAnonymous: boolean }) | undefined)}
 	<img
-		src={`https://avatar.vercel.sh/${user?.email}`}
-		alt={user?.email ?? 'User Avatar'}
+		src="https://avatar.vercel.sh/{user?.id}"
+		alt="User Avatar"
 		width={24}
 		height={24}
 		class="rounded-full"
