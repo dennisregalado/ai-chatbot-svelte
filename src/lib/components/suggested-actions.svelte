@@ -3,9 +3,8 @@
 	import { Button } from './ui/button';
 	import { fly } from 'svelte/transition';
 	import { replaceState } from '$app/navigation';
-	import type { User } from '$server/db/schema';
 
-	let { user, chatClient }: { user: User | undefined; chatClient: Chat } = $props();
+	let { chat }: { chat: Chat } = $props();
 
 	const suggestedActions = [
 		{
@@ -24,9 +23,9 @@
 			action: `Help me write an essay about silicon valley`
 		},
 		{
-			title: 'What is the weather like',
+			title: 'What is the weather',
 			label: 'in San Francisco?',
-			action: 'What is the weather like in San Francisco?'
+			action: 'What is the weather in San Francisco?'
 		}
 	];
 </script>
@@ -40,12 +39,10 @@
 			<Button
 				variant="ghost"
 				onclick={async () => {
-					if (user) {
-						replaceState(`/chat/${chatClient.id}`, {});
-					}
-					await chatClient.append({
+					replaceState(`/chat/${chat.id}`, {});
+					await chat.sendMessage({
 						role: 'user',
-						content: suggestedAction.action
+						parts: [{ type: 'text', text: suggestedAction.action }]
 					});
 				}}
 				class="h-auto w-full flex-1 items-start justify-start gap-1 rounded-xl border px-4 py-3.5 text-left text-sm sm:flex-col"

@@ -6,7 +6,7 @@
 	import type { UIMessage } from '@ai-sdk/svelte';
 	import type { Chat } from '@ai-sdk/svelte';
 	import type { Vote } from '$server/db/schema';
-
+	import { fly } from 'svelte/transition';
 	import Greeting from './greeting.svelte';
 
 	let containerRef = $state<HTMLDivElement | null>(null);
@@ -29,10 +29,18 @@
 	} = $props();
 
 	let messagesEndRef = $state<HTMLDivElement | null>(null);
+	let animate = $state(false); 
+
+	onMount(() => {
+		if (messages.length === 0) {
+			// defer to next tick so Svelte sees a state change
+			setTimeout(() => (animate = true), 0);
+		}
+	});
 </script>
 
 <div class="relative flex min-w-0 flex-1 flex-col gap-6 overflow-y-scroll pt-4">
-	{#if messages.length === 0}
+	{#if animate}
 		<Greeting />
 	{/if}
 	{#each messages as message, index (message.id)}{/each}

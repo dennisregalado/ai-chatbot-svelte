@@ -44,10 +44,10 @@
 
 	let open = $state(false);
 
-	let chatVisibility = $derived(await getChatVisibility(chatId));
+	let chatVisibility = getChatVisibility(chatId);
 
 	let selectedVisibility = $derived(
-		visibilities.find((visibility) => visibility.id === chatVisibility)
+		visibilities.find((visibility) => visibility.id === chatVisibility.current)
 	);
 </script>
 

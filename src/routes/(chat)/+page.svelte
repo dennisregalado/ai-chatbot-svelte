@@ -5,7 +5,4 @@
 	let { id } = $derived(data);
 </script>
 
-<svelte:boundary>
-	{#snippet pending()}{/snippet}
-	<Chat {id} />
-</svelte:boundary>
+<Chat {id} />

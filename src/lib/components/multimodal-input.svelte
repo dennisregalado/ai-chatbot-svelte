@@ -14,27 +14,29 @@
 	import ArrowUpIcon from './icons/arrow-up.svelte';
 	import SuggestedActions from './suggested-actions.svelte';
 	import { replaceState } from '$app/navigation';
-	import type { User } from '$server/db/schema';
+	import type { ClassValue } from 'svelte/elements';
 
 	let {
-		chatId,
 		input = $bindable(),
 		attachments = $bindable(),
 		chat,
 		class: c
 	}: {
-		chatId: string;
 		input: string;
 		attachments: Attachment[];
 		chat: Chat;
-		class?: string;
+		class?: ClassValue;
 	} = $props();
 
 	let textareaRef = $state<HTMLTextAreaElement | null>(null);
 	let fileInputRef = $state<HTMLInputElement | null>(null);
 	let uploadQueue = $state<string[]>([]);
 
-	const loading = $derived(chat.status === 'streaming' || chat.status === 'submitted');
+	onMount(() => {
+		if (textareaRef) {
+			adjustHeight();
+		}
+	});
 
 	const adjustHeight = () => {
 		if (textareaRef) {
@@ -51,6 +53,20 @@
 	};
 
 	const localStorageInput = new LocalStorage('input', '');
+
+	onMount(() => {
+		if (textareaRef) {
+			const domValue = textareaRef.value;
+			// Prefer DOM value over localStorage to handle hydration
+			const finalValue = domValue || localStorageInput.value || '';
+			setInput(finalValue);
+			adjustHeight();
+		}
+	});
+
+	$effect.pre(() => {
+		localStorageInput.value = input;
+	});
 
 	function setInput(value: string) {
 		input = value;
@@ -77,6 +93,7 @@
 		});
 
 		attachments = [];
+		localStorageInput.value = '';
 		resetHeight();
 		setInput('');
 
@@ -135,21 +152,27 @@
 		}
 	}
 
-	onMount(() => {
-		input = localStorageInput.value;
-		adjustHeight();
-	});
+	// const { isAtBottom, scrollToBottom } = useScrollToBottom();
 
-	$effect.pre(() => {
-		localStorageInput.value = input;
+	//	useEffect(() => {
+	//  if (status === 'submitted') {
+	//      scrollToBottom();
+	//    }
+	//  }, [status, scrollToBottom]);
+
+	let animate = $state(false); 
+
+	onMount(() => {
+		if (chat.messages.length === 0) {
+			// defer to next tick so Svelte sees a state change
+			setTimeout(() => (animate = true), 0);
+		}
 	});
 </script>
 
 <div class="relative flex w-full flex-col gap-4">
-	{#if chat.messages.length === 0 && attachments.length === 0 && uploadQueue.length === 0}
-		<!--
+	{#if animate && chat.messages.length === 0 && attachments.length === 0 && uploadQueue.length === 0}
 		<SuggestedActions {chat} />
-		-->
 	{/if}
 
 	<input
@@ -194,7 +217,7 @@
 			if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
 				event.preventDefault();
 
-				if (loading) {
+				if (chat.status !== 'ready') {
 					toast.error('Please wait for the model to finish its response!');
 				} else {
 					submitForm();
@@ -208,7 +231,7 @@
 	</div>
 
 	<div class="absolute right-0 bottom-0 flex w-fit flex-row justify-end p-2">
-		{#if loading}
+		{#if chat.status === 'submitted'}
 			{@render stopButton()}
 		{:else}
 			{@render sendButton()}
@@ -223,7 +246,7 @@
 			event.preventDefault();
 			fileInputRef?.click();
 		}}
-		disabled={loading}
+		disabled={chat.status !== 'ready'}
 		variant="ghost"
 	>
 		<PaperclipIcon size={14} />

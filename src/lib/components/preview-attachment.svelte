@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Attachment } from 'ai';
+	import type { Attachment } from '$lib/types';
 	import LoaderIcon from './icons/loader.svelte';
 
 	let {
@@ -15,7 +15,7 @@
 
 <div class="flex flex-col gap-2">
 	<div
-		class="relative flex aspect-video h-16 w-20 flex-col items-center justify-center rounded-md bg-muted"
+		class="w-20 h-16 aspect-video bg-muted rounded-md relative flex flex-col items-center justify-center"
 	>
 		{#if contentType && contentType.startsWith('image')}
 			<img
