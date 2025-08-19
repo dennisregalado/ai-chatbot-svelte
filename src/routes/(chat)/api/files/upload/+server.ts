@@ -1,6 +1,7 @@
 import { put } from '@vercel/blob';
 import { z } from 'zod';
 import { error, json } from '@sveltejs/kit';
+import { BLOB_READ_WRITE_TOKEN } from '$env/static/private';
 
 // Use Blob instead of File since File is not available in Node.js environment
 const FileSchema = z.object({
@@ -24,34 +25,31 @@ export async function POST({ request, locals: { session } }) {
 		error(400, 'Request body is empty');
 	}
 
+	const formData = await request.formData();
+	const file = formData.get('file') as Blob;
+
+	if (!file) {
+		error(400, 'No file uploaded');
+	}
+
+	const validatedFile = FileSchema.safeParse({ file });
+
+	if (!validatedFile.success) {
+		error(400, 'Invalid file');
+	}
+
+	// Get filename from formData since Blob doesn't have name property
+	const filename = (formData.get('file') as File).name;
+	const fileBuffer = await file.arrayBuffer();
+
 	try {
-		const formData = await request.formData();
-		const file = formData.get('file') as Blob;
+		const data = await put(`${filename}`, fileBuffer, {
+			access: 'public',
+			token: BLOB_READ_WRITE_TOKEN
+		});
 
-		if (!file) {
-			return error(400, 'No file uploaded');
-		}
-
-		const validatedFile = FileSchema.safeParse({ file });
-
-		if (!validatedFile.success) {
-			return error(400, 'Invalid file');
-		}
-
-		// Get filename from formData since Blob doesn't have name property
-		const filename = (formData.get('file') as File).name;
-		const fileBuffer = await file.arrayBuffer();
-
-		try {
-			const data = await put(`${filename}`, fileBuffer, {
-				access: 'public'
-			});
-
-			return json(data);
-		} catch {
-			return error(500, 'Upload failed');
-		}
+		return json(data);
 	} catch {
-		return error(500, 'Failed to process request');
+		return error(500, 'Upload failed');
 	}
 }

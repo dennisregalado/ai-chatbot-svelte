@@ -31,6 +31,7 @@
 	let textareaRef = $state<HTMLTextAreaElement | null>(null);
 	let fileInputRef = $state<HTMLInputElement | null>(null);
 	let uploadQueue = $state<string[]>([]);
+	const MIN_TEXTAREA_HEIGHT_PX = 98;
 
 	onMount(() => {
 		if (textareaRef) {
@@ -41,14 +42,15 @@
 	const adjustHeight = () => {
 		if (textareaRef) {
 			textareaRef.style.height = 'auto';
-			textareaRef.style.height = `${textareaRef.scrollHeight + 2}px`;
+			const newHeight = Math.max(textareaRef.scrollHeight + 2, MIN_TEXTAREA_HEIGHT_PX);
+			textareaRef.style.height = `${newHeight}px`;
 		}
 	};
 
 	const resetHeight = () => {
 		if (textareaRef) {
 			textareaRef.style.height = 'auto';
-			textareaRef.style.height = '98px';
+			textareaRef.style.height = `${MIN_TEXTAREA_HEIGHT_PX}px`;
 		}
 	};
 
@@ -207,6 +209,7 @@
 		bind:ref={textareaRef}
 		placeholder="Send a message..."
 		bind:value={() => input, setInput}
+		style={`height: ${MIN_TEXTAREA_HEIGHT_PX}px`}
 		class={cn(
 			'max-h-[calc(75dvh)] min-h-[24px] resize-none overflow-hidden rounded-2xl bg-muted pb-10 !text-base dark:border-zinc-700',
 			c
