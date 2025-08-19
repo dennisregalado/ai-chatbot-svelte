@@ -2,7 +2,8 @@
 	import Markdown from 'svelte-exmarkdown';
 	import { gfmPlugin } from 'svelte-exmarkdown/gfm';
 	import { cn } from '$lib/utils';
-	import CodeBlock from '../code-block.svelte';
+	import CodeBlock from '$components/code-block.svelte';
+	
 	let { md }: { md: string } = $props();
 </script>
 
@@ -25,7 +26,6 @@
 			{@render children?.()}
 		</li>
 	{/snippet}
-
 	{#snippet strong(props)}
 		{@const { children, ...rest } = props}
 		<span {...rest} class={cn('font-semibold', rest.class)}>
@@ -43,7 +43,6 @@
 			{@render children?.()}
 		</a>
 	{/snippet}
-
 	{#snippet h1(props)}
 		{@const { children, ...rest } = props}
 		<h1 {...rest} class={cn('mt-6 mb-2 text-3xl font-semibold', rest.class)}>
