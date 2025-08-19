@@ -10,7 +10,12 @@
 	import { fly } from 'svelte/transition';
 	import type { UIMessage } from '@ai-sdk/svelte';
 
-	let { message, readonly, loading }: { message: UIMessage; readonly: boolean; loading: boolean } =
+	let {
+		message,
+		readonly,
+		loading,
+		requiresScrollPadding
+	}: { message: UIMessage; readonly: boolean; loading: boolean; requiresScrollPadding: boolean } =
 		$props();
 
 	let mode = $state<'view' | 'edit'>('view');
@@ -42,7 +47,11 @@
 			</div>
 		{/if}
 
-		<div class="flex w-full flex-col gap-4">
+		<div
+			class={cn('flex w-full flex-col gap-4', {
+				'min-h-96': message.role === 'assistant' && requiresScrollPadding
+			})}
+		>
 			{#if attachmentsFromMessage.length > 0}
 				<div class="flex flex-row justify-end gap-2">
 					{#each attachmentsFromMessage as attachment (attachment.url)}
@@ -64,7 +73,8 @@
 					{#key key}
 						<MessageReasoning {loading} reasoning={part.text} />
 					{/key}
-				{:else if type === 'text'}
+				{/if}
+				{#if type === 'text'}
 					{#if mode === 'view'}
 						<div class="flex flex-row items-start gap-2">
 							{#if message.role === 'user' && !readonly}
@@ -99,55 +109,20 @@
 							<div class="size-8"></div>
 
 							<!-- TODO -->
-							<!-- <MessageEditor key={message.id} {message} {setMode} {setMessages} {reload} /> -->
+							{#key message.id}
+								<!-- <MessageEditor key={message.id} {message} {setMode} {setMessages} {reload} /> -->
+							{/key}
 						</div>
 					{/if}
-
-					<!-- TODO -->
-					<!-- {:else if type === 'tool-invocation'}
-					{@const { toolInvocation } = part}
-					{@const { toolName, state } = toolInvocation}
-
-					{#if state === 'call'}
-						{@const { args } = toolInvocation}
-						<div
-							class={cn({
-								skeleton: ['getWeather'].includes(toolName)
-							})}
-						>
-							{#if toolName === 'getWeather'}
-								<Weather />
-							{:else if toolName === 'createDocument'}
-								<DocumentPreview {readonly} {args} />
-							{:else if toolName === 'updateDocument'}
-								<DocumentToolCall type="update" {args} {readonly} />
-							{:else if toolName === 'requestSuggestions'}
-								<DocumentToolCall type="request-suggestions" {args} {readonly} />
-							{/if}
-						</div>
-					{:else if state === 'result'}
-					{@const { result } = toolInvocation}
-						<div>
-							{#if toolName === 'getWeather'}
-								<Weather weatherAtLocation={result} />
-							{:else if toolName === 'createDocument'}
-								<DocumentPreview {readonly} {result} />
-							{:else if toolName === 'updateDocument'}
-								<DocumentToolResult type="update" {result} {readonly} />
-							{:else if toolName === 'requestSuggestions'}
-								<DocumentToolResult type="request-suggestions" {result} {readonly} />
-							{:else}
-								<pre>{JSON.stringify(result, null, 2)}</pre>
-							{/if}
-						</div>
-					{/if} -->
 				{/if}
 			{/each}
 
-			<!-- TODO -->
-			<!-- {#if !readonly}
-				<MessageActions key={`action-${message.id}`} {chatId} {message} {vote} {isLoading} />
-			{/if} -->
+			{#if !readonly}
+				<!-- TODO -->
+				{#key `action-${message.id}`}
+					<!-- <MessageActions key={`action-${message.id}`} {chatId} {message} {vote} {isLoading} /> -->
+				{/key}
+			{/if}
 		</div>
 	</div>
 </div>
