@@ -4,12 +4,12 @@
 
 <script lang="ts">
 	import { cn } from '$lib/utils';
-	import { SparklesIcon, PencilEditIcon } from './icons.svelte';
-	import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-	import { Button } from './ui/button';
-	import PreviewAttachment from './preview-attachment.svelte';
-	import Markdown from './markdown.svelte';
-	import MessageReasoning from './message-reasoning.svelte';
+	import { SparklesIcon, PencilEditIcon } from '$components/icons.svelte';
+	import { Tooltip, TooltipContent, TooltipTrigger } from '$components/ui/tooltip';
+	import { Button } from '$components/ui/button';
+	import PreviewAttachment from '$components/preview-attachment.svelte';
+	import Markdown from '$components/markdown.svelte';
+	import MessageReasoning from '$components/message-reasoning.svelte';
 	import { fly } from 'svelte/transition';
 	import type { UIMessage } from '@ai-sdk/svelte';
 	import { sanitizeText } from '$lib/utils';
