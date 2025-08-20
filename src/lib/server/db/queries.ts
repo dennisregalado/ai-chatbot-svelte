@@ -14,7 +14,7 @@ import {
 	type Chat,
 	stream
 } from './schema';
-import type { ArtifactKind } from '$components/artifact';
+import type { ArtifactKind } from '$components/artifact.svelte';
 import type { VisibilityType } from '$components/visibility-selector.svelte';
 import { ChatSDKError } from '$lib/errors';
 import { POSTGRES_URL } from '$env/static/private';

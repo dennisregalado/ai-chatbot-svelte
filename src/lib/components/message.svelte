@@ -1,14 +1,19 @@
+<script lang="ts" module>
+	export { thinkingMessage };
+</script>
+
 <script lang="ts">
 	import { cn } from '$lib/utils';
-	import SparklesIcon from '../icons/sparkles.svelte';
-	import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
-	import { Button } from '../ui/button';
-	import PencilEditIcon from '../icons/pencil-edit.svelte';
-	import PreviewAttachment from '../preview-attachment.svelte';
-	import { Markdown } from '../markdown';
-	import MessageReasoning from '../message-reasoning.svelte';
+	import SparklesIcon from './icons/sparkles.svelte';
+	import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+	import { Button } from './ui/button';
+	import PencilEditIcon from './icons/pencil-edit.svelte';
+	import PreviewAttachment from './preview-attachment.svelte';
+	import Markdown from './markdown.svelte';
+	import MessageReasoning from './message-reasoning.svelte';
 	import { fly } from 'svelte/transition';
 	import type { UIMessage } from '@ai-sdk/svelte';
+	import { sanitizeText } from '$lib/utils';
 
 	let {
 		message,
@@ -101,7 +106,7 @@
 									'rounded-xl bg-primary px-3 py-2 text-primary-foreground': message.role === 'user'
 								})}
 							>
-								<Markdown md={part.text} />
+								<Markdown md={sanitizeText(part.text)} />
 							</div>
 						</div>
 					{:else if mode === 'edit'}
@@ -126,3 +131,25 @@
 		</div>
 	</div>
 </div>
+
+{#snippet thinkingMessage()}
+	{@const role = 'assistant'}
+	<div data-role={role} in:fly={{ opacity: 0, y: 5, delay: 1000 }}>
+		<div
+			class={cn(
+				'flex w-full gap-4 rounded-xl group-data-[role=user]/message:ml-auto group-data-[role=user]/message:w-fit group-data-[role=user]/message:max-w-2xl group-data-[role=user]/message:px-3 group-data-[role=user]/message:py-2',
+				{
+					'group-data-[role=user]/message:bg-muted': true
+				}
+			)}
+		>
+			<div class="flex size-8 shrink-0 items-center justify-center rounded-full ring-1 ring-border">
+				<SparklesIcon size={14} />
+			</div>
+
+			<div class="flex w-full flex-col gap-2">
+				<div class="flex flex-col gap-4 text-muted-foreground">Hmm...</div>
+			</div>
+		</div>
+	</div>
+{/snippet}

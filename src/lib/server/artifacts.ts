@@ -2,7 +2,7 @@ import { codeDocumentHandler } from '$artifacts/code/server';
 import { imageDocumentHandler } from '$artifacts/image/server';
 import { sheetDocumentHandler } from '$artifacts/sheet/server';
 import { textDocumentHandler } from '$artifacts/text/server';
-import type { ArtifactKind } from '$components/artifact';
+import type { ArtifactKind } from '$components/artifact.svelte';
 import type { Document } from '$server/db/schema';
 import { saveDocument } from '$server/db/queries';
 import type { Session } from 'better-auth';

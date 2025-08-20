@@ -26,17 +26,19 @@
 	<SidebarHeader>
 		<SidebarMenu>
 			<div class="flex flex-row items-center justify-between">
-				<a
-					href="/"
+				<button
 					onclick={() => {
 						sidebar.setOpenMobile(false);
+						goto('/', {
+							invalidateAll: true
+						});
 					}}
 					class="flex flex-row items-center gap-3"
 				>
 					<span class="cursor-pointer rounded-md px-2 text-lg font-semibold hover:bg-muted"
 						>Chatbot</span
 					>
-				</a>
+				</button>
 				<Tooltip>
 					<TooltipTrigger>
 						{#snippet child({ props })}

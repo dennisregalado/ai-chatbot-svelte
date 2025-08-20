@@ -1,4 +1,4 @@
-import type { ArtifactKind } from '$components/artifact';
+import type { ArtifactKind } from '$components/artifact.svelte';
 import {
 	deleteDocumentsByIdAfterTimestamp,
 	getDocumentsById,

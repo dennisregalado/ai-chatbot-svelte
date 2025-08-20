@@ -1,8 +1,6 @@
 <script lang="ts">
-	import ThinkingMessage from './messages/thinking-message.svelte';
-	import Overview from './messages/overview.svelte';
 	import { onMount } from 'svelte';
-	import PreviewMessage from './messages/preview-message.svelte';
+	import Message, { thinkingMessage } from './message.svelte';
 	import type { UIMessage } from '@ai-sdk/svelte';
 	import type { Chat } from '@ai-sdk/svelte';
 	import type { Vote } from '$server/db/schema';
@@ -44,10 +42,10 @@
 		<Greeting />
 	{/if}
 	{#each messages as message, index (message.id)}
-		<PreviewMessage {message} readonly={readonly} loading={status === 'submitted'} />
+		<Message {message} {readonly} loading={status === 'submitted'} />
 	{/each}
 	{#if status === 'submitted' && messages.length > 0 && messages[messages.length - 1].role === 'user'}
-		<ThinkingMessage />
+		{@render thinkingMessage()}
 	{/if}
 	<div bind:this={messagesEndRef} class="min-h-[24px] min-w-[24px] shrink-0"></div>
 </div>

@@ -3,7 +3,7 @@
 	import { gfmPlugin } from 'svelte-exmarkdown/gfm';
 	import { cn } from '$lib/utils';
 	import CodeBlock from '$components/code-block.svelte';
-	
+
 	let { md }: { md: string } = $props();
 </script>
 

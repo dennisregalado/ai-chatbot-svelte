@@ -4,7 +4,7 @@ import type { createDocument } from '$ai/tools/create-document';
 import type { updateDocument } from '$ai/tools/update-document';
 import type { requestSuggestions } from '$ai/tools/request-suggestions';
 import type { InferUITool, UIMessage } from 'ai';
-import type { ArtifactKind } from '$components/artifact';
+import type { ArtifactKind } from '$components/artifact.svelte';
 import type { Suggestion } from '$server/db/schema';
 
 export type DataPart = { type: 'append-message'; message: string };

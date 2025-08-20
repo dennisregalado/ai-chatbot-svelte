@@ -1,9 +1,7 @@
 <script lang="ts">
-	// refactor
 	import { getChatHistory, getVotesByChatId, getChatVisibility } from '$remote/chat.remote';
 	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
-
 	import { DefaultChatTransport } from 'ai';
 	import { Chat } from '@ai-sdk/svelte';
 	import ChatHeader from './chat-header.svelte';
@@ -38,7 +36,6 @@
 	// const { setDataStream } = useDataStream();
 
 	let visibilityType = getChatVisibility(id);
- 
 
 	let input = $state('');
 
