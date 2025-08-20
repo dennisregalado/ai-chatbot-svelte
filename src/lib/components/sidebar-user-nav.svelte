@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { User } from 'better-auth';
 	import { cn } from '$lib/utils';
-	import ChevronUp from '$components/icons/chevron-up.svelte';
+	import ChevronUp from '@lucide/svelte/icons/chevron-up';
 	import {
 		DropdownMenu,
 		DropdownMenuContent,
@@ -13,7 +13,8 @@
 	import { getTheme } from '@sejohnson/svelte-themes';
 	import { signOut, getUser } from '$remote/auth.remote';
 	import { Skeleton } from '$components/ui/skeleton';
-	import LoaderIcon from './icons/loader.svelte';
+	import { LoaderIcon } from './icons.svelte';
+
 	const theme = getTheme();
 </script>
 
@@ -33,7 +34,7 @@
 								</div>
 
 								<div class="animate-spin text-zinc-500">
-									<LoaderIcon />
+									{@render LoaderIcon()}
 								</div>
 							</SidebarMenuButton>
 						{/snippet}

@@ -10,7 +10,7 @@
 	} from '$lib/components/ui/sidebar';
 	import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 	import { Button } from './ui/button';
-	import PlusIcon from './icons/plus.svelte';
+	import { PlusIcon } from './icons.svelte';
 	import SidebarHistory from './sidebar-history.svelte';
 	import SidebarUserNav from './sidebar-user-nav.svelte';
 
@@ -43,7 +43,7 @@
 					<TooltipTrigger>
 						{#snippet child({ props })}
 							<Button {...props} variant="ghost" type="button" class="h-fit p-2" onclick={newChat}>
-								<PlusIcon />
+								{@render PlusIcon()}
 							</Button>
 						{/snippet}
 					</TooltipTrigger>

@@ -2,5 +2,5 @@
 import { registerOTel } from '@vercel/otel';
 
 registerOTel({
-    serviceName: 'ai-chatbot-svelte'
+	serviceName: 'ai-chatbot-svelte'
 });

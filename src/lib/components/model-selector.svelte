@@ -7,8 +7,7 @@
 		DropdownMenuItem,
 		DropdownMenuTrigger
 	} from './ui/dropdown-menu';
-	import CheckCircleFillIcon from './icons/check-circle-fill.svelte';
-	import ChevronDownIcon from './icons/chevron-down.svelte';
+	import { CheckCircleFillIcon, ChevronDownIcon } from './icons.svelte';
 	import { cn } from '$lib/utils';
 	import { chatModels } from '$ai/models';
 	import { getChatModel, saveChatModel } from '$remote/chat.remote';
@@ -51,7 +50,7 @@
 		{#snippet child({ props })}
 			<Button {...props} variant="outline" class="md:h-[34px] md:px-2">
 				{selectedChatModel?.name}
-				<ChevronDownIcon />
+				{@render ChevronDownIcon()}
 			</Button>
 		{/snippet}
 	</DropdownMenuTrigger>
@@ -75,7 +74,7 @@
 				<div
 					class="text-foreground opacity-0 group-data-[active=true]/item:opacity-100 dark:text-foreground"
 				>
-					<CheckCircleFillIcon />
+					{@render CheckCircleFillIcon()}
 				</div>
 			</DropdownMenuItem>
 		{/each}

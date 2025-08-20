@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { Button } from './ui/button';
-	import LoaderIcon from './icons/loader.svelte';
+	import { LoaderIcon } from './icons.svelte';
 
 	let { pending, success, children }: { pending: boolean; success: boolean; children: Snippet } =
 		$props();
@@ -12,7 +12,7 @@
 
 	{#if pending || success}
 		<span class="absolute right-4 animate-spin">
-			<LoaderIcon />
+			{@render LoaderIcon()}
 		</span>
 	{/if}
 

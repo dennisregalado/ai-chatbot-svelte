@@ -7,7 +7,6 @@
 		in:fly={{ y: 10, delay: 500, opacity: 0 }}
 		out:fly={{ y: 10, opacity: 0 }}
 		class="text-2xl font-semibold"
-		
 	>
 		Hello there!
 	</div>

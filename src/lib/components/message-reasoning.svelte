@@ -1,6 +1,5 @@
 <script lang="ts">
-	import LoaderIcon from './icons/loader.svelte';
-	import ChevronDownIcon from './icons/chevron-down.svelte';
+	import { LoaderIcon, ChevronDownIcon } from './icons.svelte';
 	import Markdown from './markdown.svelte';
 	import { slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
@@ -13,7 +12,7 @@
 		<div class="flex flex-row items-center gap-2">
 			<div class="font-medium">Reasoning</div>
 			<div class="animate-spin">
-				<LoaderIcon />
+				{@render LoaderIcon()}
 			</div>
 		</div>
 	{:else}
@@ -26,7 +25,7 @@
 					expanded = !expanded;
 				}}
 			>
-				<ChevronDownIcon />
+				{@render ChevronDownIcon()}
 			</button>
 		</div>
 	{/if}

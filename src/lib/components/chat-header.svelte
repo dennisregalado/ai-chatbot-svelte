@@ -4,10 +4,9 @@
 	import { innerWidth } from 'svelte/reactivity/window';
 	import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 	import { Button } from './ui/button';
-	import PlusIcon from './icons/plus.svelte';
+	import { PlusIcon, VercelIcon } from './icons.svelte';
 	import { goto } from '$app/navigation';
 	import VisibilitySelector from './visibility-selector.svelte';
-	import VercelIcon from './icons/vercel.svelte';
 	import ModelSelector from './model-selector.svelte';
 
 	let {
@@ -31,7 +30,7 @@
 					<Button
 						{...props}
 						variant="outline"
-						class="order-2 md:order-1 md:px-2 px-2 md:h-fit ml-auto md:ml-0"
+						class="order-2 ml-auto px-2 md:order-1 md:ml-0 md:h-fit md:px-2"
 						onclick={() => {
 							sidebar.setOpenMobile(false);
 							goto('/', {
@@ -39,7 +38,7 @@
 							});
 						}}
 					>
-						<PlusIcon />
+						{@render PlusIcon()}
 						<span class="md:sr-only">New Chat</span>
 					</Button>
 				{/snippet}
@@ -61,7 +60,7 @@
 		href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fai-chatbot-svelte&project-name=my-awesome-chatbot&repository-name=my-awesome-chatbot&demo-title=AI%20Chatbot&demo-description=An%20Open-Source%20AI%20Chatbot%20Template%20Built%20With%20Next.js%20and%20the%20AI%20SDK%20by%20Vercel&demo-url=https%3A%2F%2Fsvelte-chat.vercel.ai&products=%5B%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22ai%22%2C%22productSlug%22%3A%22grok%22%2C%22integrationSlug%22%3A%22xai%22%7D%2C%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22ai%22%2C%22productSlug%22%3A%22api-key%22%2C%22integrationSlug%22%3A%22groq%22%7D%2C%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22productSlug%22%3A%22neon%22%2C%22integrationSlug%22%3A%22neon%22%7D%2C%7B%22type%22%3A%22blob%22%7D%5D"
 		target="_blank"
 	>
-		<VercelIcon size={16} />
+		{@render VercelIcon(16)}
 		Deploy with Vercel
 	</Button>
 </header>

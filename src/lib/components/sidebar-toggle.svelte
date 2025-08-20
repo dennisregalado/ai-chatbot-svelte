@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SidebarLeftIcon from './icons/sidebar-left.svelte';
+	import { SidebarLeftIcon } from './icons.svelte';
 	import { Button } from './ui/button';
 	import { useSidebar } from './ui/sidebar';
 	import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
@@ -18,7 +18,7 @@
 				variant="outline"
 				class="md:h-fit md:px-2"
 			>
-				<SidebarLeftIcon />
+				{@render SidebarLeftIcon(16)}
 			</Button>
 		{/snippet}
 	</TooltipTrigger>

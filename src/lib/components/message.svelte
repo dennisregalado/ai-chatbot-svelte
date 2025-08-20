@@ -4,10 +4,9 @@
 
 <script lang="ts">
 	import { cn } from '$lib/utils';
-	import SparklesIcon from './icons/sparkles.svelte';
+	import { SparklesIcon, PencilEditIcon } from './icons.svelte';
 	import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 	import { Button } from './ui/button';
-	import PencilEditIcon from './icons/pencil-edit.svelte';
 	import PreviewAttachment from './preview-attachment.svelte';
 	import Markdown from './markdown.svelte';
 	import MessageReasoning from './message-reasoning.svelte';
@@ -47,7 +46,7 @@
 				class="flex size-8 shrink-0 items-center justify-center rounded-full bg-background ring-1 ring-border"
 			>
 				<div class="translate-y-px">
-					<SparklesIcon size={14} />
+					{@render SparklesIcon(14)}
 				</div>
 			</div>
 		{/if}
@@ -94,7 +93,7 @@
 													mode = 'edit';
 												}}
 											>
-												<PencilEditIcon />
+												{@render PencilEditIcon()}
 											</Button>
 										{/snippet}
 									</TooltipTrigger>
@@ -144,7 +143,7 @@
 			)}
 		>
 			<div class="flex size-8 shrink-0 items-center justify-center rounded-full ring-1 ring-border">
-				<SparklesIcon size={14} />
+				{@render SparklesIcon(14)}
 			</div>
 
 			<div class="flex w-full flex-col gap-2">

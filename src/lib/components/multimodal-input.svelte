@@ -9,9 +9,7 @@
 	import type { Attachment } from '$lib/types';
 	import { toast } from 'svelte-sonner';
 	import { Button } from './ui/button';
-	import PaperclipIcon from './icons/paperclip.svelte';
-	import StopIcon from './icons/stop.svelte';
-	import ArrowUpIcon from './icons/arrow-up.svelte';
+	import { ArrowUpIcon, StopIcon, PaperclipIcon } from './icons.svelte';
 	import SuggestedActions from './suggested-actions.svelte';
 	import { replaceState } from '$app/navigation';
 	import type { ClassValue } from 'svelte/elements';
@@ -162,7 +160,7 @@
 	//    }
 	//  }, [status, scrollToBottom]);
 
-	let animate = $state(false); 
+	let animate = $state(false);
 
 	onMount(() => {
 		if (chat.messages.length === 0) {
@@ -252,7 +250,7 @@
 		disabled={chat.status !== 'ready'}
 		variant="ghost"
 	>
-		<PaperclipIcon size={14} />
+		{@render PaperclipIcon(14)}
 	</Button>
 {/snippet}
 
@@ -265,7 +263,7 @@
 			chat.messages = chat.messages;
 		}}
 	>
-		<StopIcon size={14} />
+		{@render StopIcon(14)}
 	</Button>
 {/snippet}
 
@@ -278,6 +276,6 @@
 		}}
 		disabled={input.length === 0 || uploadQueue.length > 0}
 	>
-		<ArrowUpIcon size={14} />
+		{@render ArrowUpIcon(14)}
 	</Button>
 {/snippet}

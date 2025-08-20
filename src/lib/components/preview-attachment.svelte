@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Attachment } from '$lib/types';
-	import LoaderIcon from './icons/loader.svelte';
+	import { LoaderIcon } from './icons.svelte';
 
 	let {
 		attachment,
@@ -15,7 +15,7 @@
 
 <div class="flex flex-col gap-2">
 	<div
-		class="w-20 h-16 aspect-video bg-muted rounded-md relative flex flex-col items-center justify-center"
+		class="relative flex aspect-video h-16 w-20 flex-col items-center justify-center rounded-md bg-muted"
 	>
 		{#if contentType && contentType.startsWith('image')}
 			<img
@@ -29,7 +29,7 @@
 
 		{#if uploading}
 			<div class="absolute animate-spin text-zinc-500">
-				<LoaderIcon />
+				{@render LoaderIcon()}
 			</div>
 		{/if}
 	</div>

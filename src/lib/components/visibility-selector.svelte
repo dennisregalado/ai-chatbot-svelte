@@ -1,6 +1,6 @@
 <script module lang="ts">
-	import LockIcon from './icons/lock.svelte';
-	import GlobeIcon from './icons/globe.svelte';
+	import { LockIcon, GlobeIcon } from './icons.svelte';
+	import type { Snippet } from 'svelte';
 
 	export type VisibilityType = 'private' | 'public';
 
@@ -8,7 +8,7 @@
 		id: VisibilityType;
 		label: string;
 		description: string;
-		icon: any;
+		icon: Snippet;
 	}> = [
 		{
 			id: 'private',
@@ -34,8 +34,7 @@
 		DropdownMenuItem,
 		DropdownMenuTrigger
 	} from './ui/dropdown-menu';
-	import ChevronDownIcon from './icons/chevron-down.svelte';
-	import CheckCircleFillIcon from './icons/check-circle-fill.svelte';
+	import { ChevronDownIcon, CheckCircleFillIcon } from './icons.svelte';
 	import { updateChatVisibility, getChatHistory, getChatVisibility } from '$remote/chat.remote';
 	import type { ClassValue } from 'svelte/elements';
 	import { toast } from 'svelte-sonner';
@@ -63,12 +62,12 @@
 				)}
 			>
 				{#if selectedVisibility?.id === 'public'}
-					<GlobeIcon />
+					{@render GlobeIcon()}
 				{:else}
-					<LockIcon />
+					{@render LockIcon()}
 				{/if}
 				{selectedVisibility?.label}
-				<ChevronDownIcon />
+				{@render ChevronDownIcon()}
 			</Button>
 		{/snippet}
 	</DropdownMenuTrigger>
@@ -104,7 +103,7 @@
 				<div
 					class="text-foreground opacity-0 group-data-[active=true]/item:opacity-100 dark:text-foreground"
 				>
-					<CheckCircleFillIcon />
+					{@render CheckCircleFillIcon()}
 				</div>
 			</DropdownMenuItem>
 		{/each}

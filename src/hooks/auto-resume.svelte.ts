@@ -19,7 +19,7 @@ export class AutoResume {
 		this.#initialMessages = initialMessages;
 		this.#chat = chat;
 
-	//	const { dataStream } = useDataStream();
+		//	const { dataStream } = useDataStream();
 
 		// Effect to resume stream if auto-resume is enabled and last message is from user
 		// We run this once on initialization

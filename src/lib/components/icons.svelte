@@ -1,5 +1,65 @@
 <script lang="ts" module>
-	export { BotIcon, UserIcon, AttachmentIcon, VercelIcon, GitIcon, BoxIcon, HomeIcon, GPSIcon, InvoiceIcon, LogoOpenAI, LogoGoogle, LogoAnthropic, RouteIcon, FileIcon, LoaderIcon, UploadIcon, MenuIcon, PencilEditIcon, CheckedSquare, UncheckedSquare, MoreIcon, TrashIcon, InfoIcon, ArrowUpIcon, StopIcon, PaperclipIcon, MoreHorizontalIcon, MessageIcon, CrossIcon, CrossSmallIcon, UndoIcon, RedoIcon, DeltaIcon, PenIcon, SummarizeIcon, SidebarLeftIcon, PlusIcon, CopyIcon, ThumbUpIcon, ThumbDownIcon, ChevronDownIcon, SparklesIcon, CheckCircleFillIcon, GlobeIcon, LockIcon, EyeIcon, ShareIcon, CodeIcon, PlayIcon, PythonIcon, TerminalWindowIcon, TerminalIcon, ClockRewind, LogsIcon, ImageIcon, FullscreenIcon, DownloadIcon, LineChartIcon, WarningIcon };
+	export {
+		BotIcon,
+		UserIcon,
+		AttachmentIcon,
+		VercelIcon,
+		GitIcon,
+		BoxIcon,
+		HomeIcon,
+		GPSIcon,
+		InvoiceIcon,
+		LogoOpenAI,
+		LogoGoogle,
+		LogoAnthropic,
+		RouteIcon,
+		FileIcon,
+		LoaderIcon,
+		UploadIcon,
+		MenuIcon,
+		PencilEditIcon,
+		CheckedSquare,
+		UncheckedSquare,
+		MoreIcon,
+		TrashIcon,
+		InfoIcon,
+		ArrowUpIcon,
+		StopIcon,
+		PaperclipIcon,
+		MoreHorizontalIcon,
+		MessageIcon,
+		CrossIcon,
+		CrossSmallIcon,
+		UndoIcon,
+		RedoIcon,
+		DeltaIcon,
+		PenIcon,
+		SummarizeIcon,
+		SidebarLeftIcon,
+		PlusIcon,
+		CopyIcon,
+		ThumbUpIcon,
+		ThumbDownIcon,
+		ChevronDownIcon,
+		SparklesIcon,
+		CheckCircleFillIcon,
+		GlobeIcon,
+		LockIcon,
+		EyeIcon,
+		ShareIcon,
+		CodeIcon,
+		PlayIcon,
+		PythonIcon,
+		TerminalWindowIcon,
+		TerminalIcon,
+		ClockRewind,
+		LogsIcon,
+		ImageIcon,
+		FullscreenIcon,
+		DownloadIcon,
+		LineChartIcon,
+		WarningIcon
+	};
 </script>
 
 {#snippet BotIcon()}
@@ -61,12 +121,7 @@
 		width={size}
 		style="color: currentColor;"
 	>
-		<path
-			fill-rule="evenodd"
-			clip-rule="evenodd"
-			d="M8 1L16 15H0L8 1Z"
-			fill="currentColor"
-		/>
+		<path fill-rule="evenodd" clip-rule="evenodd" d="M8 1L16 15H0L8 1Z" fill="currentColor" />
 	</svg>
 {/snippet}
 
@@ -268,12 +323,7 @@
 	>
 		<g clip-path="url(#clip0_2393_1490)">
 			<path d="M8 0V4" stroke="currentColor" stroke-width="1.5" />
-			<path
-				opacity="0.5"
-				d="M8 16V12"
-				stroke="currentColor"
-				stroke-width="1.5"
-			/>
+			<path opacity="0.5" d="M8 16V12" stroke="currentColor" stroke-width="1.5" />
 			<path
 				opacity="0.9"
 				d="M3.29773 1.52783L5.64887 4.7639"
@@ -407,15 +457,7 @@
 		width={size}
 		style="color: currentColor;"
 	>
-		<rect
-			x="1"
-			y="1"
-			width="14"
-			height="14"
-			stroke="currentColor"
-			stroke-width="1.5"
-			fill="none"
-		/>
+		<rect x="1" y="1" width="14" height="14" stroke="currentColor" stroke-width="1.5" fill="none" />
 	</svg>
 {/snippet}
 
@@ -488,18 +530,8 @@
 {/snippet}
 
 {#snippet StopIcon(size = 16)}
-	<svg
-		height={size}
-		viewBox="0 0 16 16"
-		width={size}
-		style="color: currentColor;"
-	>
-		<path
-			fill-rule="evenodd"
-			clip-rule="evenodd"
-			d="M3 3H13V13H3V3Z"
-			fill="currentColor"
-		/>
+	<svg height={size} viewBox="0 0 16 16" width={size} style="color: currentColor;">
+		<path fill-rule="evenodd" clip-rule="evenodd" d="M3 3H13V13H3V3Z" fill="currentColor" />
 	</svg>
 {/snippet}
 

@@ -5,13 +5,11 @@ import { error, redirect } from '@sveltejs/kit';
 export async function load({ locals, params }) {
 	const { session } = locals;
 
-
 	const chat = await getChatById(params.id);
 
 	if (!chat) {
 		error(404, 'Chat not found');
 	}
-
 
 	if (!session) {
 		redirect(302, '/guest');

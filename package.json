@@ -23,7 +23,7 @@
 	},
 	"devDependencies": {
 		"@ai-sdk/groq": "^2.0.11",
-		"@ai-sdk/svelte": "^3.0.17",
+		"@ai-sdk/svelte": "^3.0.18",
 		"@ai-sdk/xai": "^2.0.10",
 		"@eslint/compat": "^1.2.5",
 		"@eslint/js": "^9.18.0",
@@ -37,7 +37,7 @@
 		"@tailwindcss/vite": "^4.0.0",
 		"@types/ms": "^2.1.0",
 		"@vercel/blob": "^1.1.1",
-		"ai": "^5.0.17",
+		"ai": "^5.0.18",
 		"autoprefixer": "^10.4.20",
 		"bcrypt-ts": "^7.1.0",
 		"bits-ui": "^2.9.4",

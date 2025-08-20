@@ -11,12 +11,14 @@
 		DropdownMenuSubTrigger,
 		DropdownMenuSubContent
 	} from './ui/dropdown-menu';
-	import TrashIcon from '$components/icons/trash.svelte';
-	import GlobeIcon from '$components/icons/globe.svelte';
-	import CheckCircleFillIcon from '$components/icons/check-circle-fill.svelte';
-	import LockIcon from '$components/icons/lock.svelte';
-	import ShareIcon from '$components/icons/share.svelte';
-	import MoreHorizontalIcon from '$components/icons/more-horizontal.svelte';
+	import {
+		TrashIcon,
+		GlobeIcon,
+		CheckCircleFillIcon,
+		LockIcon,
+		ShareIcon,
+		MoreHorizontalIcon
+	} from '$components/icons.svelte';
 	import { getChatHistory, getChatVisibility, updateChatVisibility } from '$remote/chat.remote';
 	import { toast } from 'svelte-sonner';
 	import { visibilities } from '$components/visibility-selector.svelte';
@@ -50,7 +52,7 @@
 					class="mr-0.5 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 					showOnHover={!active}
 				>
-					<MoreHorizontalIcon />
+					{@render MoreHorizontalIcon()}
 					<span class="sr-only">More</span>
 				</SidebarMenuAction>
 			{/snippet}
@@ -58,7 +60,7 @@
 		<DropdownMenuContent side="bottom" align="end">
 			<DropdownMenuSub>
 				<DropdownMenuSubTrigger class="cursor-pointer">
-					<ShareIcon />
+					{@render ShareIcon()}
 					<span>Share</span>
 				</DropdownMenuSubTrigger>
 				<DropdownMenuSubContent>
@@ -83,14 +85,14 @@
 						>
 							<div class="flex flex-row items-center gap-2">
 								{#if visibility.id === 'public'}
-									<GlobeIcon />
+									{@render GlobeIcon()}
 								{:else}
-									<LockIcon size={12} />
+									{@render LockIcon(12)}
 								{/if}
 								<span>{visibility.label}</span>
 							</div>
 							{#if visibility.id === chat.visibility}
-								<CheckCircleFillIcon />
+								{@render CheckCircleFillIcon()}
 							{/if}
 						</DropdownMenuItem>
 					{/each}
@@ -100,7 +102,7 @@
 				class="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
 				onclick={() => ondelete(chat.id)}
 			>
-				<TrashIcon />
+				{@render TrashIcon()}
 				<span>Delete</span>
 			</DropdownMenuItem>
 		</DropdownMenuContent>

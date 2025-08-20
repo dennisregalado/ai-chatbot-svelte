@@ -32,8 +32,8 @@ devDependencies:
     specifier: ^2.0.11
     version: 2.0.11(zod@4.0.17)
   '@ai-sdk/svelte':
-    specifier: ^3.0.17
-    version: 3.0.17(svelte@5.38.2)(zod@4.0.17)
+    specifier: ^3.0.18
+    version: 3.0.18(svelte@5.38.2)(zod@4.0.17)
   '@ai-sdk/xai':
     specifier: ^2.0.10
     version: 2.0.10(zod@4.0.17)
@@ -74,8 +74,8 @@ devDependencies:
     specifier: ^1.1.1
     version: 1.1.1
   ai:
-    specifier: ^5.0.17
-    version: 5.0.17(zod@4.0.17)
+    specifier: ^5.0.18
+    version: 5.0.18(zod@4.0.17)
   autoprefixer:
     specifier: ^10.4.20
     version: 10.4.21(postcss@8.5.6)
@@ -172,8 +172,8 @@ devDependencies:
 
 packages:
 
-  /@ai-sdk/gateway@1.0.8(zod@4.0.17):
-    resolution: {integrity: sha512-yiHYz0bAHEvhL+fSUBI2dNmyj0LOI8zw5qrYpa4gp1ojPgZq/7T1WXoIWRmVdjQwvT4PzSmRKLtbMPfz+umgfw==}
+  /@ai-sdk/gateway@1.0.9(zod@4.0.17):
+    resolution: {integrity: sha512-kIfwunyUUwyBLg2KQcaRtjRQ1bDuJYPNIs4CNWaWPpMZ4SV5cRL1hLGMuX4bhfCJYDXHMGvJGLtUK6+iAJH2ZQ==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4
@@ -225,8 +225,8 @@ packages:
       json-schema: 0.4.0
     dev: true
 
-  /@ai-sdk/svelte@3.0.17(svelte@5.38.2)(zod@4.0.17):
-    resolution: {integrity: sha512-ywgpCribAzD543IQKBqJe69SLGps1XFa5K6lgICQCehLXZJbDEcfk7GxsQ/mbeIqq4aMeU5W6v8Zkm7nR5RQug==}
+  /@ai-sdk/svelte@3.0.18(svelte@5.38.2)(zod@4.0.17):
+    resolution: {integrity: sha512-ExS91TbEEgIvDpoxaxKYLDAct5Y3RyYbev0NUU/J3rNX9a3VM5f1gv391ZOooVChgKXN+IjYSDku8iS5BT5LrQ==}
     peerDependencies:
       svelte: ^5.31.0
       zod: ^3.25.76 || ^4
@@ -235,7 +235,7 @@ packages:
         optional: true
     dependencies:
       '@ai-sdk/provider-utils': 3.0.4(zod@4.0.17)
-      ai: 5.0.17(zod@4.0.17)
+      ai: 5.0.18(zod@4.0.17)
       svelte: 5.38.2
       zod: 4.0.17
     dev: true
@@ -1775,13 +1775,13 @@ packages:
     engines: {node: '>= 14'}
     dev: false
 
-  /ai@5.0.17(zod@4.0.17):
-    resolution: {integrity: sha512-DLZikqZZJdwSkRhFikw6Mt7pUmPZ7Ue38TjdOcw2U6iZtBbuiyWGIhHyJXlUpLcZrtBE5yqPTozyZri1lRjduw==}
+  /ai@5.0.18(zod@4.0.17):
+    resolution: {integrity: sha512-fx5RqO0e+wB/dd/pbtCvx2j5WT1UYXSeONyMCgej0s6neCEhh9Wv5OmZHk6yxWKqI0y6WyjEqxCp8VCIqNZTDg==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4
     dependencies:
-      '@ai-sdk/gateway': 1.0.8(zod@4.0.17)
+      '@ai-sdk/gateway': 1.0.9(zod@4.0.17)
       '@ai-sdk/provider': 2.0.0
       '@ai-sdk/provider-utils': 3.0.4(zod@4.0.17)
       '@opentelemetry/api': 1.9.0
