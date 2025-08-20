@@ -42,7 +42,7 @@
 		<Greeting />
 	{/if}
 	{#each messages as message, index (message.id)}
-		<Message {message} {readonly} loading={status === 'submitted'} />
+		<Message {chatId} {message} {readonly} loading={status === 'submitted'} />
 	{/each}
 	{#if status === 'submitted' && messages.length > 0 && messages[messages.length - 1].role === 'user'}
 		{@render thinkingMessage()}

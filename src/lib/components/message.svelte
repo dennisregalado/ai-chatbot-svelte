@@ -11,16 +11,23 @@
 	import Markdown from '$components/markdown.svelte';
 	import MessageReasoning from '$components/message-reasoning.svelte';
 	import { fly } from 'svelte/transition';
-	import type { UIMessage } from '@ai-sdk/svelte';
+	import type { ChatMessage } from '$lib/types';
 	import { sanitizeText } from '$lib/utils';
+	import MessageActions from '$components/message-actions.svelte';
 
 	let {
+		chatId,
 		message,
 		readonly,
 		loading,
 		requiresScrollPadding
-	}: { message: UIMessage; readonly: boolean; loading: boolean; requiresScrollPadding: boolean } =
-		$props();
+	}: {
+		chatId: string;
+		message: ChatMessage;
+		readonly: boolean;
+		loading: boolean;
+		requiresScrollPadding: boolean;
+	} = $props();
 
 	let mode = $state<'view' | 'edit'>('view');
 
@@ -122,9 +129,8 @@
 			{/each}
 
 			{#if !readonly}
-				<!-- TODO -->
 				{#key `action-${message.id}`}
-					<!-- <MessageActions key={`action-${message.id}`} {chatId} {message} {vote} {isLoading} /> -->
+					<MessageActions {chatId} {message} {loading} {readonly} />
 				{/key}
 			{/if}
 		</div>
