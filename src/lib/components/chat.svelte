@@ -93,7 +93,7 @@
 		}
 	});
 
-	let votes = getVotesByChatId(id); 
+	 // let votes = getVotesByChatId(id); 
 
 	let attachments = $state<Array<Attachment>>([]);
 	//	const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
@@ -113,7 +113,7 @@
 	<Messages
 		chatId={id}
 		status={chat.status}
-		votes={votes.current}
+		votes={[]}
 		messages={chat.messages}
 		regenerate={chat.regenerate}
 		{readonly}

@@ -46,10 +46,10 @@
 
 <script lang="ts">
 	import { page } from '$app/state';
-	import { SidebarGroup, SidebarGroupContent } from './ui/sidebar';
+	import { SidebarGroup, SidebarGroupContent } from '$components/ui/sidebar';
 	import { getChatHistory, deleteChatById } from '$remote/chat.remote';
-	import ChatItem from './sidebar-history-item.svelte';
-	import { SidebarMenu } from './ui/sidebar';
+	import ChatItem from '$components/sidebar-history-item.svelte';
+	import { SidebarMenu } from '$components/ui/sidebar';
 	import {
 		AlertDialog,
 		AlertDialogContent,
@@ -59,7 +59,7 @@
 		AlertDialogFooter,
 		AlertDialogCancel,
 		AlertDialogAction
-	} from './ui/alert-dialog';
+	} from '$components/ui/alert-dialog';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 
