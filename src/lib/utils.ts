@@ -83,6 +83,8 @@ export function sanitizeText(text: string) {
 }
 
 export function convertToUIMessages(messages: DBMessage[]): ChatMessage[] {
+	if (!messages) return [];
+
 	return messages.map((message) => ({
 		id: message.id,
 		role: message.role as 'user' | 'assistant' | 'system',

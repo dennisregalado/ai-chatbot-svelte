@@ -27,6 +27,8 @@ export async function load({ locals, params }) {
 
 	const messagesFromDb = await getMessagesByChatId(params.id);
 
+	console.log(params.id, messagesFromDb);
+
 	const uiMessages = convertToUIMessages(messagesFromDb);
 
 	return {
