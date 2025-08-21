@@ -33,7 +33,9 @@ import type { ChatModel } from '$ai/models';
 import type { VisibilityType } from '$components/visibility-selector.svelte';
 import { dev } from '$app/environment';
 
-// const maxDuration = 60;
+export const config = {
+	maxDuration: 60
+};
 
 export const POST = async ({ request, locals: { session, user, getStreamContext } }) => {
 	let requestBody: PostRequestBody;

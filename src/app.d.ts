@@ -1,6 +1,6 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 
-import type { Session, User } from 'better-auth';
+import type { Session, User } from '$lib/auth';
 import type { ResumableStreamContext } from 'resumable-stream';
 
 // for information about these interfaces
@@ -8,17 +8,17 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			user?: User & { isAnonymous?: boolean };
+			user?: User;
 			session?: Session;
 			getStreamContext: () => ResumableStreamContext;
 		}
 		interface PageData {
 			selectedModelId: string;
-			user?: User & { isAnonymous?: boolean };
+			user?: User;
 		}
 		// interface PageState {}
 		// interface Platform {}
 	}
 }
 
-export {};
+export { };

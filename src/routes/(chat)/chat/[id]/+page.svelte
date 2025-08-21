@@ -2,14 +2,14 @@
 	import Chat from '$components/chat.svelte';
 
 	let { data } = $props();
-	let { session, chat, uiMessages } = $derived(data);
+	let { readonly, chat, uiMessages } = $derived(data);
 </script>
 
 <Chat
 	id={chat.id}
 	initialMessages={uiMessages}
 	initialVisibilityType={chat.visibility}
-	readonly={session?.userId !== chat.userId}
+	{readonly}
 	autoResume
 />
 <!-- <DataStreamHandler {id} /> -->
