@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import Message, { thinkingMessage } from './message.svelte';
-	import type { UIMessage } from '@ai-sdk/svelte';
+	import PreviewMessage, { thinkingMessage } from './message.svelte';
 	import type { Chat } from '@ai-sdk/svelte';
 	import type { Vote } from '$server/db/schema';
-	import { fly } from 'svelte/transition';
+	import type { ChatMessage } from '$lib/types';
 	import Greeting from './greeting.svelte';
 
 	let containerRef = $state<HTMLDivElement | null>(null);
@@ -15,12 +14,13 @@
 		status,
 		votes,
 		readonly,
-		messages
+		messages,
+		regenerate
 	}: {
 		chatId: string;
 		status: Chat['status'];
 		votes: Array<Vote> | undefined;
-		messages: Chat['messages'];
+		messages: ChatMessage[];
 		regenerate: Chat['regenerate'];
 		readonly: boolean;
 		isArtifactVisible: boolean;
@@ -30,22 +30,28 @@
 	let animate = $state(false);
 
 	onMount(() => {
-		if (messages.length === 0) {
-			// defer to next tick so Svelte sees a state change
-			setTimeout(() => (animate = true), 0);
-		}
+		setTimeout(() => (animate = true), 0);
 	});
 </script>
 
 <div class="relative flex min-w-0 flex-1 flex-col gap-6 overflow-y-scroll pt-4">
-	{#if animate}
+	{#if messages.length === 0}
 		<Greeting />
 	{/if}
 	{#each messages as message, index (message.id)}
-		<Message {chatId} {message} {readonly} loading={status === 'submitted'} />
+		<PreviewMessage
+			{chatId}
+			{message}
+			vote={votes ? votes.find((vote) => vote.messageId === message.id) : undefined}
+			loading={status === 'submitted'}
+			{messages}
+			{regenerate}
+			{readonly}
+			requiresScrollPadding={false}
+		/>
 	{/each}
 	{#if status === 'submitted' && messages.length > 0 && messages[messages.length - 1].role === 'user'}
 		{@render thinkingMessage()}
 	{/if}
-	<div bind:this={messagesEndRef} class="min-h-[24px] min-w-[24px] shrink-0"></div>
+	<div bind:this={messagesEndRef} class="min-h-6 min-w-6 shrink-0"></div>
 </div>

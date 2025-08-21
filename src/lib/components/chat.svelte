@@ -93,7 +93,7 @@
 		}
 	});
 
-	// let votes = $derived(chat.messages.length >= 2 ? await getVotesByChatId(id) : []);
+	let votes = getVotesByChatId(id); 
 
 	let attachments = $state<Array<Attachment>>([]);
 	//	const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
@@ -113,7 +113,7 @@
 	<Messages
 		chatId={id}
 		status={chat.status}
-		votes={[]}
+		votes={votes.current}
 		messages={chat.messages}
 		regenerate={chat.regenerate}
 		{readonly}

@@ -12,18 +12,28 @@
 	import MessageReasoning from '$components/message-reasoning.svelte';
 	import { fly } from 'svelte/transition';
 	import type { ChatMessage } from '$lib/types';
+	import type { Vote } from '$server/db/schema';
+	import type { Chat } from '@ai-sdk/svelte';
+
 	import { sanitizeText } from '$lib/utils';
+	import MessageEditor from '$components/message-editor.svelte';
 	import MessageActions from '$components/message-actions.svelte';
 
 	let {
 		chatId,
 		message,
+		messages,
+		regenerate,
 		readonly,
 		loading,
-		requiresScrollPadding
+		requiresScrollPadding,
+		vote
 	}: {
 		chatId: string;
 		message: ChatMessage;
+		messages: ChatMessage[];
+		vote: Vote | undefined;
+		regenerate: Chat['regenerate'];
 		readonly: boolean;
 		loading: boolean;
 		requiresScrollPadding: boolean;
@@ -87,50 +97,55 @@
 				{/if}
 				{#if type === 'text'}
 					{#if mode === 'view'}
-						<div class="flex flex-row items-start gap-2">
-							{#if message.role === 'user' && !readonly}
-								<Tooltip>
-									<TooltipTrigger>
-										{#snippet child({ props })}
-											<Button
-												{...props}
-												variant="ghost"
-												class="h-fit rounded-full px-2 text-muted-foreground opacity-0 group-hover/message:opacity-100"
-												onclick={() => {
-													mode = 'edit';
-												}}
-											>
-												{@render PencilEditIcon()}
-											</Button>
-										{/snippet}
-									</TooltipTrigger>
-									<TooltipContent>Edit message</TooltipContent>
-								</Tooltip>
-							{/if}
-							<div
-								class={cn('flex flex-col gap-4', {
-									'rounded-xl bg-primary px-3 py-2 text-primary-foreground': message.role === 'user'
-								})}
-							>
-								<Markdown md={sanitizeText(part.text)} />
+						{#key key}
+							<div class="flex flex-row items-start gap-2">
+								{#if message.role === 'user' && !readonly}
+									<Tooltip>
+										<TooltipTrigger>
+											{#snippet child({ props })}
+												<Button
+													{...props}
+													variant="ghost"
+													class="h-fit rounded-full px-2 text-muted-foreground opacity-0 group-hover/message:opacity-100"
+													onclick={() => {
+														mode = 'edit';
+													}}
+												>
+													{@render PencilEditIcon()}
+												</Button>
+											{/snippet}
+										</TooltipTrigger>
+										<TooltipContent>Edit message</TooltipContent>
+									</Tooltip>
+								{/if}
+								<div
+									class={cn('flex flex-col gap-4', {
+										'rounded-xl bg-primary px-3 py-2 text-primary-foreground':
+											message.role === 'user'
+									})}
+								>
+									<Markdown md={sanitizeText(part.text)} />
+								</div>
 							</div>
-						</div>
-					{:else if mode === 'edit'}
-						<div class="flex flex-row items-start gap-2">
-							<div class="size-8"></div>
+						{/key}
+					{/if}
 
-							<!-- TODO -->
-							{#key message.id}
-								<!-- <MessageEditor key={message.id} {message} {setMode} {setMessages} {reload} /> -->
-							{/key}
-						</div>
+					{#if mode === 'edit'}
+						{#key key}
+							<div class="flex flex-row items-start gap-2">
+								<div class="size-8"></div>
+								{#key message.id}
+									<MessageEditor {message} {mode} {messages} {regenerate} />
+								{/key}
+							</div>
+						{/key}
 					{/if}
 				{/if}
 			{/each}
 
 			{#if !readonly}
 				{#key `action-${message.id}`}
-					<MessageActions {chatId} {message} {loading} {readonly} />
+					<MessageActions {chatId} {message} {loading} {vote} />
 				{/key}
 			{/if}
 		</div>

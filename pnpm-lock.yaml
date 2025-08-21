@@ -10,7 +10,7 @@ onlyBuiltDependencies:
 dependencies:
   '@sveltejs/adapter-vercel':
     specifier: ^5.10.2
-    version: 5.10.2(@sveltejs/kit@2.34.0)
+    version: 5.10.2(@sveltejs/kit@2.36.1)
   '@vercel/functions':
     specifier: ^2.2.12
     version: 2.2.12
@@ -21,8 +21,8 @@ dependencies:
     specifier: ^1.3.7
     version: 1.3.7(zod@4.0.17)
   redis:
-    specifier: ^5.8.1
-    version: 5.8.1
+    specifier: ^5.8.2
+    version: 5.8.2
   resumable-stream:
     specifier: ^2.2.3
     version: 2.2.3
@@ -32,8 +32,8 @@ devDependencies:
     specifier: ^2.0.11
     version: 2.0.11(zod@4.0.17)
   '@ai-sdk/svelte':
-    specifier: ^3.0.18
-    version: 3.0.18(svelte@5.38.2)(zod@4.0.17)
+    specifier: ^3.0.20
+    version: 3.0.20(svelte@5.38.2)(zod@4.0.17)
   '@ai-sdk/xai':
     specifier: ^2.0.10
     version: 2.0.10(zod@4.0.17)
@@ -59,8 +59,8 @@ devDependencies:
     specifier: ^0.0.6
     version: 0.0.6(svelte@5.38.2)
   '@sveltejs/kit':
-    specifier: ^2.34.0
-    version: 2.34.0(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@6.1.3)(svelte@5.38.2)(vite@7.1.3)
+    specifier: ^2.36.1
+    version: 2.36.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@6.1.3)(svelte@5.38.2)(vite@7.1.3)
   '@sveltejs/vite-plugin-svelte':
     specifier: ^6.1.3
     version: 6.1.3(svelte@5.38.2)(vite@7.1.3)
@@ -74,8 +74,8 @@ devDependencies:
     specifier: ^1.1.1
     version: 1.1.1
   ai:
-    specifier: ^5.0.18
-    version: 5.0.18(zod@4.0.17)
+    specifier: ^5.0.20
+    version: 5.0.20(zod@4.0.17)
   autoprefixer:
     specifier: ^10.4.20
     version: 10.4.21(postcss@8.5.6)
@@ -225,8 +225,8 @@ packages:
       json-schema: 0.4.0
     dev: true
 
-  /@ai-sdk/svelte@3.0.18(svelte@5.38.2)(zod@4.0.17):
-    resolution: {integrity: sha512-ExS91TbEEgIvDpoxaxKYLDAct5Y3RyYbev0NUU/J3rNX9a3VM5f1gv391ZOooVChgKXN+IjYSDku8iS5BT5LrQ==}
+  /@ai-sdk/svelte@3.0.20(svelte@5.38.2)(zod@4.0.17):
+    resolution: {integrity: sha512-+BXIGDD9Cs7HB2ORAX6TGExnTUnONTO0iGnPMprQr7SJjaDDi4mjAu3skl8S+yAGjox0+NxNTU0NMAu4nU1OXA==}
     peerDependencies:
       svelte: ^5.31.0
       zod: ^3.25.76 || ^4
@@ -235,7 +235,7 @@ packages:
         optional: true
     dependencies:
       '@ai-sdk/provider-utils': 3.0.4(zod@4.0.17)
-      ai: 5.0.18(zod@4.0.17)
+      ai: 5.0.20(zod@4.0.17)
       svelte: 5.38.2
       zod: 4.0.17
     dev: true
@@ -1046,47 +1046,47 @@ packages:
   /@polka/url@1.0.0-next.29:
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
 
-  /@redis/bloom@5.8.1(@redis/client@5.8.1):
-    resolution: {integrity: sha512-hJOJr/yX6BttnyZ+nxD3Ddiu2lPig4XJjyAK1v7OSHOJNUTfn3RHBryB9wgnBMBdkg9glVh2AjItxIXmr600MA==}
+  /@redis/bloom@5.8.2(@redis/client@5.8.2):
+    resolution: {integrity: sha512-855DR0ChetZLarblio5eM0yLwxA9Dqq50t8StXKp5bAtLT0G+rZ+eRzzqxl37sPqQKjUudSYypz55o6nNhbz0A==}
     engines: {node: '>= 18'}
     peerDependencies:
-      '@redis/client': ^5.8.1
+      '@redis/client': ^5.8.2
     dependencies:
-      '@redis/client': 5.8.1
+      '@redis/client': 5.8.2
     dev: false
 
-  /@redis/client@5.8.1:
-    resolution: {integrity: sha512-hD5Tvv7G0t8b3w8ao3kQ4jEPUmUUC6pqA18c8ciYF5xZGfUGBg0olQHW46v6qSt4O5bxOuB3uV7pM6H5wEjBwA==}
+  /@redis/client@5.8.2:
+    resolution: {integrity: sha512-WtMScno3+eBpTac1Uav2zugXEoXqaU23YznwvFgkPwBQVwEHTDgOG7uEAObtZ/Nyn8SmAMbqkEubJaMOvnqdsQ==}
     engines: {node: '>= 18'}
     dependencies:
       cluster-key-slot: 1.1.2
     dev: false
 
-  /@redis/json@5.8.1(@redis/client@5.8.1):
-    resolution: {integrity: sha512-kyvM8Vn+WjJI++nRsIoI9TbdfCs1/TgD0Hp7Z7GiG6W4IEBzkXGQakli+R5BoJzUfgh7gED2fkncYy1NLprMNg==}
+  /@redis/json@5.8.2(@redis/client@5.8.2):
+    resolution: {integrity: sha512-uxpVfas3I0LccBX9rIfDgJ0dBrUa3+0Gc8sEwmQQH0vHi7C1Rx1Qn8Nv1QWz5bohoeIXMICFZRcyDONvum2l/w==}
     engines: {node: '>= 18'}
     peerDependencies:
-      '@redis/client': ^5.8.1
+      '@redis/client': ^5.8.2
     dependencies:
-      '@redis/client': 5.8.1
+      '@redis/client': 5.8.2
     dev: false
 
-  /@redis/search@5.8.1(@redis/client@5.8.1):
-    resolution: {integrity: sha512-CzuKNTInTNQkxqehSn7QiYcM+th+fhjQn5ilTvksP1wPjpxqK0qWt92oYg3XZc3tO2WuXkqDvTujc4D7kb6r/A==}
+  /@redis/search@5.8.2(@redis/client@5.8.2):
+    resolution: {integrity: sha512-cNv7HlgayavCBXqPXgaS97DRPVWFznuzsAmmuemi2TMCx5scwLiP50TeZvUS06h/MG96YNPe6A0Zt57yayfxwA==}
     engines: {node: '>= 18'}
     peerDependencies:
-      '@redis/client': ^5.8.1
+      '@redis/client': ^5.8.2
     dependencies:
-      '@redis/client': 5.8.1
+      '@redis/client': 5.8.2
     dev: false
 
-  /@redis/time-series@5.8.1(@redis/client@5.8.1):
-    resolution: {integrity: sha512-klvdR96U9oSOyqvcectoAGhYlMOnMS3I5UWUOgdBn1buMODiwM/E4Eds7gxldKmtowe4rLJSF1CyIqyZTjy8Ow==}
+  /@redis/time-series@5.8.2(@redis/client@5.8.2):
+    resolution: {integrity: sha512-g2NlHM07fK8H4k+613NBsk3y70R2JIM2dPMSkhIjl2Z17SYvaYKdusz85d7VYOrZBWtDrHV/WD2E3vGu+zni8A==}
     engines: {node: '>= 18'}
     peerDependencies:
-      '@redis/client': ^5.8.1
+      '@redis/client': ^5.8.2
     dependencies:
-      '@redis/client': 5.8.1
+      '@redis/client': 5.8.2
     dev: false
 
   /@rollup/pluginutils@5.2.0:
@@ -1199,6 +1199,13 @@ packages:
     os: [linux]
     optional: true
 
+  /@rollup/rollup-linux-x64-gnu@4.47.1:
+    resolution: {integrity: sha512-uTLEakjxOTElfeZIGWkC34u2auLHB1AYS6wBjPGI00bWdxdLcCzK5awjs25YXpqB9lS8S0vbO0t9ZcBeNibA7g==}
+    cpu: [x64]
+    os: [linux]
+    dev: true
+    optional: true
+
   /@rollup/rollup-linux-x64-musl@4.46.3:
     resolution: {integrity: sha512-oLc+JrwwvbimJUInzx56Q3ujL3Kkhxehg7O1gWAYzm8hImCd5ld1F2Gry5YDjR21MNb5WCKhC9hXgU7rRlyegQ==}
     cpu: [x64]
@@ -1258,12 +1265,12 @@ packages:
     dependencies:
       acorn: 8.15.0
 
-  /@sveltejs/adapter-vercel@5.10.2(@sveltejs/kit@2.34.0):
+  /@sveltejs/adapter-vercel@5.10.2(@sveltejs/kit@2.36.1):
     resolution: {integrity: sha512-uWm0jtXbwvXxmELiIXSQ7tcPjlG8roadujxImIxqbKKZ64itZDwTbUsVXYEfUX59LvLjolW9jaODhL6sBTh5NQ==}
     peerDependencies:
       '@sveltejs/kit': ^2.4.0
     dependencies:
-      '@sveltejs/kit': 2.34.0(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@6.1.3)(svelte@5.38.2)(vite@7.1.3)
+      '@sveltejs/kit': 2.36.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@6.1.3)(svelte@5.38.2)(vite@7.1.3)
       '@vercel/nft': 0.30.0
       esbuild: 0.25.9
     transitivePeerDependencies:
@@ -1272,8 +1279,8 @@ packages:
       - supports-color
     dev: false
 
-  /@sveltejs/kit@2.34.0(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@6.1.3)(svelte@5.38.2)(vite@7.1.3):
-    resolution: {integrity: sha512-xSwh4x6SkKqDKK2lx7VY+JBtovHBcZNN8benzPGQn9cJRpWmVZ872mDsi/kJ6w8+c7lBobbiAf2W4VeSvzKvHA==}
+  /@sveltejs/kit@2.36.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@6.1.3)(svelte@5.38.2)(vite@7.1.3):
+    resolution: {integrity: sha512-dldNCtSIpaGxQMEfHaUxSPH/k3uU28pTZwtKzfkn8fqpOjWufKlMBeIL7FJ/s93dOrhEq41zaQYkXh+XTgEgVw==}
     engines: {node: '>=18.13'}
     hasBin: true
     peerDependencies:
@@ -1775,8 +1782,8 @@ packages:
     engines: {node: '>= 14'}
     dev: false
 
-  /ai@5.0.18(zod@4.0.17):
-    resolution: {integrity: sha512-fx5RqO0e+wB/dd/pbtCvx2j5WT1UYXSeONyMCgej0s6neCEhh9Wv5OmZHk6yxWKqI0y6WyjEqxCp8VCIqNZTDg==}
+  /ai@5.0.20(zod@4.0.17):
+    resolution: {integrity: sha512-zesSsm03ELeiqwU63IP8grTWuWtywil+XqA+64/8ALUVbsuCt/4fj7Sdk0G/k4f7oSo31lIVAdlj6rzx7d0GhQ==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4
@@ -3414,7 +3421,7 @@ packages:
     resolution: {integrity: sha512-kOCT/1MCPAxY5iUV3wytNFUMUolzuwd/VF/1KCx7kf6CutrOsTie+84zTGTpgQycjvfLdBBdvBvFLqFD2c0wkQ==}
     engines: {node: '>=18'}
     optionalDependencies:
-      '@rollup/rollup-linux-x64-gnu': 4.46.3
+      '@rollup/rollup-linux-x64-gnu': 4.47.1
     dev: true
 
   /node-fetch@2.7.0:
@@ -3692,15 +3699,15 @@ packages:
     engines: {node: '>= 14.18.0'}
     dev: true
 
-  /redis@5.8.1:
-    resolution: {integrity: sha512-RZjBKYX/qFF809x6vDcE5VA6L3MmiuT+BkbXbIyyyeU0lPD47V4z8qTzN+Z/kKFwpojwCItOfaItYuAjNs8pTQ==}
+  /redis@5.8.2:
+    resolution: {integrity: sha512-31vunZj07++Y1vcFGcnNWEf5jPoTkGARgfWI4+Tk55vdwHxhAvug8VEtW7Cx+/h47NuJTEg/JL77zAwC6E0OeA==}
     engines: {node: '>= 18'}
     dependencies:
-      '@redis/bloom': 5.8.1(@redis/client@5.8.1)
-      '@redis/client': 5.8.1
-      '@redis/json': 5.8.1(@redis/client@5.8.1)
-      '@redis/search': 5.8.1(@redis/client@5.8.1)
-      '@redis/time-series': 5.8.1(@redis/client@5.8.1)
+      '@redis/bloom': 5.8.2(@redis/client@5.8.2)
+      '@redis/client': 5.8.2
+      '@redis/json': 5.8.2(@redis/client@5.8.2)
+      '@redis/search': 5.8.2(@redis/client@5.8.2)
+      '@redis/time-series': 5.8.2(@redis/client@5.8.2)
     dev: false
 
   /remark-gfm@4.0.1:

@@ -73,11 +73,17 @@
 		if (!deleteId) return;
 
 		try {
-			showDeleteDialog = false;
-			await deleteChatById(deleteId).updates(
+			const deletePromise = deleteChatById(deleteId).updates(
 				getChatHistory().withOverride((chats) => chats.filter((chat) => chat.id !== deleteId))
 			);
-			toast.success('Chat deleted successfully');
+			toast.promise(deletePromise, {
+				loading: 'Deleting chat...',
+				success: 'Chat deleted successfully',
+				error: 'Failed to delete chat'
+			});
+
+			showDeleteDialog = false;
+			
 			if (deleteId === id) {
 				goto('/');
 			}
