@@ -1,6 +1,7 @@
 import { form, getRequestEvent, query } from '$app/server';
 import { auth } from '$lib/auth';
-import { error, fail, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
+import { BetterAuthError } from 'better-auth'
 
 export const getSession = query(async () => {
 	const { locals } = getRequestEvent();
@@ -20,24 +21,29 @@ export const signInEmail = form(async (formData) => {
 	const email = formData.get('email');
 	const password = formData.get('password');
 
-	const response = await auth.api.signInEmail({
-		body: {
-			email: email as string,
-			password: password as string,
-			rememberMe: true
-		},
-		headers: request.headers
-	}).catch((error) => {
-		return {
-			error: error.body.message,
-		};
-	});
+	let redirectTo;
 
-	if (response?.error) {
-		return response
+	try {
+
+		const response = await auth.api.signInEmail({
+			body: {
+				email: email as string,
+				password: password as string,
+				rememberMe: true
+			},
+			headers: request.headers
+		})
+
+		redirectTo = response.url;
+	} catch (error) {
+		return {
+			invalid: error.body.message,
+		}
 	}
 
-	redirect(307, '/');
+	if (redirectTo) {
+		redirect(307, redirectTo);
+	}
 });
 
 export const register = form(async (formData) => {
@@ -59,8 +65,9 @@ export const register = form(async (formData) => {
 
 		redirectTo = "/"
 	} catch (error) {
-		console.log(error);
-		return error.body.message
+		return {
+			invalid: error.body.message,
+		}
 	}
 
 	if (redirectTo) {

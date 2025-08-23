@@ -3,13 +3,12 @@
 	import { Label } from '$components/ui/label';
 	import { Input } from '$components/ui/input';
 	import { Button } from '$components/ui/button';
-	import { LoaderIcon } from '$components/icons.svelte'; 
+	import { LoaderIcon } from '$components/icons.svelte';
 	import { toast } from 'svelte-sonner';
 
 	$effect(() => {
-		if (register.result) {
-			// @ts-ignore
-			toast.error(register.result);
+		if (register.result?.invalid) {
+			toast.error(register.result.invalid);
 		}
 	});
 

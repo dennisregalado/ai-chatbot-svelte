@@ -7,12 +7,11 @@
 	import { toast } from 'svelte-sonner';
 
 	$effect(() => {
-		if (signInEmail.result) {
-			// @ts-ignore
-			toast.error(signInEmail.result);
+		if (signInEmail.result?.invalid) {
+			toast.error(signInEmail.result.invalid);
 		}
 	});
-	
+
 	let loading = $derived(Boolean(signInEmail.pending));
 </script>
 
