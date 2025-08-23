@@ -3,10 +3,13 @@
 	import Markdown from './markdown.svelte';
 	import { fade, slide } from 'svelte/transition';
 	import { cubicInOut, linear } from 'svelte/easing';
+	
 
 	let { loading, reasoning }: { loading: boolean; reasoning: string } = $props();
 
 	let expanded = $state(true);
+
+	 
 </script>
 
 <div class="flex flex-col">
@@ -33,11 +36,8 @@
 	{/if}
 
 	{#if expanded}
-		<div
-			transition:slide={{ duration: 200, easing: cubicInOut }}
-			class="h-max w-full"
-		>
-			<div 
+		<div transition:slide={{ duration: 200, easing: cubicInOut }} class="h-max w-full">
+			<div
 				transition:fade={{
 					duration: 150,
 					easing: linear
