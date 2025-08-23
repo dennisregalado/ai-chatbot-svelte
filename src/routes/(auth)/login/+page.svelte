@@ -4,13 +4,16 @@
 	import { Input } from '$components/ui/input';
 	import { Button } from '$components/ui/button';
 	import { LoaderIcon } from '$components/icons.svelte';
-	import { toast } from 'svelte-sonner'; 
+	import { toast } from 'svelte-sonner';
 
 	$effect(() => {
-		if (signInEmail.result?.error) {
-			toast.error(signInEmail.result.error);
+		if (signInEmail.result) {
+			// @ts-ignore
+			toast.error(signInEmail.result);
 		}
 	});
+	
+	let loading = $derived(Boolean(signInEmail.pending));
 </script>
 
 <div
@@ -46,21 +49,21 @@
 				/>
 			</div>
 			<Button
-				type={signInEmail.pending ? 'button' : 'submit'}
-				aria-disabled={signInEmail.pending > 0}
-				disabled={signInEmail.pending > 0}
+				type={loading ? 'button' : 'submit'}
+				aria-disabled={loading}
+				disabled={loading}
 				class="relative"
 			>
 				Sign in
 
-				{#if signInEmail.pending > 0}
+				{#if loading}
 					<span class="absolute right-4 animate-spin">
 						{@render LoaderIcon()}
 					</span>
 				{/if}
 
 				<output aria-live="polite" class="sr-only">
-					{signInEmail.pending > 0 ? 'Loading' : 'Submit form'}
+					{loading ? 'Loading' : 'Submit form'}
 				</output>
 			</Button>
 			<p class="mt-4 text-center text-sm text-gray-600 dark:text-zinc-400">

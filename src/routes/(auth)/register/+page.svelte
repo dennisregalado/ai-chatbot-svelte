@@ -7,10 +7,13 @@
 	import { toast } from 'svelte-sonner';
 
 	$effect(() => {
-		if (register.result?.error) {
-			toast.error(register.result.error);
+		if (register.result) {
+			// @ts-ignore
+			toast.error(register.result);
 		}
 	});
+
+	let loading = $derived(Boolean(register.pending));
 </script>
 
 <div
@@ -24,6 +27,20 @@
 			</p>
 		</div>
 		<form {...register} class="flex flex-col gap-4 px-4 sm:px-16">
+			<div class="flex flex-col gap-2">
+				<Label id="name" class="font-normal text-zinc-600 dark:text-zinc-400">Name</Label>
+
+				<Input
+					id="name"
+					name="name"
+					class="text-md bg-muted md:text-sm"
+					type="text"
+					placeholder="John Doe"
+					autocomplete="name"
+					required
+					autofocus
+				/>
+			</div>
 			<div class="flex flex-col gap-2">
 				<Label id="email" class="font-normal text-zinc-600 dark:text-zinc-400">Email Address</Label>
 
@@ -50,21 +67,21 @@
 				/>
 			</div>
 			<Button
-				type={register.pending ? 'button' : 'submit'}
-				aria-disabled={register.pending > 0}
-				disabled={register.pending > 0}
+				type={loading ? 'button' : 'submit'}
+				aria-disabled={loading}
+				disabled={loading}
 				class="relative"
 			>
 				Sign Up
 
-				{#if register.pending > 0}
+				{#if loading}
 					<span class="absolute right-4 animate-spin">
 						{@render LoaderIcon()}
 					</span>
 				{/if}
 
 				<output aria-live="polite" class="sr-only">
-					{register.pending > 0 ? 'Loading' : 'Submit form'}
+					{loading ? 'Loading' : 'Submit form'}
 				</output>
 			</Button>
 			<p class="mt-4 text-center text-sm text-gray-600 dark:text-zinc-400">

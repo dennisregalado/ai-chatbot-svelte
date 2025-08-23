@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import PreviewMessage, { thinkingMessage } from './message.svelte';
+ 	import PreviewMessage, { thinkingMessage } from './message.svelte';
 	import type { Chat } from '@ai-sdk/svelte';
 	import type { Vote } from '$server/db/schema';
 	import type { ChatMessage } from '$lib/types';
@@ -25,13 +24,6 @@
 		readonly: boolean;
 		isArtifactVisible: boolean;
 	} = $props();
-
-	let messagesEndRef = $state<HTMLDivElement | null>(null);
-	let animate = $state(false);
-
-	onMount(() => {
-		setTimeout(() => (animate = true), 0);
-	});
 </script>
 
 <div class="relative flex min-w-0 flex-1 flex-col gap-6 overflow-y-scroll pt-4">
@@ -43,7 +35,7 @@
 			{chatId}
 			{message}
 			vote={votes ? votes.find((vote) => vote.messageId === message.id) : undefined}
-			loading={status === 'submitted'}
+			loading={status === 'streaming' && messages.length - 1 === index}
 			{messages}
 			{regenerate}
 			{readonly}
@@ -53,5 +45,5 @@
 	{#if status === 'submitted' && messages.length > 0 && messages[messages.length - 1].role === 'user'}
 		{@render thinkingMessage()}
 	{/if}
-	<div bind:this={messagesEndRef} class="min-h-6 min-w-6 shrink-0"></div>
+	<div class="min-h-6 min-w-6 shrink-0"></div>
 </div>

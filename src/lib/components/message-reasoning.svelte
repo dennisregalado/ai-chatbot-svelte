@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { LoaderIcon, ChevronDownIcon } from './icons.svelte';
 	import Markdown from './markdown.svelte';
-	import { slide } from 'svelte/transition';
-	import { cubicInOut } from 'svelte/easing';
+	import { fade, slide } from 'svelte/transition';
+	import { cubicInOut, linear } from 'svelte/easing';
+
 	let { loading, reasoning }: { loading: boolean; reasoning: string } = $props();
-	let expanded = $state(false);
+
+	let expanded = $state(true);
 </script>
 
 <div class="flex flex-col">
@@ -33,9 +35,17 @@
 	{#if expanded}
 		<div
 			transition:slide={{ duration: 200, easing: cubicInOut }}
-			class="flex flex-col gap-4 border-l pl-4 text-zinc-600 dark:text-zinc-400"
+			class="h-max w-full"
 		>
-			<Markdown md={reasoning} />
+			<div 
+				transition:fade={{
+					duration: 150,
+					easing: linear
+				}}
+				class="mt-4 mb-2 flex flex-col gap-4 border-l pl-4 text-zinc-600 dark:text-zinc-400"
+			>
+				<Markdown md={reasoning} />
+			</div>
 		</div>
 	{/if}
 </div>

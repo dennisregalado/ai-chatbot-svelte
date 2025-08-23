@@ -26,7 +26,7 @@ export const signInEmail = form(async (formData) => {
 			password: password as string,
 			rememberMe: true
 		},
-		headers: request.headers,
+		headers: request.headers
 	}).catch((error) => {
 		return {
 			error: error.body.message,
@@ -42,26 +42,30 @@ export const signInEmail = form(async (formData) => {
 
 export const register = form(async (formData) => {
 
+	const name = formData.get('name');
 	const email = formData.get('email');
 	const password = formData.get('password');
 
-	const response = await auth.api.signUpEmail({
-		body: {
-			name: email as string, // required
-			email: email as string, // required
-			password: password as string, // required
-		},
-	}).catch((error) => {
-		return {
-			error: error.body.message,
-		};
-	});
+	let redirectTo;
 
-	if (response?.error) {
-		return response
+	try {
+		await auth.api.signUpEmail({
+			body: {
+				name: name as string,
+				email: email as string,
+				password: password as string,
+			}
+		});
+
+		redirectTo = "/"
+	} catch (error) {
+		console.log(error);
+		return error.body.message
 	}
 
-	redirect(307, '/');
+	if (redirectTo) {
+		redirect(307, redirectTo);
+	}
 });
 
 export const signOut = form(async () => {

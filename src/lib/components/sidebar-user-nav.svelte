@@ -109,7 +109,7 @@
 		{#if user?.isAnonymous}
 			Guest
 		{:else}
-			{user?.email}
+			{user?.name || user?.email}
 		{/if}
 	</span>
 	<ChevronUp class="ml-auto" />
