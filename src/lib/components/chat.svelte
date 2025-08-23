@@ -93,7 +93,7 @@
 		}
 	});
 
-	 // let votes = getVotesByChatId(id); 
+	// let votes = getVotesByChatId(id);
 
 	let attachments = $state<Array<Attachment>>([]);
 	//	const isArtifactVisible = useArtifactSelector((state) => state.isVisible);

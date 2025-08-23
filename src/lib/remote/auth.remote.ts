@@ -1,6 +1,6 @@
 import { form, getRequestEvent, query } from '$app/server';
 import { auth } from '$lib/auth';
-import { redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 
 export const getSession = query(async () => {
 	const { locals } = getRequestEvent();
@@ -15,8 +15,53 @@ export const getUser = query(async () => {
 });
 
 export const signInEmail = form(async (formData) => {
+	const { request } = getRequestEvent();
+
 	const email = formData.get('email');
 	const password = formData.get('password');
+
+	const response = await auth.api.signInEmail({
+		body: {
+			email: email as string,
+			password: password as string,
+			rememberMe: true
+		},
+		headers: request.headers,
+	}).catch((error) => {
+		return {
+			error: error.body.message,
+		};
+	});
+
+	if (response?.error) {
+		return response
+	}
+
+	redirect(307, '/');
+});
+
+export const register = form(async (formData) => {
+
+	const email = formData.get('email');
+	const password = formData.get('password');
+
+	const response = await auth.api.signUpEmail({
+		body: {
+			name: email as string, // required
+			email: email as string, // required
+			password: password as string, // required
+		},
+	}).catch((error) => {
+		return {
+			error: error.body.message,
+		};
+	});
+
+	if (response?.error) {
+		return response
+	}
+
+	redirect(307, '/');
 });
 
 export const signOut = form(async () => {

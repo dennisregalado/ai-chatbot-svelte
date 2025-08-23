@@ -83,7 +83,7 @@
 			});
 
 			showDeleteDialog = false;
-			
+
 			if (deleteId === id) {
 				goto('/');
 			}
