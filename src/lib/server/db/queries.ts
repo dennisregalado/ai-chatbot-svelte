@@ -249,7 +249,8 @@ export async function getSuggestionsByDocumentId({ documentId }: { documentId: s
 
 export async function getMessageById({ id }: { id: string }) {
 	try {
-		return await db.select().from(message).where(eq(message.id, id));
+		const messages = await db.select().from(message).where(eq(message.id, id));
+		return messages[0] || null;
 	} catch (error) {
 		throw new ChatSDKError('bad_request:database', 'Failed to get message by id');
 	}

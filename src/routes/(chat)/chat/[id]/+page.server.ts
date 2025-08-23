@@ -1,4 +1,4 @@
-import { convertToUIMessages, generateUUID } from '$lib/utils';
+import { convertToUIMessages } from '$lib/utils';
 import { getChatById, getMessagesByChatId } from '$remote/chat.remote';
 import { error, redirect } from '@sveltejs/kit';
 

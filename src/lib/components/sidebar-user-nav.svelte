@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { User } from 'better-auth';
+	import type { User } from '$lib/auth';
 	import { cn } from '$lib/utils';
 	import ChevronUp from '@lucide/svelte/icons/chevron-up';
 	import {
@@ -13,7 +13,7 @@
 	import { getTheme } from '@sejohnson/svelte-themes';
 	import { signOut, getUser } from '$remote/auth.remote';
 	import { Skeleton } from '$components/ui/skeleton';
-	import { LoaderIcon } from './icons.svelte';
+	import { LoaderIcon } from '$components/icons.svelte';
 
 	const theme = getTheme();
 </script>
@@ -26,6 +26,7 @@
 					<svelte:boundary>
 						{#snippet pending()}
 							<SidebarMenuButton
+								{...props}
 								class="h-10 justify-between bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 							>
 								<div class="flex flex-row items-center gap-2">
@@ -38,21 +39,7 @@
 								</div>
 							</SidebarMenuButton>
 						{/snippet}
-						<SidebarMenuButton
-							{...props}
-							class="h-10 bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-						>
-							{#await getUser() then data}
-								{#if data}
-									{@render user(data as User & { isAnonymous: boolean })}
-								{:else}
-									<div class="flex flex-row items-center gap-2">
-										<Skeleton class="size-6 rounded-full" />
-										<Skeleton class="h-4 w-24" />
-									</div>
-								{/if}
-							{/await}
-						</SidebarMenuButton>
+						{@render user(await getUser(), props)}
 					</svelte:boundary>
 				{/snippet}
 			</DropdownMenuTrigger>
@@ -97,20 +84,25 @@
 	</SidebarMenuItem>
 </SidebarMenu>
 
-{#snippet user(user: (User & { isAnonymous: boolean }) | undefined)}
-	<img
-		src="https://avatar.vercel.sh/{user?.id}"
-		alt="User Avatar"
-		width={24}
-		height={24}
-		class="rounded-full"
-	/>
-	<span class="truncate">
-		{#if user?.isAnonymous}
-			Guest
-		{:else}
-			{user?.name || user?.email}
-		{/if}
-	</span>
-	<ChevronUp class="ml-auto" />
+{#snippet user(user?: User, props?: any)}
+	<SidebarMenuButton
+		{...props}
+		class="h-10 bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+	>
+		<img
+			src="https://avatar.vercel.sh/{user?.id}"
+			alt="User Avatar"
+			width={24}
+			height={24}
+			class="rounded-full"
+		/>
+		<span class="truncate">
+			{#if user?.isAnonymous}
+				Guest
+			{:else}
+				{user?.name || user?.email}
+			{/if}
+		</span>
+		<ChevronUp class="ml-auto" />
+	</SidebarMenuButton>
 {/snippet}
