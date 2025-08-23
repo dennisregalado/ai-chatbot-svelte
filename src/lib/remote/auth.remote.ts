@@ -25,7 +25,7 @@ export const signInEmail = form(async (formData) => {
 
 	try {
 
-		const response = await auth.api.signInEmail({
+		await auth.api.signInEmail({
 			body: {
 				email: email as string,
 				password: password as string,
@@ -34,7 +34,7 @@ export const signInEmail = form(async (formData) => {
 			headers: request.headers
 		})
 
-		redirectTo = response.url;
+		redirectTo = "/";
 	} catch (error) {
 		return {
 			invalid: error.body.message,
