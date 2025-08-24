@@ -1,61 +1,75 @@
-<script module lang="ts">
-	import { getContext } from 'svelte';
-	import type { DataUIPart } from 'ai';
-	import type { CustomUIDataTypes } from '$lib/types';
-
-	interface DataStreamContextValue {
-		dataStream: DataUIPart<CustomUIDataTypes>[];
-		setDataStream: (
-			stream:
-				| DataUIPart<CustomUIDataTypes>[]
-				| ((prev: DataUIPart<CustomUIDataTypes>[]) => DataUIPart<CustomUIDataTypes>[])
-		) => void;
-	}
-
-	const DATA_STREAM_CONTEXT_KEY = Symbol('data-stream');
-
-	export function useDataStream(): DataStreamContextValue {
-		const context = getContext<DataStreamContextValue>(DATA_STREAM_CONTEXT_KEY);
-		if (!context) {
-			throw new Error('useDataStream must be used within a DataStreamProvider');
-		}
-		return context;
-	}
-</script>
-
 <script lang="ts">
-	import { setContext } from 'svelte';
-	import type { Snippet } from 'svelte';
-
-	interface Props {
-		children: Snippet;
-	}
-
-	let { children }: Props = $props();
-
-	// Use Svelte 5's $state rune for reactive state
-	let dataStream = $state<DataUIPart<CustomUIDataTypes>[]>([]);
-
-	// Create context value with methods to update the state
-	const contextValue: DataStreamContextValue = {
-		get dataStream() {
-			return dataStream;
-		},
-		setDataStream: (
-			stream:
-				| DataUIPart<CustomUIDataTypes>[]
-				| ((prev: DataUIPart<CustomUIDataTypes>[]) => DataUIPart<CustomUIDataTypes>[])
-		) => {
-			if (typeof stream === 'function') {
-				dataStream = stream(dataStream);
-			} else {
-				dataStream = stream;
-			}
-		}
-	};
+	import { useDataStream } from '$components/data-stream-provider.svelte';
 
 	// Set the context
-	//	setContext(DATA_STREAM_CONTEXT_KEY, contextValue);
-</script>
+	// const { artifact, setArtifact, setMetadata } = useArtifact();
+	// const lastProcessedIndex = useRef(-1);
 
-{@render children()}
+	/*
+	$effect(() => {
+		if (!dataStream?.length) return;
+
+		const newDeltas = dataStream.slice(lastProcessedIndex.current + 1);
+		lastProcessedIndex.current = dataStream.length - 1;
+
+		newDeltas.forEach((delta) => {
+			const artifactDefinition = artifactDefinitions.find(
+				(artifactDefinition) => artifactDefinition.kind === artifact.kind
+			);
+
+			if (artifactDefinition?.onStreamPart) {
+				artifactDefinition.onStreamPart({
+					streamPart: delta,
+					setArtifact,
+					setMetadata
+				});
+			}
+
+			setArtifact((draftArtifact) => {
+				if (!draftArtifact) {
+					return { ...initialArtifactData, status: 'streaming' };
+				}
+
+				switch (delta.type) {
+					case 'data-id':
+						return {
+							...draftArtifact,
+							documentId: delta.data,
+							status: 'streaming'
+						};
+
+					case 'data-title':
+						return {
+							...draftArtifact,
+							title: delta.data,
+							status: 'streaming'
+						};
+
+					case 'data-kind':
+						return {
+							...draftArtifact,
+							kind: delta.data,
+							status: 'streaming'
+						};
+
+					case 'data-clear':
+						return {
+							...draftArtifact,
+							content: '',
+							status: 'streaming'
+						};
+
+					case 'data-finish':
+						return {
+							...draftArtifact,
+							status: 'idle'
+						};
+
+					default:
+						return draftArtifact;
+				}
+			});
+		});
+	});
+	*/
+</script>

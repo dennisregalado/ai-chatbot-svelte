@@ -1,24 +1,7 @@
 <script lang="ts" module>
-	// export type ArtifactKind = (typeof artifactDefinitions)[number]['kind'];
+	import type { Artifact } from './create-artifact.svelte';
 
-	export interface UIArtifact {
-		title: string;
-		documentId: string;
-		//	kind: ArtifactKind;
-		content: string;
-		isVisible: boolean;
-		status: 'streaming' | 'idle';
-		boundingBox: {
-			top: number;
-			left: number;
-			width: number;
-			height: number;
-		};
-	}
-
-	// export type ArtifactKind = (typeof artifactDefinitions)[number]['kind'];
-
-	export type ArtifactKind = 'text' | 'code' | 'image' | 'sheet';
+	export type ArtifactKind = (typeof import('$server/artifacts').artifactDefinitions)[number]['kind'];
 
 	export interface UIArtifact {
 		title: string;

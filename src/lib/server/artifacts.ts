@@ -8,6 +8,8 @@ import { saveDocument } from '$server/db/queries';
 import type { Session } from 'better-auth';
 import type { UIMessageStreamWriter } from 'ai';
 import type { ChatMessage } from '$lib/types';
+import { textArtifact } from '$artifacts/text/client.svelte';
+import type { Artifact } from '$components/create-artifact.svelte';
 
 export interface SaveDocumentProps {
 	id: string;
@@ -98,3 +100,15 @@ export const documentHandlersByArtifactKind: Array<DocumentHandler> = [
 ];
 
 export const artifactKinds = ['text', 'code', 'image', 'sheet'] as const;
+
+/*
+ * Use this array to define the artifact definitions for each artifact kind.
+ * This contains the client-side artifact configurations with actions, toolbar, etc.
+ */
+export const artifactDefinitions: Array<Artifact<string, any>> = [
+	textArtifact
+	// TODO: Add other artifacts when they're implemented
+	// codeArtifact,
+	// imageArtifact,
+	// sheetArtifact
+];

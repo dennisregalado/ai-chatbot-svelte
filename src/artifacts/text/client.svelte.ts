@@ -1,14 +1,12 @@
 import { Artifact } from '$components/create-artifact.svelte';
-import type { Suggestion } from '$server/db/schema';
-import {
-	ClockRewind,
-	MessageIcon,
-	PenIcon,
-	UndoIcon,
-	RedoIcon,
-	CopyIcon
-} from '$components/icons.svelte';
-import { toast } from 'svelte-sonner';
+	import type { Suggestion } from '$server/db/schema';
+	import { toast } from 'svelte-sonner';
+	import ClockRewind from '@lucide/svelte/icons/rotate-ccw';
+	import MessageIcon from '@lucide/svelte/icons/message-square';
+	import PenIcon from '@lucide/svelte/icons/pen';
+	import UndoIcon from '@lucide/svelte/icons/undo';
+	import RedoIcon from '@lucide/svelte/icons/redo';
+	import CopyIcon from '@lucide/svelte/icons/copy';
 
 interface TextArtifactMetadata {
 	suggestions: Array<Suggestion>;
@@ -19,17 +17,11 @@ export const textArtifact = new Artifact<'text', TextArtifactMetadata>({
 	description: 'Useful for text content, like drafting essays and emails.',
 	initialize: async ({ documentId, setMetadata }) => {},
 	onStreamPart: ({ streamPart, setMetadata, setArtifact }) => {},
-	content: ({
-		mode,
-		status,
-		content,
-		isCurrentVersion,
-		currentVersionIndex,
-		onSaveContent,
-		getDocumentContentById,
-		isLoading,
-		metadata
-	}) => {},
+	content: ({ mode, status, content, isCurrentVersion, currentVersionIndex, onSaveContent, getDocumentContentById, isLoading, metadata }) => {
+		// This will be implemented as a proper Svelte component
+		// For now, return a simple placeholder
+		return null as any;
+	},
 	actions: [
 		{
 			icon: ClockRewind,

@@ -1,7 +1,7 @@
-import type { Suggestion } from '$lib/db/schema';
+import type { Suggestion } from '$server/db/schema';
 import type { Chat } from '@ai-sdk/svelte';
 // import type {  Dispatch,  SetStateAction } from 'react';
-import type { UIArtifact } from '$components/artifact';
+import type { UIArtifact } from '$components/artifact.svelte';
 import type { ChatMessage, CustomUIDataTypes } from '$lib/types';
 import type { DataUIPart } from 'ai';
 import type { Component, Snippet } from 'svelte';

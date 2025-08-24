@@ -37,7 +37,7 @@
 	let dataStream = $state<DataUIPart<CustomUIDataTypes>[]>([]);
 
 	// Create context value with methods to update the state
-	const contextValue: DataStreamContextValue = {
+	const value: DataStreamContextValue = {
 		get dataStream() {
 			return dataStream;
 		},
@@ -55,7 +55,7 @@
 	};
 
 	// Set the context
-	//	setContext(DATA_STREAM_CONTEXT_KEY, contextValue);
+	setContext(DATA_STREAM_CONTEXT_KEY, value);
 </script>
 
 {@render children()}

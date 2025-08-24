@@ -1,37 +1,29 @@
-<script lang="ts" module>
-	import { artifactDefinitions } from '$server/artifacts';
+<script lang="ts">
+	import { CrossIcon } from './icons.svelte';
+	import { Button } from './ui/button';
+	// import { initialArtifactData, useArtifact } from '$hooks/artifact.svelte';
 
-	// export type ArtifactKind = (typeof artifactDefinitions)[number]['kind'];
-
-	export interface UIArtifact {
-		title: string;
-		documentId: string;
-		//	kind: ArtifactKind;
-		content: string;
-		isVisible: boolean;
-		status: 'streaming' | 'idle';
-		boundingBox: {
-			top: number;
-			left: number;
-			width: number;
-			height: number;
-		};
-	}
-
-	export type ArtifactKind = (typeof artifactDefinitions)[number]['kind'];
-
-	export interface UIArtifact {
-		title: string;
-		documentId: string;
-		kind: ArtifactKind;
-		content: string;
-		isVisible: boolean;
-		status: 'streaming' | 'idle';
-		boundingBox: {
-			top: number;
-			left: number;
-			width: number;
-			height: number;
-		};
-	}
+	// TODO: Implement artifact management hook
+	// const { setArtifact } = useArtifact();
 </script>
+
+<Button
+	variant="outline"
+	class="h-fit p-2 dark:hover:bg-zinc-700"
+	onclick={() => {
+		// TODO: Implement artifact state management
+		/*
+		setArtifact((currentArtifact) =>
+			currentArtifact.status === 'streaming'
+				? {
+						...currentArtifact,
+						isVisible: false,
+					}
+				: { ...initialArtifactData, status: 'idle' },
+		);
+		*/
+		console.log('Close artifact clicked - hook implementation pending');
+	}}
+>
+	{@render CrossIcon(18)}
+</Button>
