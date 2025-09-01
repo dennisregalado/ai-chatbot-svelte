@@ -19,6 +19,8 @@
 	import type { Attachment, ChatMessage } from '$lib/types';
 	//import { useDataStream } from '$components/data-stream-provider.svelte';
 
+	import MessagesPane from '$components/messages-pane.svelte';
+
 	let {
 		id,
 		initialMessages = [],
@@ -108,6 +110,9 @@
 	});*/
 </script>
 
+{#if chat.messages.length}
+	<MessagesPane {chat} {messages} />
+{/if}
 <div class="flex h-dvh min-w-0 flex-col bg-background">
 	<ChatHeader chatId={id} {readonly} />
 	<Messages
