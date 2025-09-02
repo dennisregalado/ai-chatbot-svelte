@@ -166,6 +166,8 @@
 			}
 		);
 	};
+
+	$inspect(chat.messages);
 </script>
 
 <div class="relative mx-auto size-full h-screen max-w-4xl p-6">

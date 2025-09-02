@@ -6,8 +6,7 @@
 	import { Button } from './ui/button';
 	import { PlusIcon, VercelIcon } from './icons.svelte';
 	import { goto } from '$app/navigation';
-	import VisibilitySelector from './visibility-selector.svelte';
-	import ModelSelector from './model-selector.svelte';
+	import VisibilitySelector from './visibility-selector.svelte'; 
 
 	let {
 		chatId,
