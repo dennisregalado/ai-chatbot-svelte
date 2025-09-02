@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn } from '$lib/utils.js';
+	import { cn, sanitizeText } from '$lib/utils.js';
 	import { CollapsibleContent } from '$lib/components/ui/collapsible';
 	import Response from '../response/response.svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
@@ -8,9 +8,10 @@
 	interface Props extends HTMLAttributes<HTMLDivElement> {
 		children: Snippet;
 		class?: string;
+		md: string;
 	}
 
-	let { class: className, children, ...restProps }: Props = $props();
+	let { class: className, children, md, ...restProps }: Props = $props();
 </script>
 
 <CollapsibleContent
@@ -21,5 +22,5 @@
 	)}
 	{...restProps}
 >
-	<Response class="grid gap-2">{@render children()}</Response>
+	<Response class="grid gap-2" md={sanitizeText(md)} />
 </CollapsibleContent>
