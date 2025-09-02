@@ -1,5 +1,10 @@
 <script lang="ts">
-	import { getChatHistory, getVotesByChatId, getChatVisibility } from '$remote/chat.remote';
+	import {
+		getChatHistory,
+		getVotesByChatId,
+		getChatVisibility,
+		deleteTrailingMessages
+	} from '$remote/chat.remote';
 	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
 	import { DefaultChatTransport } from 'ai';
@@ -34,18 +39,17 @@
 	import { Source, Sources, SourcesContent, SourcesTrigger } from '$components/ai-elements/source';
 	import { Reasoning, ReasoningContent, ReasoningTrigger } from '$components/ai-elements/reasoning';
 	import { Actions, Action } from '$components/ai-elements/actions';
-	import { CopyIcon } from '$components/icons.svelte';
+	import { CopyIcon, RetryIcon } from '$components/icons.svelte';
 	import { Loader } from '$components/ai-elements/loader';
+	import { Suggestions, Suggestion } from '$components/ai-elements/suggestion';
+	import { chatModels, DEFAULT_CHAT_MODEL } from '$ai/models';
+	import { updateVoteByChatId } from '$remote/chat.remote';
+	import { ThumbDownIcon, ThumbUpIcon } from '$components/icons.svelte';
 
-	const models = [
-		{
-			name: 'GPT 4o',
-			value: 'openai/gpt-4o'
-		},
-		{
-			name: 'Deepseek R1',
-			value: 'deepseek/deepseek-r1'
-		}
+	const suggestions = [
+		'Can you explain how to play tennis?',
+		'What is the weather in Tokyo?',
+		'How do I make a really good fish taco?'
 	];
 
 	let {
@@ -65,7 +69,7 @@
 	// const { setDataStream } = useDataStream();
 
 	let input = $state('');
-	let model = $state<string>(models[0].value);
+	let model = $state<string>(chatModels[0].id);
 	let webSearch = $state(false);
 
 	let visibilityType = getChatVisibility(id);
@@ -85,7 +89,7 @@
 						body: {
 							id,
 							message: messages.at(-1),
-							selectedChatModel: page.data.selectedModelId,
+							selectedChatModel: DEFAULT_CHAT_MODEL,
 							selectedVisibilityType: visibilityType?.current || initialVisibilityType,
 							...body
 						}
@@ -124,13 +128,17 @@
 		}
 	});
 
-	// let votes = getVotesByChatId(id);
+	let votes = getVotesByChatId(id);
 
 	const handleSubmit = (e: Event) => {
 		e.preventDefault();
 		if (input.trim()) {
+			replaceState('/chat/' + id, {});
 			chat.sendMessage(
-				{ text: input },
+				{
+					role: 'user' as const,
+					parts: [{ type: 'text', text: input }]
+				},
 				{
 					body: {
 						model: model,
@@ -141,27 +149,44 @@
 			input = '';
 		}
 	};
+
+	const handleSuggestionClick = (suggestion: string) => {
+		replaceState('/chat/' + id, {});
+		chat.sendMessage(
+			{
+				role: 'user' as const,
+				parts: [{ type: 'text', text: suggestion }]
+			},
+			{
+				body: {
+					model: model,
+					webSearch: webSearch
+				}
+			}
+		);
+	};
 </script>
 
 <div class="relative mx-auto size-full h-screen max-w-4xl p-6">
 	<div class="flex h-full flex-col">
 		<Conversation class="h-full">
-			<ConversationContent>
+			{#snippet children()}
 				{#each chat.messages as message, messageIndex (message.id)}
 					<div>
 						{#if message.role === 'assistant'}
-							<Sources>
-								<SourcesTrigger
-									count={message.parts.filter((part) => part.type === 'source-url').length}
-								/>
-								{#each message.parts.filter((part) => part.type === 'source-url') as part, i}
-									{#key `${message.id}-${i}`}
-										<SourcesContent>
-											<Source href={part.url} title={part.url} />
-										</SourcesContent>
-									{/key}
-								{/each}
-							</Sources>
+							{@const sources = message.parts.filter((part) => part.type === 'source-url')}
+							{#if sources.length > 0}
+								<Sources>
+									<SourcesTrigger count={sources.length} />
+									{#each sources as part, i}
+										{#key `${message.id}-${i}`}
+											<SourcesContent>
+												<Source href={part.url} title={part.url} />
+											</SourcesContent>
+										{/key}
+									{/each}
+								</Sources>
+							{/if}
 						{/if}
 						{#key message.id}
 							<Message from={message.role}>
@@ -173,17 +198,121 @@
 												<Response>
 													{part.text}
 												</Response>
-												{#if message.role == 'assistant' && isLastMessage}
+												{#if message.role == 'assistant' && isLastMessage && chat.status !== 'streaming'}
 													<Actions class="mt-2">
-														<Action onclick={() => chat.regenerate()} label="Retry">
-															{@render CopyIcon(3)}
-														</Action>
+														{#if !readonly}
+															<Action
+																onclick={async () => {
+																	// todo fix this
+																	await deleteTrailingMessages({
+																		id: message.id
+																	});
+ 
+																	chat.regenerate();
+																}}
+																tooltip="Retry"
+																label="Retry"
+															>
+																{@render RetryIcon()}
+															</Action>
+														{/if}
 														<Action
-															onclick={() => navigator.clipboard.writeText(part.text)}
+															onclick={() => {
+																navigator.clipboard.writeText(part.text);
+																toast.success('Copied to clipboard!');
+															}}
+															tooltip="Copy"
 															label="Copy"
 														>
-															{@render CopyIcon(3)}
+															{@render CopyIcon()}
 														</Action>
+														{#if !readonly}
+															{@const vote = votes.current?.find(
+																(vote) => vote.messageId === message.id
+															)}
+															<Action
+																disabled={vote && vote.isUpvoted}
+																onclick={async () => {
+																	try {
+																		const upvote = updateVoteByChatId({
+																			chatId: chat.id,
+																			messageId: message.id,
+																			type: 'up'
+																		}).updates(
+																			getVotesByChatId(chat.id).withOverride((currentVotes) => {
+																				if (!currentVotes) return [];
+
+																				const votesWithoutCurrent = currentVotes.filter(
+																					(vote) => vote.messageId !== message.id
+																				);
+
+																				return [
+																					...votesWithoutCurrent,
+																					{
+																						chatId: chat.id,
+																						messageId: message.id,
+																						isUpvoted: true
+																					}
+																				];
+																			})
+																		);
+
+																		toast.promise(upvote, {
+																			loading: 'Upvoting Response...',
+																			success: 'Upvoted Response!',
+																			error: 'Failed to upvote response.'
+																		});
+																	} catch (error) {
+																		toast.error('Failed to upvote response.');
+																	}
+																}}
+																tooltip="Upvote"
+																label="Upvote"
+															>
+																{@render ThumbUpIcon()}
+															</Action>
+															<Action
+																disabled={vote && !vote.isUpvoted}
+																onclick={async () => {
+																	try {
+																		const downvote = updateVoteByChatId({
+																			chatId: chat.id,
+																			messageId: message.id,
+																			type: 'down'
+																		}).updates(
+																			getVotesByChatId(chat.id).withOverride((currentVotes) => {
+																				if (!currentVotes) return [];
+
+																				const votesWithoutCurrent = currentVotes.filter(
+																					(vote) => vote.messageId !== message.id
+																				);
+
+																				return [
+																					...votesWithoutCurrent,
+																					{
+																						chatId: chat.id,
+																						messageId: message.id,
+																						isUpvoted: false
+																					}
+																				];
+																			})
+																		);
+
+																		toast.promise(downvote, {
+																			loading: 'Downvoting Response...',
+																			success: 'Downvoted Response!',
+																			error: 'Failed to downvote response.'
+																		});
+																	} catch (error) {
+																		toast.error('Failed to downvote response.');
+																	}
+																}}
+																tooltip="Downvote"
+																label="Downvote"
+															>
+																{@render ThumbDownIcon()}
+															</Action>
+														{/if}
 													</Actions>
 												{/if}
 											{:else if part.type === 'reasoning'}
@@ -202,40 +331,49 @@
 				{#if chat.status === 'submitted'}
 					<Loader />
 				{/if}
-			</ConversationContent>
-			<ConversationScrollButton />
+			{/snippet}
+			{#snippet button()}
+				<ConversationScrollButton />
+			{/snippet}
 		</Conversation>
-		<PromptInput onsubmit={handleSubmit} class="mt-4">
-			<PromptInputTextarea bind:value={input} />
-			<PromptInputToolbar>
-				<PromptInputTools>
-					<PromptInputButton
-						variant={webSearch ? 'default' : 'ghost'}
-						onclick={() => (webSearch = !webSearch)}
-					>
-						{@render GlobeIcon(16)}
-						<span>Search</span>
-					</PromptInputButton>
-					<PromptInputModelSelect
-						onvaluechange={(value: string) => {
-							model = value;
-						}}
-						value={model}
-					>
-						<PromptInputModelSelectTrigger>
-							<PromptInputModelSelectValue />
-						</PromptInputModelSelectTrigger>
-						<PromptInputModelSelectContent>
-							{#each models as model (model.value)}
-								<PromptInputModelSelectItem value={model.value}>
-									{model.name}
-								</PromptInputModelSelectItem>
-							{/each}
-						</PromptInputModelSelectContent>
-					</PromptInputModelSelect>
-				</PromptInputTools>
-				<PromptInputSubmit disabled={!input} status={chat.status} />
-			</PromptInputToolbar>
-		</PromptInput>
+		{#if !readonly}
+			<Suggestions>
+				{#each suggestions as suggestion (suggestion)}
+					<Suggestion onclick={() => handleSuggestionClick(suggestion)} {suggestion} />
+				{/each}
+			</Suggestions>
+			<PromptInput onsubmit={handleSubmit} class="mt-4">
+				<PromptInputTextarea bind:value={input} />
+				<PromptInputToolbar>
+					<PromptInputTools>
+						<PromptInputButton
+							variant={webSearch ? 'default' : 'ghost'}
+							onclick={() => (webSearch = !webSearch)}
+						>
+							{@render GlobeIcon(16)}
+							<span>Search</span>
+						</PromptInputButton>
+						<PromptInputModelSelect>
+							<PromptInputModelSelectTrigger>
+								<PromptInputModelSelectValue>
+									{chatModels.find((m) => m.id === model)?.name}
+								</PromptInputModelSelectValue>
+							</PromptInputModelSelectTrigger>
+							<PromptInputModelSelectContent>
+								{#each chatModels as model (model.id)}
+									<PromptInputModelSelectItem value={model.id}>
+										{model.name}
+									</PromptInputModelSelectItem>
+								{/each}
+							</PromptInputModelSelectContent>
+						</PromptInputModelSelect>
+					</PromptInputTools>
+					<PromptInputSubmit
+						disabled={!input.trim()}
+						status={chat.status === 'streaming' ? 'streaming' : 'ready'}
+					/>
+				</PromptInputToolbar>
+			</PromptInput>
+		{/if}
 	</div>
 </div>

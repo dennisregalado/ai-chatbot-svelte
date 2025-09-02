@@ -22,7 +22,7 @@
 		label,
 		class: className,
 		variant = 'ghost',
-		size = 'sm',
+		size = 'icon',
 		...restProps
 	}: Props = $props();
 
@@ -34,7 +34,7 @@
 
 {#if tooltip}
 	<TooltipProvider>
-		<Tooltip>
+		<Tooltip delayDuration={0} >
 			<TooltipTrigger>
 				{#snippet child({ props })}
 					<Button
@@ -50,7 +50,7 @@
 					</Button>
 				{/snippet}
 			</TooltipTrigger>
-			<TooltipContent>
+			<TooltipContent side="bottom">
 				<p>{tooltip}</p>
 			</TooltipContent>
 		</Tooltip>

@@ -40,8 +40,11 @@ export const config = {
 export const POST = async ({ request, locals: { session, user, getStreamContext } }) => {
 	let requestBody: PostRequestBody;
 
+
 	try {
 		const json = await request.json();
+		console.log('json', json);
+
 		requestBody = postRequestBodySchema.parse(json);
 	} catch (error) {
 		return new ChatSDKError('bad_request:api').toResponse();
@@ -190,6 +193,7 @@ export const POST = async ({ request, locals: { session, user, getStreamContext 
 			return new Response(stream.pipeThrough(new JsonToSseTransformStream()));
 		}
 	} catch (error) {
+		console.error('Error in chat API:', error);
 		if (error instanceof ChatSDKError) {
 			return error.toResponse();
 		}
