@@ -252,10 +252,7 @@ export async function getMessageById({ id }: { id: string }) {
 	try {
 		return await db.select().from(message).where(eq(message.id, id));
 	} catch (error) {
-		throw new ChatSDKError(
-			'bad_request:database',
-			'Failed to get message by id',
-		);
+		throw new ChatSDKError('bad_request:database', 'Failed to get message by id');
 	}
 }
 

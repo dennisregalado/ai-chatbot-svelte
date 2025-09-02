@@ -64,7 +64,7 @@
 </script>
 
 {#snippet RetryIcon()}
-	<svg 
+	<svg
 		height="16"
 		stroke-linejoin="round"
 		viewBox="0 0 16 16"

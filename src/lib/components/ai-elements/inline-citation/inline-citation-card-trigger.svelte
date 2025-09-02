@@ -9,12 +9,7 @@
 		class?: string;
 	}>;
 
-	let {
-		sources,
-		variant = 'secondary',
-		ref = $bindable(null),
-		class: className
-	}: Props = $props();
+	let { sources, variant = 'secondary', ref = $bindable(null), class: className }: Props = $props();
 </script>
 
 <HoverCardTrigger bind:ref>

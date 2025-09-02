@@ -11,10 +11,7 @@
 </script>
 
 <form
-	class={cn(
-		'w-full overflow-hidden rounded-xl border bg-background shadow-sm',
-		className
-	)}
+	class={cn('w-full overflow-hidden rounded-xl border bg-background shadow-sm', className)}
 	{...restProps}
 >
 	{@render children?.()}

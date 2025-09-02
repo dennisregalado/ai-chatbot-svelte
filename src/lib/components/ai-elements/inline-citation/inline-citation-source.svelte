@@ -21,13 +21,13 @@
 
 <div bind:this={ref} class={cn('space-y-1', className)} {...restProps}>
 	{#if title}
-		<h4 class="truncate font-medium text-sm leading-tight">{title}</h4>
+		<h4 class="truncate text-sm leading-tight font-medium">{title}</h4>
 	{/if}
 	{#if url}
-		<p class="truncate break-all text-muted-foreground text-xs">{url}</p>
+		<p class="truncate text-xs break-all text-muted-foreground">{url}</p>
 	{/if}
 	{#if description}
-		<p class="line-clamp-3 text-muted-foreground text-sm leading-relaxed">
+		<p class="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
 			{description}
 		</p>
 	{/if}

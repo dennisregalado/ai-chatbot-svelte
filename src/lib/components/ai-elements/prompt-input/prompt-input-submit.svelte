@@ -14,23 +14,17 @@
 		children?: Snippet;
 	}
 
-	let { 
+	let {
 		class: className,
 		variant = 'default',
 		size = 'icon',
 		status,
 		children,
-		...restProps 
+		...restProps
 	}: Props = $props();
 </script>
 
-<Button
-	class={cn('gap-1.5 rounded-lg', className)}
-	{size}
-	type="submit"
-	{variant}
-	{...restProps}
->
+<Button class={cn('gap-1.5 rounded-lg', className)} {size} type="submit" {variant} {...restProps}>
 	{#if children}
 		{@render children()}
 	{:else if status === 'submitted'}

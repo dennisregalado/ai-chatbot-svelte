@@ -1,9 +1,9 @@
 import CodeBlock from './code-block.svelte';
 import CodeBlockCopyButton from './code-block-copy-button.svelte';
-import { 
-	setCodeBlockContext, 
+import {
+	setCodeBlockContext,
 	getCodeBlockContext,
-	type CodeBlockContextType 
+	type CodeBlockContextType
 } from './code-block-context.svelte.js';
 
 export {

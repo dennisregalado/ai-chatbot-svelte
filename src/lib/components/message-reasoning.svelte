@@ -3,13 +3,10 @@
 	import Markdown from './markdown.svelte';
 	import { fade, slide } from 'svelte/transition';
 	import { cubicInOut, linear } from 'svelte/easing';
-	
 
 	let { loading, reasoning }: { loading: boolean; reasoning: string } = $props();
 
 	let expanded = $state(true);
-
-	 
 </script>
 
 <div class="flex flex-col">

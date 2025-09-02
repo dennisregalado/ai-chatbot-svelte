@@ -7,18 +7,9 @@
 		children?: import('svelte').Snippet;
 	}>;
 
-	let {
-		ref = $bindable(null),
-		class: className,
-		children,
-		...restProps
-	}: Props = $props();
+	let { ref = $bindable(null), class: className, children, ...restProps }: Props = $props();
 </script>
 
-<HoverCardContent
-	bind:ref
-	class={cn('relative w-80 p-0', className)}
-	{...restProps}
->
+<HoverCardContent bind:ref class={cn('relative w-80 p-0', className)} {...restProps}>
 	{@render children?.()}
 </HoverCardContent>

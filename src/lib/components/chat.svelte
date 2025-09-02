@@ -207,7 +207,7 @@
 																	await deleteTrailingMessages({
 																		id: message.id
 																	});
- 
+
 																	chat.regenerate();
 																}}
 																tooltip="Retry"

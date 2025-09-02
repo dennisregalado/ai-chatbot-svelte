@@ -5,18 +5,9 @@
 
 	type Props = WithElementRef<HTMLAttributes<HTMLDivElement>>;
 
-	let {
-		ref = $bindable(null),
-		class: className,
-		children,
-		...restProps
-	}: Props = $props();
+	let { ref = $bindable(null), class: className, children, ...restProps }: Props = $props();
 </script>
 
-<CarouselItem
-	bind:ref
-	class={cn('w-full space-y-2 p-4 pl-8', className)}
-	{...restProps}
->
+<CarouselItem bind:ref class={cn('w-full space-y-2 p-4 pl-8', className)} {...restProps}>
 	{@render children?.()}
 </CarouselItem>

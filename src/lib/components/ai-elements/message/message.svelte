@@ -10,17 +10,12 @@
 		children?: Snippet;
 	}
 
-	let {
-		class: className,
-		from,
-		children,
-		...restProps
-	}: Props = $props();
+	let { class: className, from, children, ...restProps }: Props = $props();
 </script>
 
 <div
 	class={cn(
-		'group flex flex-col w-full justify-end gap-2 py-4',
+		'group flex w-full flex-col justify-end gap-2 py-4',
 		from === 'user' ? 'is-user items-end' : 'is-assistant justify-end',
 		'[&>div]:max-w-[80%]',
 		className

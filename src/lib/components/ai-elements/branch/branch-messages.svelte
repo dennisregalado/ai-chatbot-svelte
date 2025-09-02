@@ -50,10 +50,7 @@
 		</div>
 	{/each}
 {:else}
-	<div
-		class={cn('grid gap-2 overflow-hidden [&>div]:pb-0', className)}
-		{...props}
-	>
+	<div class={cn('grid gap-2 overflow-hidden [&>div]:pb-0', className)} {...props}>
 		{@render children()}
 	</div>
 {/if}

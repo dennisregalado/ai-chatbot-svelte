@@ -31,7 +31,7 @@
 	let endRef = $state<HTMLDivElement | null>(null);
 
 	$effect(() => {
-		if (!(containerRef && endRef)) return; 
+		if (!(containerRef && endRef)) return;
 
 		const observer = new MutationObserver(() => {
 			if (!endRef) return;
@@ -48,11 +48,10 @@
 		return () => observer.disconnect();
 	});
 
-
 	$effect.pre(() => {
 		console.log('the component is about to update');
 		tick().then(() => {
-				console.log('the component just updated');
+			console.log('the component just updated');
 		});
 	});
 </script>

@@ -12,13 +12,7 @@
 	let { href, title, children, ...restProps }: Props = $props();
 </script>
 
-<a
-	class="flex items-center gap-2"
-	{href}
-	rel="noreferrer"
-	target="_blank"
-	{...restProps}
->
+<a class="flex items-center gap-2" {href} rel="noreferrer" target="_blank" {...restProps}>
 	{#if children}
 		{@render children()}
 	{:else}

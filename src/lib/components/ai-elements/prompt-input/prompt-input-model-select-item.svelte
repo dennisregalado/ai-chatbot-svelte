@@ -15,6 +15,6 @@
 	let { class: className, value, onSelect, children, ...restProps }: Props = $props();
 </script>
 
-<DropdownMenuItem class={cn(className)} onSelect={onSelect} {...restProps}>
+<DropdownMenuItem class={cn(className)} {onSelect} {...restProps}>
 	{@render children?.()}
 </DropdownMenuItem>

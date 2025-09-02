@@ -9,10 +9,7 @@
 	let { class: className, size = 16, ...restProps }: Props = $props();
 </script>
 
-<div
-	class={cn('inline-flex animate-spin items-center justify-center', className)}
-	{...restProps}
->
+<div class={cn('inline-flex animate-spin items-center justify-center', className)} {...restProps}>
 	<svg
 		height={size}
 		stroke-linejoin="round"
@@ -23,12 +20,7 @@
 		<title>Loader</title>
 		<g clip-path="url(#clip0_2393_1490)">
 			<path d="M8 0V4" stroke="currentColor" stroke-width="1.5" />
-			<path
-				d="M8 16V12"
-				opacity="0.5"
-				stroke="currentColor"
-				stroke-width="1.5"
-			/>
+			<path d="M8 16V12" opacity="0.5" stroke="currentColor" stroke-width="1.5" />
 			<path
 				d="M3.29773 1.52783L5.64887 4.7639"
 				opacity="0.9"

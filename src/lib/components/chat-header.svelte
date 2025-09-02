@@ -49,5 +49,5 @@
 
 	{#if !readonly}
 		<VisibilitySelector {chatId} class="order-1 md:order-3" />
-	{/if} 
+	{/if}
 </header>

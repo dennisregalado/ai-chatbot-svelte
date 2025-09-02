@@ -2,14 +2,8 @@
 	import { cn } from '$lib/utils.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import type { ButtonProps } from '$lib/components/ui/button/button.svelte';
- 
-	let { 
-		variant = 'ghost', 
-		class: className, 
-		size, 
-		children,
-		...restProps 
-	}: ButtonProps = $props();
+
+	let { variant = 'ghost', class: className, size, children, ...restProps }: ButtonProps = $props();
 
 	// Simplified check for children - in Svelte we assume children exist if passed
 	const hasChildren = children !== undefined;

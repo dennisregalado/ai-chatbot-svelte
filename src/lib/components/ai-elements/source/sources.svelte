@@ -13,9 +13,6 @@
 	let { children, className, ...restProps }: Props = $props();
 </script>
 
-<Collapsible
-	class={cn('not-prose mb-4 text-primary text-xs', className)}
-	{...restProps}
->
+<Collapsible class={cn('not-prose mb-4 text-xs text-primary', className)} {...restProps}>
 	{@render children()}
 </Collapsible>

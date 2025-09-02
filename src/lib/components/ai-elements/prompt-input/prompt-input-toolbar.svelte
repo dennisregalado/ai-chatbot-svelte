@@ -10,9 +10,6 @@
 	let { class: className, children, ...restProps }: Props = $props();
 </script>
 
-<div
-	class={cn('flex items-center justify-between p-1', className)}
-	{...restProps}
->
+<div class={cn('flex items-center justify-between p-1', className)} {...restProps}>
 	{@render children?.()}
 </div>

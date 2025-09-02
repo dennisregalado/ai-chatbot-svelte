@@ -5,12 +5,7 @@
 
 	type Props = WithElementRef<HTMLAttributes<HTMLDivElement>>;
 
-	let {
-		ref = $bindable(null),
-		class: className,
-		children,
-		...restProps
-	}: Props = $props();
+	let { ref = $bindable(null), class: className, children, ...restProps }: Props = $props();
 
 	const api = getCarouselApi();
 	let current = $state(0);
@@ -37,7 +32,7 @@
 <div
 	bind:this={ref}
 	class={cn(
-		'flex flex-1 items-center justify-end px-3 py-1 text-muted-foreground text-xs',
+		'flex flex-1 items-center justify-end px-3 py-1 text-xs text-muted-foreground',
 		className
 	)}
 	{...restProps}

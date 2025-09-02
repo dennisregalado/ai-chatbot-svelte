@@ -7,11 +7,7 @@
 		children?: import('svelte').Snippet;
 	};
 
-	let {
-		closeDelay = 0,
-		openDelay = 0,
-		children
-	}: Props = $props();
+	let { closeDelay = 0, openDelay = 0, children }: Props = $props();
 </script>
 
 <HoverCard {closeDelay} {openDelay}>

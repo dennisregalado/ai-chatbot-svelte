@@ -6,14 +6,10 @@
 	interface Props {
 		src: string;
 		name?: string;
-		class?:  ClassValue;
+		class?: ClassValue;
 	}
 
-	let {
-		src,
-		name,
-		class: className
-	}: Props = $props();
+	let { src, name, class: className }: Props = $props();
 </script>
 
 <Avatar class={cn('size-8 ring-1 ring-border', className)}>

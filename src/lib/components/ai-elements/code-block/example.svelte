@@ -29,35 +29,26 @@ for i in range(10):
 	}
 </script>
 
-<div class="max-w-4xl mx-auto p-6 space-y-6">
+<div class="mx-auto max-w-4xl space-y-6 p-6">
 	<h1 class="text-2xl font-bold">CodeBlock Component Examples</h1>
-	
+
 	<div class="space-y-4">
 		<h2 class="text-xl font-semibold">JavaScript Example with Copy Button</h2>
 		<CodeBlock code={jsCode} language="javascript">
-			<CodeBlockCopyButton 
-				onCopy={handleCopy} 
-				onError={handleError}
-			/>
+			<CodeBlockCopyButton onCopy={handleCopy} onError={handleError} />
 		</CodeBlock>
 	</div>
 
 	<div class="space-y-4">
 		<h2 class="text-xl font-semibold">Python Example</h2>
-		<CodeBlock 
-			code={pythonCode} 
-			language="python"
-		>
-			<CodeBlockCopyButton 
-				onCopy={handleCopy} 
-				onError={handleError}
-			/>
+		<CodeBlock code={pythonCode} language="python">
+			<CodeBlockCopyButton onCopy={handleCopy} onError={handleError} />
 		</CodeBlock>
 	</div>
 
 	<div class="space-y-4">
 		<h2 class="text-xl font-semibold">TypeScript Example (Simple)</h2>
-		<CodeBlock 
+		<CodeBlock
 			code={`interface User {
   id: number;
   name: string;
@@ -68,7 +59,7 @@ const user: User = {
   id: 1,
   name: 'John Doe',
   email: 'john@example.com'
-};`} 
+};`}
 			language="typescript"
 		/>
 	</div>

@@ -40,7 +40,6 @@ export const config = {
 export const POST = async ({ request, locals: { session, user, getStreamContext } }) => {
 	let requestBody: PostRequestBody;
 
-
 	try {
 		const json = await request.json();
 		console.log('json', json);

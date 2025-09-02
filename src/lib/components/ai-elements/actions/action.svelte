@@ -34,17 +34,10 @@
 
 {#if tooltip}
 	<TooltipProvider>
-		<Tooltip delayDuration={0} >
+		<Tooltip delayDuration={0}>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<Button
-						{...props}
-						class={buttonClasses}
-						{size}
-						type="button"
-						{variant}
-						{...restProps}
-					>
+					<Button {...props} class={buttonClasses} {size} type="button" {variant} {...restProps}>
 						{@render children?.()}
 						<span class="sr-only">{label || tooltip}</span>
 					</Button>
@@ -56,13 +49,7 @@
 		</Tooltip>
 	</TooltipProvider>
 {:else}
-	<Button
-		class={buttonClasses}
-		{size}
-		type="button"
-		{variant}
-		{...restProps}
-	>
+	<Button class={buttonClasses} {size} type="button" {variant} {...restProps}>
 		{@render children?.()}
 		<span class="sr-only">{label || tooltip}</span>
 	</Button>

@@ -1,7 +1,8 @@
 <script lang="ts" module>
 	import type { Artifact } from './create-artifact.svelte';
 
-	export type ArtifactKind = (typeof import('$server/artifacts').artifactDefinitions)[number]['kind'];
+	export type ArtifactKind =
+		(typeof import('$server/artifacts').artifactDefinitions)[number]['kind'];
 
 	export interface UIArtifact {
 		title: string;

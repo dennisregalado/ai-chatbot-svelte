@@ -15,14 +15,14 @@
 		[key: string]: any;
 	}
 
-	let { 
-		suggestion, 
-		onClick, 
-		className, 
-		variant = 'outline', 
-		size = 'sm', 
+	let {
+		suggestion,
+		onClick,
+		className,
+		variant = 'outline',
+		size = 'sm',
 		children,
-		...restProps 
+		...restProps
 	}: Props = $props();
 
 	function handleClick() {

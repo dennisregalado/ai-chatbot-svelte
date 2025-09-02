@@ -8,22 +8,12 @@
 		alt?: string;
 	}
 
-	let {
-		base64,
-		uint8Array,
-		mediaType,
-		className,
-		alt,
-		...restProps
-	}: ImageProps = $props();
+	let { base64, uint8Array, mediaType, className, alt, ...restProps }: ImageProps = $props();
 </script>
 
 <img
 	{...restProps}
 	{alt}
-	class={cn(
-		'h-auto max-w-full overflow-hidden rounded-md',
-		className,
-	)}
+	class={cn('h-auto max-w-full overflow-hidden rounded-md', className)}
 	src="data:{mediaType};base64,{base64}"
 />

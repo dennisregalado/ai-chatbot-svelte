@@ -6,11 +6,7 @@
 
 	type Props = WithElementRef<HTMLAttributes<HTMLButtonElement>>;
 
-	let {
-		ref = $bindable(null),
-		class: className,
-		...restProps
-	}: Props = $props();
+	let { ref = $bindable(null), class: className, ...restProps }: Props = $props();
 
 	const api = getCarouselApi();
 

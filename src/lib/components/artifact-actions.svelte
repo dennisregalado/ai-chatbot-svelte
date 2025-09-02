@@ -48,7 +48,7 @@
 		setMetadata
 	};
 
-	async function handleActionClick(action: typeof safeArtifactDefinition.actions[0]) {
+	async function handleActionClick(action: (typeof safeArtifactDefinition.actions)[0]) {
 		isLoading = true;
 
 		try {
@@ -60,7 +60,7 @@
 		}
 	}
 
-	function isActionDisabled(action: typeof safeArtifactDefinition.actions[0]): boolean {
+	function isActionDisabled(action: (typeof safeArtifactDefinition.actions)[0]): boolean {
 		if (isLoading || artifact.status === 'streaming') {
 			return true;
 		}
@@ -82,7 +82,7 @@
 			<TooltipTrigger>
 				<Button
 					variant="outline"
-					class="h-fit dark:hover:bg-zinc-700 {action.label ? 'py-1.5 px-2' : 'p-2'}"
+					class="h-fit dark:hover:bg-zinc-700 {action.label ? 'px-2 py-1.5' : 'p-2'}"
 					onclick={() => handleActionClick(action)}
 					disabled={isActionDisabled(action)}
 				>

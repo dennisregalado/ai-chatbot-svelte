@@ -9,13 +9,7 @@
 		setApi?: (api: CarouselAPI | undefined) => void;
 	} & WithElementRef<HTMLAttributes<HTMLDivElement>>;
 
-	let {
-		setApi,
-		ref = $bindable(null),
-		class: className,
-		children,
-		...restProps
-	}: Props = $props();
+	let { setApi, ref = $bindable(null), class: className, children, ...restProps }: Props = $props();
 
 	function handleSetApi(api: CarouselAPI | undefined) {
 		setCarouselApi(api);
@@ -23,11 +17,6 @@
 	}
 </script>
 
-<Carousel
-	bind:ref
-	class={cn('w-full', className)}
-	setApi={handleSetApi}
-	{...restProps}
->
+<Carousel bind:ref class={cn('w-full', className)} setApi={handleSetApi} {...restProps}>
 	{@render children?.()}
 </Carousel>

@@ -83,11 +83,7 @@
 		{@const { children, class: codeClass } = props}
 		{@const lang = (props as any).lang || (props as any).language || 'text'}
 		{@const codeContent = typeof children === 'string' ? children : ''}
-		<CodeBlock 
-			code={codeContent}
-			language={lang}
-			class={cn('my-4', codeClass)}
-		>
+		<CodeBlock code={codeContent} language={lang} class={cn('my-4', codeClass)}>
 			<CodeBlockCopyButton />
 		</CodeBlock>
 	{/snippet}

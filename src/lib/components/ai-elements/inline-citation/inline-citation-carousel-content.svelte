@@ -5,11 +5,7 @@
 
 	type Props = WithElementRef<HTMLAttributes<HTMLDivElement>>;
 
-	let {
-		ref = $bindable(null),
-		children,
-		...restProps
-	}: Props = $props();
+	let { ref = $bindable(null), children, ...restProps }: Props = $props();
 </script>
 
 <CarouselContent bind:ref {...restProps}>

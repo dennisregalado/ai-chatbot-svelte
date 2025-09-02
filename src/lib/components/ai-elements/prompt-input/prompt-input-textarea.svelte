@@ -42,7 +42,7 @@
 <Textarea
 	bind:value
 	class={cn(
-		'w-full resize-none rounded-none border-none p-3 shadow-none outline-none ring-0',
+		'w-full resize-none rounded-none border-none p-3 shadow-none ring-0 outline-none',
 		'field-sizing-content max-h-[6lh] bg-transparent dark:bg-transparent',
 		'focus-visible:ring-0',
 		className

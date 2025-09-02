@@ -4,12 +4,7 @@
 
 	type Props = WithElementRef<HTMLAttributes<HTMLSpanElement>>;
 
-	let {
-		ref = $bindable(null),
-		class: className,
-		children,
-		...restProps
-	}: Props = $props();
+	let { ref = $bindable(null), class: className, children, ...restProps }: Props = $props();
 </script>
 
 <span

@@ -20,12 +20,6 @@
 	const { currentBranch, totalBranches } = branchContext;
 </script>
 
-<span
-	class={cn(
-		'font-medium text-muted-foreground text-xs tabular-nums',
-		className
-	)}
-	{...props}
->
+<span class={cn('text-xs font-medium text-muted-foreground tabular-nums', className)} {...props}>
 	{currentBranch + 1} of {totalBranches}
 </span>

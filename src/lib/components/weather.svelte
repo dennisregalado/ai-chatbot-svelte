@@ -192,7 +192,7 @@
 
 <script lang="ts">
 	import { format, isWithinInterval } from 'date-fns';
-	import { IsMobile } from '$hooks/is-mobile.svelte'; 
+	import { IsMobile } from '$hooks/is-mobile.svelte';
 
 	interface Props {
 		weatherAtLocation?: WeatherAtLocation;
@@ -200,7 +200,7 @@
 
 	let { weatherAtLocation = SAMPLE }: Props = $props();
 
-    let isMobile = new IsMobile(); 
+	let isMobile = new IsMobile();
 
 	// Reactive calculations using Svelte 5 runes
 	let currentHigh = $derived(Math.max(...weatherAtLocation.hourly.temperature_2m.slice(0, 24)));
@@ -272,4 +272,4 @@
 			</div>
 		{/each}
 	</div>
-</div> 
+</div>
