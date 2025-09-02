@@ -14,7 +14,6 @@
 	import { toast } from 'svelte-sonner';
 	import { ChatSDKError } from '$lib/errors';
 	import type { ChatMessage } from '$lib/types';
-
 	import { Conversation, ConversationScrollButton } from '$components/ai-elements/conversation';
 	import { Message, MessageContent } from '$components/ai-elements/message';
 	import {
@@ -167,7 +166,7 @@
 		);
 	};
 
-	$inspect(chat.messages);
+	$inspect('TEST:', chat.messages);
 </script>
 
 <div class="relative mx-auto size-full h-screen max-w-4xl p-6">
