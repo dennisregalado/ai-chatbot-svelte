@@ -17,7 +17,8 @@
 		CheckCircleFillIcon,
 		LockIcon,
 		ShareIcon,
-		MoreHorizontalIcon
+		MoreHorizontalIcon,
+		PencilEditIcon
 	} from '$components/icons.svelte';
 	import { getChatHistory, getChatVisibility, updateChatVisibility } from '$remote/chat.remote';
 	import { toast } from 'svelte-sonner';
@@ -98,6 +99,14 @@
 					{/each}
 				</DropdownMenuSubContent>
 			</DropdownMenuSub>
+			<DropdownMenuItem class="cursor-pointer" onclick={() => {}}>
+				{@render PencilEditIcon()}
+				<span>Rename</span>
+			</DropdownMenuItem>
+			<DropdownMenuItem class="cursor-pointer" onclick={() => {}}>
+				{@render PencilEditIcon()}
+				<span>Favorite</span>
+			</DropdownMenuItem>
 			<DropdownMenuItem
 				class="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
 				onclick={() => ondelete(chat.id)}

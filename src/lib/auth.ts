@@ -35,6 +35,7 @@ export const auth = betterAuth({
 	plugins: [
 		sveltekitCookies(getRequestEvent),
 		anonymous(),
+		/**
 		polar({
 			client: polarClient,
 			createCustomerOnSignUp: true,
@@ -53,6 +54,7 @@ export const auth = betterAuth({
 				usage()
 			]
 		})
+		*/
 	]
 });
 

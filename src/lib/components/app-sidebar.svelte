@@ -1,3 +1,7 @@
+<script lang="ts" module>
+	// sample data
+</script>
+
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import {
@@ -6,6 +10,11 @@
 		SidebarFooter,
 		SidebarHeader,
 		SidebarMenu,
+		SidebarGroup,
+		SidebarGroupLabel,
+		SidebarGroupContent,
+		SidebarMenuItem,
+		SidebarMenuButton,
 		useSidebar
 	} from '$lib/components/ui/sidebar';
 	import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
@@ -13,6 +22,8 @@
 	import { PlusIcon } from './icons.svelte';
 	import SidebarHistory from './sidebar-history.svelte';
 	import SidebarUserNav from './sidebar-user-nav.svelte';
+	import * as Collapsible from '$components/ui/collapsible';
+	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
 
 	const sidebar = useSidebar();
 
@@ -22,10 +33,10 @@
 	}
 </script>
 
-<Sidebar class="group-data-[side=left]:border-r-0">
+<Sidebar  variant="inset">
 	<SidebarHeader>
 		<SidebarMenu>
-			<div class="flex flex-row items-center justify-between">
+			<div class="flex w-full flex-row items-center justify-between">
 				<button
 					onclick={() => {
 						sidebar.setOpenMobile(false);
@@ -33,23 +44,21 @@
 							invalidateAll: true
 						});
 					}}
-					class="flex flex-row items-center gap-3"
+					class="flex hidden flex-row items-center gap-3"
 				>
 					<span class="cursor-pointer rounded-md px-2 text-lg font-semibold hover:bg-muted"
 						>Chatbot</span
 					>
 				</button>
-				<Tooltip>
-					<TooltipTrigger>
-						{#snippet child({ props })}
-							<Button {...props} variant="ghost" type="button" class="h-fit p-2" onclick={newChat}>
-								{@render PlusIcon()}
-							</Button>
-						{/snippet}
-					</TooltipTrigger>
-					<TooltipContent align="end">New Chat</TooltipContent>
-				</Tooltip>
 			</div>
+			<Tooltip>
+				<TooltipTrigger>
+					{#snippet child({ props })}
+						<Button {...props} variant="outline" type="button" onclick={newChat}>New Chat</Button>
+					{/snippet}
+				</TooltipTrigger>
+				<TooltipContent align="end">New Chat</TooltipContent>
+			</Tooltip>
 		</SidebarMenu>
 	</SidebarHeader>
 	<SidebarContent>

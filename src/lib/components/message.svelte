@@ -16,8 +16,7 @@
 	import type { Chat } from '@ai-sdk/svelte';
 
 	import { sanitizeText } from '$lib/utils';
-	import MessageEditor from '$components/message-editor.svelte';
-	import MessageActions from '$components/message-actions.svelte';
+	import MessageEditor from '$components/message-editor.svelte'; 
 
 	let {
 		chatId,
@@ -141,13 +140,7 @@
 						{/key}
 					{/if}
 				{/if}
-			{/each}
-
-			{#if !readonly}
-				{#key `action-${message.id}`}
-					<MessageActions {chatId} {message} {loading} {vote} />
-				{/key}
-			{/if}
+			{/each} 
 		</div>
 	</div>
 </div>
