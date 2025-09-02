@@ -3,9 +3,10 @@
 	import { CollapsibleContent } from '$lib/components/ui/collapsible';
 	import Response from '../response/response.svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
+	import type { Snippet } from 'svelte';
 
 	interface Props extends HTMLAttributes<HTMLDivElement> {
-		children: string;
+		children: Snippet;
 		class?: string;
 	}
 

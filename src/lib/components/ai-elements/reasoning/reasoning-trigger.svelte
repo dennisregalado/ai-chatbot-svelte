@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { cn } from '$lib/utils.js';
 	import { CollapsibleTrigger } from '$lib/components/ui/collapsible';
-	import { BrainIcon, ChevronDownIcon } from '$lib/components/icons.svelte';
+	import BrainIcon from '@lucide/svelte/icons/brain';
+	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import type { Snippet } from 'svelte';
 	import { getContext } from 'svelte';
@@ -29,7 +30,7 @@
 </script>
 
 <CollapsibleTrigger
-	class={cn('flex items-center gap-2 text-muted-foreground text-sm', className)}
+	class={cn('flex items-center gap-2 text-sm text-muted-foreground', className)}
 	{...restProps}
 >
 	{#if children}
