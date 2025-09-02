@@ -6,20 +6,6 @@ import type { VisibilityType } from '$components/visibility-selector.svelte';
 import { myProvider } from '$ai/providers';
 import { error, redirect } from '@sveltejs/kit';
 
-export const getChatModel = query(async () => {
-	const { cookies } = getRequestEvent();
-	const model = cookies.get('chat-model');
-	return model;
-});
-
-export const saveChatModel = command(z.string(), async (model: string) => {
-	const { cookies } = getRequestEvent();
-
-	cookies.set('chat-model', model, {
-		path: '/'
-	});
-});
-
 export const getChatHistory = query(async () => {
 	const {
 		locals: { session }
