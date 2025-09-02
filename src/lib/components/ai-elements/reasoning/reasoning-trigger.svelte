@@ -14,39 +14,50 @@
 		duration: number;
 	}
 
-	interface Props extends HTMLAttributes<HTMLButtonElement> {
+	interface Props {
 		children?: Snippet;
 		class?: string;
+		// Allow other HTML attributes
+		[key: string]: any;
 	}
 
-	let { class: className, children, ...restProps }: Props = $props();
+	let {
+		class: className,
+		children,
+		// Extract safe HTML attributes
+		id,
+		style,
+		...restProps
+	}: Props = $props();
 
-	const context = getContext<ReasoningContextValue>('reasoning');
-	if (!context) {
+	const getReasoningContext = getContext<() => ReasoningContextValue>('reasoning');
+	if (!getReasoningContext) {
 		throw new Error('ReasoningTrigger must be used within Reasoning');
 	}
 
-	const { isStreaming, isOpen, duration } = context;
+	const { isStreaming, isOpen, duration } = $derived(getReasoningContext());
 </script>
 
 <CollapsibleTrigger
 	class={cn('flex items-center gap-2 text-sm text-muted-foreground', className)}
+	{id}
+	{style}
 	{...restProps}
 >
 	{#if children}
 		{@render children()}
-	{:else} 
+	{:else}
+		<BrainIcon class="size-4" />
 		{#if isStreaming || duration === 0}
 			<p>Thinking...</p>
 		{:else}
 			<p>Thought for {duration} seconds</p>
 		{/if}
-		<div
+		<ChevronDownIcon
 			class={cn(
 				'size-4 text-muted-foreground transition-transform',
 				isOpen ? 'rotate-180' : 'rotate-0'
 			)}
-		> 
-		</div>
+		/>
 	{/if}
 </CollapsibleTrigger>

@@ -13,32 +13,40 @@
 		duration: number;
 	}
 
-	interface Props extends HTMLAttributes<HTMLDivElement> {
-		isStreaming?: boolean;
+	interface Props {
+		isstreaming?: boolean; // HTML attribute name (lowercase)
 		open?: boolean;
 		defaultOpen?: boolean;
 		onOpenChange?: (open: boolean) => void;
 		duration?: number;
 		children?: Snippet;
 		class?: string;
-	}
+		// Allow other HTML attributes but exclude those that conflict with Collapsible
+		[key: string]: any;
+}
 
 	// Constants
 	const AUTO_CLOSE_DELAY = 1000;
 	const MS_IN_S = 1000;
 	const REASONING_CONTEXT_KEY = 'reasoning';
 
-	// Props
+	// Props with bindable
 	let {
 		class: className,
-		isStreaming = false,
-		open = $bindable(),
+		isstreaming = false, // HTML attributes are lowercase
+		open = $bindable<boolean>(),
 		defaultOpen = true,
 		onOpenChange,
-		duration: durationProp = $bindable(),
+		duration: durationProp = $bindable<number>(),
 		children,
+		// Extract HTML attributes, excluding Collapsible-specific props
+		id,
+		style,
 		...restProps
 	}: Props = $props();
+
+	// Use lowercase prop for internal logic
+	const isStreaming = isstreaming;
 
 	// State
 	let duration = $state(durationProp ?? 0);
@@ -75,7 +83,8 @@
 				startTime = Date.now();
 			}
 		} else if (startTime !== null) {
-			setDuration(Math.round((Date.now() - startTime) / MS_IN_S));
+			const calculatedDuration = Math.round((Date.now() - startTime) / MS_IN_S);
+			setDuration(calculatedDuration);
 			startTime = null;
 		}
 	});
@@ -92,22 +101,25 @@
 		}
 	});
 
-	// Context
-	const context: ReasoningContextValue = $derived({
+	// Create reactive context using derived
+	const contextValue = $derived({
 		isStreaming,
 		isOpen: currentIsOpen,
 		setIsOpen,
 		duration: currentDuration
 	});
 
-	setContext(REASONING_CONTEXT_KEY, context);
+	setContext(REASONING_CONTEXT_KEY, () => contextValue);
 </script>
 
 <Collapsible
 	class={cn('not-prose mb-4', className)}
 	onOpenChange={setIsOpen}
 	bind:open={currentIsOpen}
+	{id}
+	{style}
 	{...restProps}
 >
 	{@render children?.()}
 </Collapsible>
+

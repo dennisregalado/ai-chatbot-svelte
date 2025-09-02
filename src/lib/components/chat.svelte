@@ -204,11 +204,15 @@
 															<Action
 																onclick={async () => {
 																	// todo fix this
+																	const previousMessage = chat.messages[messageIndex - 1];
+																	if (!previousMessage) return;
 																	await deleteTrailingMessages({
-																		id: message.id
+																		id: previousMessage?.id
 																	});
 
-																	chat.regenerate();
+																	chat.regenerate({
+																		messageId: previousMessage?.id
+																	});
 																}}
 																tooltip="Retry"
 																label="Retry"
@@ -315,8 +319,22 @@
 														{/if}
 													</Actions>
 												{/if}
+												{#if message.role === 'user'}
+													<Actions class="mt-2 justify-end">
+														<Action
+															onclick={() => {
+																navigator.clipboard.writeText(part.text);
+																toast.success('Copied to clipboard!');
+															}}
+															tooltip="Copy"
+															label="Copy"
+														>
+															{@render CopyIcon()}
+														</Action>
+													</Actions>
+												{/if}
 											{:else if part.type === 'reasoning'}
-												<Reasoning class="w-full" isStreaming={chat.status === 'streaming'}>
+												<Reasoning class="w-full" isstreaming={chat.status === 'streaming'}>
 													<ReasoningTrigger />
 													<ReasoningContent>{part.text}</ReasoningContent>
 												</Reasoning>
