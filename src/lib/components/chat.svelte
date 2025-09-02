@@ -89,7 +89,7 @@
 						body: {
 							id,
 							message: messages.at(-1),
-							selectedChatModel: DEFAULT_CHAT_MODEL,
+							selectedChatModel: 'chat-model-reasoning',
 							selectedVisibilityType: visibilityType?.current || initialVisibilityType,
 							...body
 						}

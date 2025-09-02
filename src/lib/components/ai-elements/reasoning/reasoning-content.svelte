@@ -21,5 +21,5 @@
 	)}
 	{...restProps}
 >
-	<Response class="grid gap-2">{children}</Response>
+	<Response class="grid gap-2">{@render children()}</Response>
 </CollapsibleContent>

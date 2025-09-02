@@ -35,8 +35,7 @@
 >
 	{#if children}
 		{@render children()}
-	{:else}
-		{@render BrainIcon()}
+	{:else} 
 		{#if isStreaming || duration === 0}
 			<p>Thinking...</p>
 		{:else}
@@ -47,8 +46,7 @@
 				'size-4 text-muted-foreground transition-transform',
 				isOpen ? 'rotate-180' : 'rotate-0'
 			)}
-		>
-			{@render ChevronDownIcon()}
+		> 
 		</div>
 	{/if}
 </CollapsibleTrigger>
