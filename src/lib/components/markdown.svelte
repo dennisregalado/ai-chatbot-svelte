@@ -2,7 +2,7 @@
 	import Markdown from 'svelte-exmarkdown';
 	import { gfmPlugin } from 'svelte-exmarkdown/gfm';
 	import { cn } from '$lib/utils';
-	import CodeBlock from '$components/code-block.svelte';
+	import { CodeBlock, CodeBlockCopyButton } from '$lib/components/ai-elements/code-block';
 
 	let { md }: { md: string } = $props();
 </script>
@@ -80,6 +80,15 @@
 		</h6>
 	{/snippet}
 	{#snippet code(props)}
-		<CodeBlock {...props} class={props.class ?? undefined} />
+		{@const { children, class: codeClass } = props}
+		{@const lang = (props as any).lang || (props as any).language || 'text'}
+		{@const codeContent = typeof children === 'string' ? children : ''}
+		<CodeBlock 
+			code={codeContent}
+			language={lang}
+			class={cn('my-4', codeClass)}
+		>
+			<CodeBlockCopyButton />
+		</CodeBlock>
 	{/snippet}
 </Markdown>

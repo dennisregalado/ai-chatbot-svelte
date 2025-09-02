@@ -95,6 +95,7 @@
 		"prosemirror-view": "^1.40.1",
 		"redis": "^5.8.2",
 		"resumable-stream": "^2.2.3",
-		"stick-to-bottom-svelte": "^1.0.0"
+		"stick-to-bottom-svelte": "^1.0.0",
+		"svelte-highlight": "^7.8.4"
 	}
 }
