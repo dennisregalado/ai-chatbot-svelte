@@ -5,17 +5,8 @@ import { anonymous } from 'better-auth/plugins';
 import { db } from '$server/db/queries';
 import * as schema from '$server/db/schema';
 import { getRequestEvent } from '$app/server';
-import { BETTER_AUTH_SECRET, POLAR_ACCESS_TOKEN } from '$env/static/private';
-import { checkout, polar, portal, usage } from '@polar-sh/better-auth';
-import { Polar } from '@polar-sh/sdk';
-
-const polarClient = new Polar({
-	accessToken: POLAR_ACCESS_TOKEN,
-	// Use 'sandbox' if you're using the Polar Sandbox environment
-	// Remember that access tokens, products, etc. are completely separated between environments.
-	// Access tokens obtained in Production are for instance not usable in the Sandbox environment.
-	server: 'sandbox'
-});
+import { BETTER_AUTH_SECRET } from '$env/static/private'; 
+ 
 
 export const auth = betterAuth({
 	secret: BETTER_AUTH_SECRET,

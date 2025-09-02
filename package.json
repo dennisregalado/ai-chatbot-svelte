@@ -82,6 +82,7 @@
 		"@codemirror/view": "^6.38.2",
 		"@polar-sh/better-auth": "^1.1.0",
 		"@polar-sh/sdk": "^0.34.14",
+		"@polar-sh/sveltekit": "^0.4.4",
 		"@sveltejs/adapter-vercel": "^5.10.2",
 		"@vercel/analytics": "^1.5.0",
 		"@vercel/functions": "^2.2.13",
