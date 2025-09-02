@@ -5,7 +5,7 @@ import { textDocumentHandler } from '$artifacts/text/server';
 import type { ArtifactKind } from '$components/artifact.svelte';
 import type { Document } from '$server/db/schema';
 import { saveDocument } from '$server/db/queries';
-import type { Session } from 'better-auth';
+import type { Session } from '$lib/auth';
 import type { UIMessageStreamWriter } from 'ai';
 import type { ChatMessage } from '$lib/types';
 import { textArtifact } from '$artifacts/text/client.svelte';

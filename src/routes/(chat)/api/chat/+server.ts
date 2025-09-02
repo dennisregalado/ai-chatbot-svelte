@@ -9,7 +9,6 @@ import {
 import { type RequestHints, systemPrompt } from '$ai/prompts';
 import {
 	createStreamId,
-	deleteChatById,
 	getChatById,
 	getMessageCountByUserId,
 	getMessagesByChatId,
@@ -200,27 +199,4 @@ export const POST = async ({ request, locals: { session, user, getStreamContext 
 		console.error('Unexpected error in chat API:', error);
 		return new ChatSDKError('bad_request:api').toResponse();
 	}
-};
-
-export const DELETE = async ({ request, locals: { session } }) => {
-	const { searchParams } = new URL(request.url);
-	const id = searchParams.get('id');
-
-	if (!id) {
-		return new ChatSDKError('bad_request:api').toResponse();
-	}
-
-	if (!session?.userId) {
-		return new ChatSDKError('unauthorized:chat').toResponse();
-	}
-
-	const chat = await getChatById({ id });
-
-	if (chat.userId !== session.userId) {
-		return new ChatSDKError('forbidden:chat').toResponse();
-	}
-
-	const deletedChat = await deleteChatById({ id });
-
-	return json(deletedChat);
 };

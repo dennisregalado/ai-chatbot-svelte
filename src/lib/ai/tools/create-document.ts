@@ -1,7 +1,7 @@
 import { generateUUID } from '$lib/utils';
 import { tool, type UIMessageStreamWriter } from 'ai';
 import { z } from 'zod';
-import type { Session } from 'better-auth';
+import type { Session } from '$lib/auth';
 import { artifactKinds, documentHandlersByArtifactKind } from '$server/artifacts';
 import type { ChatMessage } from '$lib/types';
 

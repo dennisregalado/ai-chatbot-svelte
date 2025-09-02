@@ -34,19 +34,12 @@
 		resize,
 		// Spring animation configuration for smooth chat experience
 		damping: 0.7,
-		stiffness: 0.08,
-		mass: 1.2
+		stiffness: 0.05,
+		mass: 1.25
 	});
 
 	// Provide the stick-to-bottom context for child components
-	setContext('stickToBottom', {
-		stickToBottom,
-		scrollElement: () => scrollElement,
-		contentElement: () => contentElement,
-		setContentElement: (element: HTMLElement) => {
-			contentElement = element;
-		}
-	});
+	setContext('stickToBottom', stickToBottom);
 </script>
 
 <!-- Main conversation container -->

@@ -1,13 +1,6 @@
 import { form, getRequestEvent, query } from '$app/server';
 import { auth } from '$lib/auth';
-import { redirect } from '@sveltejs/kit';
-import { BetterAuthError } from 'better-auth';
-
-export const getSession = query(async () => {
-	const { locals } = getRequestEvent();
-	const { session } = locals;
-	return session;
-});
+import { redirect } from '@sveltejs/kit'; 
 
 export const getUser = query(async () => {
 	const { locals } = getRequestEvent();

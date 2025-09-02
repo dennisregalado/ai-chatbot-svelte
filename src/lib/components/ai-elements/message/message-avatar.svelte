@@ -9,7 +9,7 @@
 		class?: ClassValue;
 	}
 
-	let { src, name, class: className }: Props = $props();
+	let { src = 'https://avatar.vercel.sh/7AZZkveU9zcdinMGJo9Bdpjl1CmWHiUK', name, class: className }: Props = $props();
 </script>
 
 <Avatar class={cn('size-8 ring-1 ring-border', className)}>

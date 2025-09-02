@@ -1,13 +1,12 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { db } from '$server/db/queries';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
-import { getRequestEvent } from '$app/server';
 import { anonymous } from 'better-auth/plugins';
+import { db } from '$server/db/queries';
 import * as schema from '$server/db/schema';
+import { getRequestEvent } from '$app/server';
 import { BETTER_AUTH_SECRET, POLAR_ACCESS_TOKEN } from '$env/static/private';
-
-import { polar, checkout, portal, usage, webhooks } from '@polar-sh/better-auth';
+import { checkout, polar, portal, usage } from '@polar-sh/better-auth';
 import { Polar } from '@polar-sh/sdk';
 
 const polarClient = new Polar({
@@ -39,7 +38,20 @@ export const auth = betterAuth({
 		polar({
 			client: polarClient,
 			createCustomerOnSignUp: true,
-			use: [usage()]
+			use: [
+				checkout({
+					products: [
+						{
+							productId: "123-456-789", // ID of Product from Polar Dashboard
+							slug: "pro" // Custom slug for easy reference in Checkout URL, e.g. /checkout/pro
+						}
+					],
+					successUrl: "/success?checkout_id={CHECKOUT_ID}",
+					authenticatedUsersOnly: true
+				}),
+				portal(),
+				usage()
+			]
 		})
 	]
 });

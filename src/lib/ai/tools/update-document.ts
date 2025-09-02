@@ -1,5 +1,5 @@
 import { tool, type UIMessageStreamWriter } from 'ai';
-import type { Session } from 'better-auth';
+import type { Session } from '$lib/auth';
 import { z } from 'zod';
 import { getDocumentById } from '$server/db/queries';
 import { documentHandlersByArtifactKind } from '$server/artifacts';

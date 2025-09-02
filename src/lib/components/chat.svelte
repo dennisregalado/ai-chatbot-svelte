@@ -17,7 +17,6 @@
 
 	import {
 		Conversation,
-		ConversationContent,
 		ConversationScrollButton
 	} from '$components/ai-elements/conversation';
 	import { Message, MessageContent } from '$components/ai-elements/message';
@@ -35,7 +34,7 @@
 		PromptInputTools
 	} from '$components/ai-elements/prompt-input';
 	import { Response } from '$components/ai-elements/response';
-	import { GlobeIcon } from '$components/icons.svelte';
+	import { GlobeIcon, PencilEditIcon } from '$components/icons.svelte';
 	import { Source, Sources, SourcesContent, SourcesTrigger } from '$components/ai-elements/source';
 	import { Reasoning, ReasoningContent, ReasoningTrigger } from '$components/ai-elements/reasoning';
 	import { Actions, Action } from '$components/ai-elements/actions';
@@ -45,9 +44,10 @@
 	import { chatModels, DEFAULT_CHAT_MODEL } from '$ai/models';
 	import { updateVoteByChatId } from '$remote/chat.remote';
 	import { ThumbDownIcon, ThumbUpIcon } from '$components/icons.svelte';
-
+	import Greeting from '$components/greeting.svelte';
+	import MessageAvatar from './ai-elements/message/message-avatar.svelte';
 	const suggestions = [
-		'Can you explain how to play tennis?',
+		'What is the UAP Disclosure Act of 2025?',
 		'What is the weather in Tokyo?',
 		'How do I make a really good fish taco?'
 	];
@@ -111,6 +111,7 @@
 		})
 	);
 
+	let editing = $state(false);
 	let searchParams = $derived(page.url.searchParams);
 	let query = $derived(searchParams.get('query'));
 
@@ -132,6 +133,7 @@
 
 	const handleSubmit = (e: Event) => {
 		e.preventDefault();
+		if (chat.status !== 'ready') return;
 		if (input.trim()) {
 			replaceState('/chat/' + id, {});
 			chat.sendMessage(
@@ -151,6 +153,8 @@
 	};
 
 	const handleSuggestionClick = (suggestion: string) => {
+		if (chat.status !== 'ready') return;
+
 		replaceState('/chat/' + id, {});
 		chat.sendMessage(
 			{
@@ -169,37 +173,40 @@
 
 <div class="relative mx-auto size-full h-screen max-w-4xl p-6">
 	<div class="flex h-full flex-col">
-		<Conversation class="h-full">
-			{#snippet children()}
-				{#each chat.messages as message, messageIndex (message.id)}
-					<div>
-						{#if message.role === 'assistant'}
-							{@const sources = message.parts.filter((part) => part.type === 'source-url')}
-							{#if sources.length > 0}
-								<Sources>
-									<SourcesTrigger count={sources.length} />
-									{#each sources as part, i}
-										{#key `${message.id}-${i}`}
-											<SourcesContent>
-												<Source href={part.url} title={part.url} />
-											</SourcesContent>
-										{/key}
-									{/each}
-								</Sources>
+		{#if chat.messages.length == 0}
+			<Greeting />
+		{:else}
+			<Conversation class="h-full">
+				{#snippet children()}
+					{#each chat.messages as message, messageIndex (message.id)} 
+							{#if message.role === 'assistant'}
+								{@const sources = message.parts.filter((part) => part.type === 'source-url')}
+								{#if sources.length > 0}
+									<Sources>
+										<SourcesTrigger count={sources.length} />
+										{#each sources as part, i}
+											{#key `${message.id}-${i}`}
+												<SourcesContent>
+													<Source href={part.url} title={part.url} />
+												</SourcesContent>
+											{/key}
+										{/each}
+									</Sources>
+								{/if}
 							{/if}
-						{/if}
-						{#key message.id}
-							<Message from={message.role}>
-								<MessageContent>
+							{#key message.id}
+								<Message from={message.role}>
 									{#each message.parts as part, i}
 										{#key `${message.id}-${i}`}
 											{#if part.type === 'text'}
 												{@const isLastMessage = messageIndex === chat.messages.length - 1}
-												<Response>
-													{part.text}
-												</Response>
+												<MessageContent>
+													<Response>
+														{part.text}
+													</Response>
+												</MessageContent>
 												{#if message.role == 'assistant' && isLastMessage && chat.status !== 'streaming'}
-													<Actions class="mt-2">
+													<Actions>
 														{#if !readonly}
 															<Action
 																onclick={async () => {
@@ -320,7 +327,17 @@
 													</Actions>
 												{/if}
 												{#if message.role === 'user'}
-													<Actions class="mt-2 justify-end">
+													<Actions class="justify-end">
+														<Action
+															onclick={() => {
+																editing = true;
+																input = part.text;
+															}}
+															tooltip="Edit"
+															label="Edit"
+														>
+															{@render PencilEditIcon()}
+														</Action>
 														<Action
 															onclick={() => {
 																navigator.clipboard.writeText(part.text);
@@ -341,26 +358,25 @@
 											{/if}
 										{/key}
 									{/each}
-								</MessageContent>
-							</Message>
-						{/key}
-					</div>
-				{/each}
-				{#if chat.status === 'submitted'}
-					<Loader />
-				{/if}
-			{/snippet}
-			{#snippet button()}
-				<ConversationScrollButton />
-			{/snippet}
-		</Conversation>
+								</Message>
+							{/key} 
+					{/each}
+					{#if chat.status === 'submitted'}
+						<Loader />
+					{/if}
+				{/snippet}
+				{#snippet button()}
+					<ConversationScrollButton />
+				{/snippet}
+			</Conversation>
+		{/if}
 		{#if !readonly}
 			<Suggestions>
 				{#each suggestions as suggestion (suggestion)}
 					<Suggestion onclick={() => handleSuggestionClick(suggestion)} {suggestion} />
 				{/each}
 			</Suggestions>
-			<PromptInput onsubmit={handleSubmit} class="mt-4">
+			<PromptInput onsubmit={handleSubmit} class="mt-4 shrink-0">
 				<PromptInputTextarea bind:value={input} />
 				<PromptInputToolbar>
 					<PromptInputTools>
@@ -378,9 +394,9 @@
 								</PromptInputModelSelectValue>
 							</PromptInputModelSelectTrigger>
 							<PromptInputModelSelectContent>
-								{#each chatModels as model (model.id)}
-									<PromptInputModelSelectItem value={model.id}>
-										{model.name}
+								{#each chatModels as chatModel (chatModel.id)}
+									<PromptInputModelSelectItem value={chatModel.id} onSelect={() => (model = chatModel.id)}>
+										{chatModel.name}
 									</PromptInputModelSelectItem>
 								{/each}
 							</PromptInputModelSelectContent>
