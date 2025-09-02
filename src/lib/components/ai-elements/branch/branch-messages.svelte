@@ -11,7 +11,6 @@
 	import { getContext } from 'svelte';
 	import { cn } from '$lib/utils.js';
 	import type { BranchContextType } from './branch.svelte';
-	import type { ClassValue } from 'svelte/elements';
 
 	let { children, class: className, ...props }: BranchMessagesProps = $props();
 
