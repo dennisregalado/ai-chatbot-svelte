@@ -23,7 +23,7 @@
 		class?: string;
 		// Allow other HTML attributes but exclude those that conflict with Collapsible
 		[key: string]: any;
-}
+	}
 
 	// Constants
 	const AUTO_CLOSE_DELAY = 1000;
@@ -122,4 +122,3 @@
 >
 	{@render children?.()}
 </Collapsible>
-

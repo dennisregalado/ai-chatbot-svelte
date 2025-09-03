@@ -83,6 +83,5 @@
 		{@const { children, class: codeClass } = props}
 		{@const lang = (props as any).lang || (props as any).language || 'text'}
 		{@const codeContent = typeof children === 'string' ? children : ''}
-		 
 	{/snippet}
 </Markdown>

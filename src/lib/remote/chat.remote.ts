@@ -200,7 +200,6 @@ export const updateChatIsFavorite = command(
 		isFavorite: z.boolean()
 	}),
 	async ({ chatId, isFavorite }) => {
-
 		const {
 			locals: { session }
 		} = getRequestEvent();
@@ -229,7 +228,6 @@ export const updateChatTitle = command(
 		title: z.string()
 	}),
 	async ({ chatId, title }) => {
-
 		const {
 			locals: { session }
 		} = getRequestEvent();
@@ -250,7 +248,7 @@ export const updateChatTitle = command(
 
 		await db.updateChatTitleById({
 			chatId,
-			title,
+			title
 		});
 	}
 );

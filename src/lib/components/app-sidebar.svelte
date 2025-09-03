@@ -1,18 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import {
-		Sidebar,
-		SidebarContent,
-		SidebarFooter,
-		SidebarHeader,
-		SidebarMenu,
-		useSidebar
-	} from '$lib/components/ui/sidebar'; 
-	import { Button } from './ui/button';
-	import SidebarHistory from './sidebar-history.svelte';
-	import SidebarUserNav from './sidebar-user-nav.svelte';
+	import * as Sidebar from '$components/ui/sidebar/index.js';
+	import { Button } from '$components/ui/button';
+	import SidebarHistory from '$components/sidebar-history.svelte';
 
-	const sidebar = useSidebar();
+	const sidebar = Sidebar.useSidebar();
 
 	function newChat() {
 		sidebar.setOpenMobile(false);
@@ -22,16 +14,13 @@
 	}
 </script>
 
-<Sidebar variant="inset">
-	<SidebarHeader>
-		<SidebarMenu>
+<Sidebar.Root variant="inset" collapsible="offcanvas">
+	<Sidebar.Header>
+		<Sidebar.Menu>
 			<Button variant="outline" type="button" onclick={newChat}>New Chat</Button>
-		</SidebarMenu>
-	</SidebarHeader>
-	<SidebarContent>
+		</Sidebar.Menu>
+	</Sidebar.Header>
+	<Sidebar.Content>
 		<SidebarHistory />
-	</SidebarContent>
-	<SidebarFooter>
-		<SidebarUserNav />
-	</SidebarFooter>
-</Sidebar>
+	</Sidebar.Content>
+</Sidebar.Root>

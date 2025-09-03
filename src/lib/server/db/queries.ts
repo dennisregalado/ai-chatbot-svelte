@@ -302,18 +302,12 @@ export async function updateChatVisiblityById({
 	}
 }
 
-export async function updateChatTitleById({
-	chatId,
-	title,
-}: {
-	chatId: string;
-	title: string;
-}) {
+export async function updateChatTitleById({ chatId, title }: { chatId: string; title: string }) {
 	try {
 		return await db
 			.update(chat)
 			.set({
-				title,
+				title
 			})
 			.where(eq(chat.id, chatId));
 	} catch (error) {
@@ -323,7 +317,7 @@ export async function updateChatTitleById({
 
 export async function updateChatIsFavoriteById({
 	chatId,
-	isFavorite,
+	isFavorite
 }: {
 	chatId: string;
 	isFavorite: boolean;
@@ -332,7 +326,7 @@ export async function updateChatIsFavoriteById({
 		return await db
 			.update(chat)
 			.set({
-				isFavorite,
+				isFavorite
 			})
 			.where(eq(chat.id, chatId));
 	} catch (error) {

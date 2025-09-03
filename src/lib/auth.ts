@@ -5,8 +5,7 @@ import { anonymous } from 'better-auth/plugins';
 import { db } from '$server/db/queries';
 import * as schema from '$server/db/schema';
 import { getRequestEvent } from '$app/server';
-import { BETTER_AUTH_SECRET } from '$env/static/private'; 
- 
+import { BETTER_AUTH_SECRET } from '$env/static/private';
 
 export const auth = betterAuth({
 	secret: BETTER_AUTH_SECRET,
@@ -25,7 +24,7 @@ export const auth = betterAuth({
 	},
 	plugins: [
 		sveltekitCookies(getRequestEvent),
-		anonymous(),
+		anonymous()
 		/**
 		polar({
 			client: polarClient,

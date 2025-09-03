@@ -4,7 +4,7 @@
 		getVotesByChatId,
 		getChatVisibility,
 		deleteTrailingMessages
-	} from '$remote/chat.remote'; 
+	} from '$remote/chat.remote';
 	import { replaceState } from '$app/navigation';
 	import { DefaultChatTransport } from 'ai';
 	import { Chat } from '@ai-sdk/svelte';
@@ -106,8 +106,6 @@
 		})
 	);
 
-	let editing = $state(false); 
-
 	let votes = getVotesByChatId(id);
 
 	const handleSubmit = (e: Event) => {
@@ -148,16 +146,14 @@
 			}
 		);
 	};
-
-	$inspect('TEST:', chat.messages);
 </script>
 
-<div class="relative mx-auto size-full h-screen max-w-4xl p-6">
+<div class="relative mx-auto size-full h-full max-w-4xl p-6">
 	<div class="flex h-full flex-col">
 		{#if chat.messages.length == 0}
 			<Greeting />
 		{:else}
-			<Conversation class="h-full">
+			<Conversation>
 				{#snippet children()}
 					{#each chat.messages as message, messageIndex (message.id)}
 						{#if message.role === 'assistant'}
@@ -189,15 +185,14 @@
 													{#if !readonly}
 														<Action
 															onclick={async () => {
-																// todo fix this
 																const previousMessage = chat.messages[messageIndex - 1];
-																if (!previousMessage) return;
+
 																await deleteTrailingMessages({
-																	id: previousMessage?.id
+																	id: previousMessage.id
 																});
 
 																chat.regenerate({
-																	messageId: previousMessage?.id
+																	messageId: previousMessage.id
 																});
 															}}
 															tooltip="Retry"

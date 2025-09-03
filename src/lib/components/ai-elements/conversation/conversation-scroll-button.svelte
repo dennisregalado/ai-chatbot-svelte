@@ -26,7 +26,7 @@
 		stickToBottom.scrollToBottom({ animation });
 	}
 </script>
- 
+
 {#if !stickToBottom.isNearBottom}
 	<Button
 		class={cn('sticky bottom-4 left-[50%] translate-x-[-50%] rounded-full', className)}

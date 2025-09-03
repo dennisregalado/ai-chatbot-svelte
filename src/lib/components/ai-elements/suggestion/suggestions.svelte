@@ -12,7 +12,7 @@
 	let { children, className, ...restProps }: Props = $props();
 </script>
 
-<div class="w-full overflow-x-auto whitespace-nowrap shrink-0" {...restProps}>
+<div class="w-full shrink-0 overflow-x-auto whitespace-nowrap" {...restProps}>
 	<div class={cn('flex w-max flex-nowrap items-center gap-2', className)}>
 		{@render children()}
 	</div>

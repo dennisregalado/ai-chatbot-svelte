@@ -9,7 +9,7 @@
 	import type { Attachment } from '$lib/types';
 	import { toast } from 'svelte-sonner';
 	import { Button } from './ui/button';
-	import { ArrowUpIcon, StopIcon, PaperclipIcon } from './icons.svelte'; 
+	import { ArrowUpIcon, StopIcon, PaperclipIcon } from './icons.svelte';
 	import { replaceState } from '$app/navigation';
 	import type { ClassValue } from 'svelte/elements';
 

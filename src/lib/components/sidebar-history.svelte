@@ -1,14 +1,19 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarGroupLabel } from '$components/ui/sidebar';
+	import {
+		SidebarGroup,
+		SidebarGroupContent,
+		SidebarMenu,
+		SidebarGroupLabel
+	} from '$components/ui/sidebar';
 	import { getChatHistory } from '$remote/chat.remote';
 	import ChatItem from '$components/sidebar-history-item.svelte';
 	import type { Chat } from '$server/db/schema';
 	import * as Collapsible from '$components/ui/collapsible';
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
 
-	let user = $derived(page.data.user); 
-	let id = $derived(page.params.id); 
+	let user = $derived(page.data.user);
+	let id = $derived(page.params.id);
 </script>
 
 <Collapsible.Root title="Favorites" open class="group/collapsible">
@@ -90,7 +95,7 @@
 			{#each chats as chat (chat.id)}
 				<ChatItem {chat} active={chat.id === id} />
 			{/each}
-		</div> 
+		</div>
 	{:else}
 		<div class="flex w-full flex-row items-center justify-center gap-2 p-2 text-xs text-zinc-500">
 			Your conversations will appear here once you start chatting!

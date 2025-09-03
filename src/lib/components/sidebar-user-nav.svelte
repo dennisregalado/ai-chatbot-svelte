@@ -1,108 +1,137 @@
 <script lang="ts">
 	import type { User } from '$lib/auth';
 	import { cn } from '$lib/utils';
-	import ChevronUp from '@lucide/svelte/icons/chevron-up';
 	import {
-		DropdownMenu,
 		DropdownMenuContent,
 		DropdownMenuItem,
 		DropdownMenuSeparator,
 		DropdownMenuTrigger
 	} from '$components/ui/dropdown-menu';
-	import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '$components/ui/sidebar';
 	import { getTheme } from '@sejohnson/svelte-themes';
 	import { signOut, getUser } from '$remote/auth.remote';
 	import { Skeleton } from '$components/ui/skeleton';
 	import { LoaderIcon } from '$components/icons.svelte';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as Avatar from '$lib/components/ui/avatar/index.js';
+	import { Button } from '$components/ui/button';
 
 	const theme = getTheme();
 </script>
 
-<SidebarMenu>
-	<SidebarMenuItem>
-		<DropdownMenu>
-			<DropdownMenuTrigger>
-				{#snippet child({ props })}
-					<svelte:boundary>
-						{#snippet pending()}
-							<SidebarMenuButton
-								{...props}
-								class="h-10 justify-between bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-							>
-								<div class="flex flex-row items-center gap-2">
-									<Skeleton class="size-6 rounded-full" />
-									<Skeleton class="h-4 w-24" />
-								</div>
-
-								<div class="animate-spin text-zinc-500">
-									{@render LoaderIcon()}
-								</div>
-							</SidebarMenuButton>
-						{/snippet}
-						{@render user(await getUser(), props)}
-					</svelte:boundary>
-				{/snippet}
-			</DropdownMenuTrigger>
-			<DropdownMenuContent side="top" class="w-[--bits-floating-anchor-width]">
-				<DropdownMenuItem
-					class="cursor-pointer"
-					onSelect={() =>
-						(theme.selectedTheme = theme.resolvedTheme === 'light' ? 'dark' : 'light')}
-				>
-					Toggle {theme.resolvedTheme === 'light' ? 'dark' : 'light'} mode
-				</DropdownMenuItem>
-				<DropdownMenuSeparator />
-				<DropdownMenuItem>
-					{#snippet child({ props })}
-						<svelte:boundary>
-							{#snippet pending()}{/snippet}
-							{#await getUser() then user}
-								{#if user?.isAnonymous}
-									<a
-										{...props}
-										href="/login"
-										class={cn('w-full cursor-pointer', props.class as string)}
-										>Login to your account
-									</a>
-								{:else}
-									<form {...signOut}>
-										<button
-											{...props}
-											type="submit"
-											class={cn('w-full cursor-pointer', props.class as string)}
-										>
-											Sign out
-										</button>
-									</form>
-								{/if}
-							{/await}
-						</svelte:boundary>
+<DropdownMenu.Root>
+	<DropdownMenu.Trigger>
+		{#snippet child({ props })}
+			<Button {...props} variant="outline" size="icon" class="h-max w-max rounded-full">
+				<svelte:boundary>
+					{#snippet pending()}
+						<Skeleton class="size-6 rounded-full" />
 					{/snippet}
-				</DropdownMenuItem>
-			</DropdownMenuContent>
-		</DropdownMenu>
-	</SidebarMenuItem>
-</SidebarMenu>
+					{@render user(await getUser(), props)}
+				</svelte:boundary>
+			</Button>
+		{/snippet}
+	</DropdownMenu.Trigger>
+	<DropdownMenu.Content class="w-56" align="end" side="bottom" sideOffset={8} alignOffset={-16}>
+		<DropdownMenu.Label class="flex flex-col">
+			<svelte:boundary>
+				{#snippet pending()}{/snippet}
+				{#await getUser() then user}
+					{#if user?.isAnonymous}
+						<span class="text-sm font-medium">Guest</span>
+					{:else}
+						<span class="text-sm font-medium">{user?.name}</span>
+						<span class="text-xs font-medium text-gray-500">{user?.email}</span>
+					{/if}
+				{/await}
+			</svelte:boundary>
+		</DropdownMenu.Label>
+		<DropdownMenu.Separator />
+		<DropdownMenu.Group>
+			<DropdownMenu.Item>
+				Billing
+				<DropdownMenu.Shortcut>⌘B</DropdownMenu.Shortcut>
+			</DropdownMenu.Item>
+			<DropdownMenu.Item>
+				Settings
+				<DropdownMenu.Shortcut>⌘S</DropdownMenu.Shortcut>
+			</DropdownMenu.Item>
+			<DropdownMenu.Item>
+				Pricing
+				<DropdownMenu.Shortcut>⌘S</DropdownMenu.Shortcut>
+			</DropdownMenu.Item>
+		</DropdownMenu.Group>
+		<DropdownMenu.Separator />
+		<DropdownMenu.Group>
+			<DropdownMenu.Label class="text-xs font-medium text-gray-500">
+				Credit Balance
+			</DropdownMenu.Label>
+			<DropdownMenu.Item>
+				<div class="flex w-full items-center justify-between gap-4">
+					<span class="text-sm font-normal text-nowrap">Gifted credits</span>
+					<span class="text-sm font-medium text-gray-500">0.00</span>
+				</div>
+			</DropdownMenu.Item>
+			<DropdownMenu.Item>
+				<div class="flex w-full items-center justify-between gap-4">
+					<span class="text-sm font-normal text-nowrap">Monthly credits</span>
+					<span class="text-sm font-medium text-gray-500">2.80</span>
+				</div>
+			</DropdownMenu.Item>
+			<div class="mt-1 rounded-lg bg-blue-100 p-2">
+				<p
+					class="font-sm [&amp;_button]:font-medium [&amp;_button]:underline [&amp;_button]:font-medium [&amp;_button]:underline [&amp;_button]:text-blue-800 hover:[&amp;_button]:text-blue-700 text-sm text-blue-900"
+				>
+					Upgrade your plan to buy more credits. <Button variant="link">Upgrade plan</Button>
+				</p>
+			</div>
+		</DropdownMenu.Group>
+		<DropdownMenu.Separator />
+		<DropdownMenu.Group>
+			<DropdownMenu.Label class="text-xs font-medium text-gray-500">Preferences</DropdownMenu.Label>
+			<DropdownMenu.Item
+				class="cursor-pointer"
+				onSelect={() => (theme.selectedTheme = theme.resolvedTheme === 'light' ? 'dark' : 'light')}
+				>Toggle {theme.resolvedTheme === 'light' ? 'dark' : 'light'} mode</DropdownMenu.Item
+			>
+		</DropdownMenu.Group>
+		<DropdownMenu.Separator />
+		<DropdownMenu.Item>
+			{#snippet child({ props })}
+				<svelte:boundary>
+					{#snippet pending()}{/snippet}
+					{#await getUser() then user}
+						{#if user?.isAnonymous}
+							<a {...props} href="/login">Login to your account </a>
+						{:else}
+							<form {...signOut}>
+								<button
+									{...props}
+									type="submit"
+									class={cn('w-full cursor-pointer', props.class as string)}
+								>
+									Sign out
+								</button>
+							</form>
+						{/if}
+					{/await}
+				</svelte:boundary>
+			{/snippet}
+		</DropdownMenu.Item>
+	</DropdownMenu.Content>
+</DropdownMenu.Root>
+<DropdownMenu.Root>
+	<DropdownMenuContent side="top" class="w-[--bits-floating-anchor-width]">
+		<DropdownMenuSeparator />
+		<DropdownMenuItem></DropdownMenuItem>
+	</DropdownMenuContent>
+</DropdownMenu.Root>
 
-{#snippet user(user?: User, props?: any)}
-	<SidebarMenuButton
-		{...props}
-		class="h-10 bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-	>
-		<img
-			src="https://avatar.vercel.sh/{user?.id}"
-			alt="User Avatar"
-			width={24}
-			height={24}
-			class="rounded-full"
-		/>
-		<span class="truncate">
-			{#if user?.isAnonymous}
-				Guest
-			{:else}
-				{user?.name || user?.email}
-			{/if}
-		</span>
-		<ChevronUp class="ml-auto" />
-	</SidebarMenuButton>
+{#snippet user(user?: User)}
+	<img
+		src="https://avatar.vercel.sh/{user?.id}"
+		alt="User Avatar"
+		width={24}
+		height={24}
+		class="rounded-full"
+	/>
 {/snippet}
