@@ -4,8 +4,7 @@
 		getVotesByChatId,
 		getChatVisibility,
 		deleteTrailingMessages
-	} from '$remote/chat.remote';
-	import { page } from '$app/state';
+	} from '$remote/chat.remote'; 
 	import { replaceState } from '$app/navigation';
 	import { DefaultChatTransport } from 'ai';
 	import { Chat } from '@ai-sdk/svelte';
@@ -107,23 +106,7 @@
 		})
 	);
 
-	let editing = $state(false);
-	let searchParams = $derived(page.url.searchParams);
-	let query = $derived(searchParams.get('query'));
-
-	let hasAppendedQuery = $state(false);
-
-	$effect(() => {
-		if (query && !hasAppendedQuery) {
-			chat.sendMessage({
-				role: 'user' as const,
-				parts: [{ type: 'text', text: query }]
-			});
-
-			hasAppendedQuery = true;
-			replaceState('/chat/' + id, {});
-		}
-	});
+	let editing = $state(false); 
 
 	let votes = getVotesByChatId(id);
 

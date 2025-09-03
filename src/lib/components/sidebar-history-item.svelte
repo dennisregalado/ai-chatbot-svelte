@@ -20,21 +20,87 @@
 		MoreHorizontalIcon,
 		PencilEditIcon
 	} from '$components/icons.svelte';
-	import { getChatHistory, getChatVisibility, updateChatVisibility } from '$remote/chat.remote';
+	import {
+		getChatHistory,
+		getChatVisibility,
+		updateChatVisibility,
+		updateChatTitle,
+		deleteChatById
+	} from '$remote/chat.remote';
 	import { toast } from 'svelte-sonner';
 	import { visibilities } from '$components/visibility-selector.svelte';
-
+	import { Input } from '$components/ui/input';
+	import {
+		AlertDialog,
+		AlertDialogContent,
+		AlertDialogHeader,
+		AlertDialogTitle,
+		AlertDialogDescription,
+		AlertDialogFooter,
+		AlertDialogCancel,
+		AlertDialogAction
+	} from '$components/ui/alert-dialog';
+	import { goto } from '$app/navigation';
 	let {
 		chat,
-		active,
-		ondelete
+		active
 	}: {
 		chat: Chat;
 		active: boolean;
-		ondelete: (chatId: string) => void;
 	} = $props();
 
 	let sidebar = useSidebar();
+
+	let editTitle = $state(chat.title);
+	let isEditing = $state(false);
+	let isDeleting = $state(false);
+
+	async function onrename() {
+		if (editTitle.trim() === '' || editTitle === chat.title) {
+			isEditing = false;
+			editTitle = chat.title;
+			return;
+		}
+
+		try {
+			await updateChatTitle({
+				chatId: chat.id,
+				title: editTitle.trim()
+			}).updates(
+				getChatHistory().withOverride((chats) =>
+					chats.map((c) => (c.id === chat.id ? { ...c, title: editTitle.trim() } : c))
+				)
+			);
+			isEditing = false;
+			toast.success('Chat renamed successfully');
+		} catch (error) {
+			toast.error('Failed to rename chat');
+			editTitle = chat.title;
+			isEditing = false;
+		}
+	}
+
+	async function ondelete() {
+		try {
+			const deletePromise = deleteChatById(chat.id).updates(
+				getChatHistory().withOverride((chats) => chats.filter((c) => c.id !== chat.id))
+			);
+			toast.promise(deletePromise, {
+				loading: 'Deleting chat...',
+				success: 'Chat deleted successfully',
+				error: 'Failed to delete chat'
+			});
+
+			isDeleting = false;
+
+			if (active) {
+				goto('/');
+			}
+		} catch (error) {
+			console.error(error);
+			toast.error('Failed to delete chat');
+		}
+	}
 </script>
 
 <SidebarMenuItem>
@@ -58,7 +124,7 @@
 				</SidebarMenuAction>
 			{/snippet}
 		</DropdownMenuTrigger>
-		<DropdownMenuContent side="bottom" align="end">
+		<DropdownMenuContent side="right" align="start">
 			<DropdownMenuSub>
 				<DropdownMenuSubTrigger class="cursor-pointer">
 					{@render ShareIcon()}
@@ -99,7 +165,12 @@
 					{/each}
 				</DropdownMenuSubContent>
 			</DropdownMenuSub>
-			<DropdownMenuItem class="cursor-pointer" onclick={() => {}}>
+			<DropdownMenuItem
+				class="cursor-pointer"
+				onclick={() => {
+					isEditing = true;
+				}}
+			>
 				{@render PencilEditIcon()}
 				<span>Rename</span>
 			</DropdownMenuItem>
@@ -109,7 +180,7 @@
 			</DropdownMenuItem>
 			<DropdownMenuItem
 				class="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
-				onclick={() => ondelete(chat.id)}
+				onclick={() => (isDeleting = true)}
 			>
 				{@render TrashIcon()}
 				<span>Delete</span>
@@ -117,3 +188,32 @@
 		</DropdownMenuContent>
 	</DropdownMenu>
 </SidebarMenuItem>
+
+<AlertDialog open={isDeleting}>
+	<AlertDialogContent>
+		<AlertDialogHeader>
+			<AlertDialogTitle>Delete chat?</AlertDialogTitle>
+			<AlertDialogDescription>
+				This action cannot be undone. This will permanently delete your chat and remove it from our
+				servers.
+			</AlertDialogDescription>
+		</AlertDialogHeader>
+		<AlertDialogFooter>
+			<AlertDialogCancel>Cancel</AlertDialogCancel>
+			<AlertDialogAction variant="destructive" onclick={ondelete}>Delete</AlertDialogAction>
+		</AlertDialogFooter>
+	</AlertDialogContent>
+</AlertDialog>
+
+<AlertDialog open={isEditing}>
+	<AlertDialogContent>
+		<AlertDialogHeader>
+			<AlertDialogTitle>Rename Chat</AlertDialogTitle>
+		</AlertDialogHeader>
+		<Input bind:value={editTitle} autofocus maxlength={255} />
+		<AlertDialogFooter>
+			<AlertDialogCancel>Cancel</AlertDialogCancel>
+			<AlertDialogAction onclick={onrename}>Save</AlertDialogAction>
+		</AlertDialogFooter>
+	</AlertDialogContent>
+</AlertDialog>

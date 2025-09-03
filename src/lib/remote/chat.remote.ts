@@ -22,7 +22,7 @@ export const getChatHistory = query(async () => {
 	return chats;
 });
 
-export const getChatById = query(z.string(), async (id: string) => {
+export const getChatById = query(z.string(), async (id) => {
 	const {
 		locals: { session }
 	} = getRequestEvent();
@@ -49,12 +49,12 @@ export const getChatById = query(z.string(), async (id: string) => {
 	return chat;
 });
 
-export const getMessagesByChatId = query(z.string(), async (id: string) => {
+export const getMessagesByChatId = query(z.string(), async (id) => {
 	const messages = await db.getMessagesByChatId({ id });
 	return messages;
 });
 
-export const deleteChatById = command(z.string(), async (id: string) => {
+export const deleteChatById = command(z.string(), async (id) => {
 	const {
 		locals: { session }
 	} = getRequestEvent();
@@ -74,7 +74,7 @@ export const deleteChatById = command(z.string(), async (id: string) => {
 	return deletedChat;
 });
 
-export const getVotesByChatId = query(z.string(), async (chatId: string) => {
+export const getVotesByChatId = query(z.string(), async (chatId) => {
 	const {
 		locals: { session }
 	} = getRequestEvent();
@@ -158,7 +158,7 @@ export const deleteTrailingMessages = command(
 	z.object({
 		id: z.string()
 	}),
-	async ({ id }: { id: string }) => {
+	async ({ id }) => {
 		const [message] = await db.getMessageById({ id });
 
 		await db.deleteMessagesByChatIdAfterTimestamp({
@@ -181,7 +181,7 @@ export const updateChatVisibility = command(
 		chatId: z.string(),
 		visibility: z.enum(['public', 'private'])
 	}),
-	async ({ chatId, visibility }: { chatId: string; visibility: VisibilityType }) => {
+	async ({ chatId, visibility }) => {
 		const { cookies } = getRequestEvent();
 
 		const result = await db.updateChatVisiblityById({ chatId, visibility });
@@ -191,6 +191,67 @@ export const updateChatVisibility = command(
 				path: '/'
 			});
 		}
+	}
+);
+
+export const updateChatIsFavorite = command(
+	z.object({
+		chatId: z.string(),
+		isFavorite: z.boolean()
+	}),
+	async ({ chatId, isFavorite }) => {
+
+		const {
+			locals: { session }
+		} = getRequestEvent();
+
+		if (!session?.userId) {
+			error(401, 'Unauthorized');
+		}
+
+		const chat = await db.getChatById({ id: chatId });
+
+		if (!chat) {
+			error(404, 'Not found');
+		}
+
+		if (chat.userId !== session.userId) {
+			error(403, 'Forbidden');
+		}
+
+		await db.updateChatIsFavoriteById({ chatId, isFavorite });
+	}
+);
+
+export const updateChatTitle = command(
+	z.object({
+		chatId: z.string(),
+		title: z.string()
+	}),
+	async ({ chatId, title }) => {
+
+		const {
+			locals: { session }
+		} = getRequestEvent();
+
+		if (!session?.userId) {
+			error(401, 'Unauthorized');
+		}
+
+		const chat = await db.getChatById({ id: chatId });
+
+		if (!chat) {
+			error(404, 'Not found');
+		}
+
+		if (chat.userId !== session.userId) {
+			error(403, 'Forbidden');
+		}
+
+		await db.updateChatTitleById({
+			chatId,
+			title,
+		});
 	}
 );
 
