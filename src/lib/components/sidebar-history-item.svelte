@@ -20,6 +20,7 @@
 		MoreHorizontalIcon,
 		PencilEditIcon
 	} from '$components/icons.svelte';
+	import { Button } from '$components/ui/button';
 	import {
 		getChatHistory,
 		getChatVisibility,
@@ -41,6 +42,7 @@
 		AlertDialogAction
 	} from '$components/ui/alert-dialog';
 	import { goto } from '$app/navigation';
+	import * as Dialog from '$components/ui/dialog';
 	let {
 		chat,
 		active
@@ -189,6 +191,18 @@
 	</DropdownMenu>
 </SidebarMenuItem>
 
+<Dialog.Root open={isEditing}>
+	<Dialog.Content>
+		<Dialog.Header>
+			<Dialog.Title>Rename Chat</Dialog.Title>
+		</Dialog.Header>
+		<Input bind:value={editTitle} autofocus maxlength={255} />
+		<Dialog.Footer>
+			<Button type="submit" onclick={onrename} disabled={updateChatTitle.pending > 0}>Save</Button>
+		</Dialog.Footer>
+	</Dialog.Content>
+</Dialog.Root>
+
 <AlertDialog open={isDeleting}>
 	<AlertDialogContent>
 		<AlertDialogHeader>
@@ -201,19 +215,6 @@
 		<AlertDialogFooter>
 			<AlertDialogCancel>Cancel</AlertDialogCancel>
 			<AlertDialogAction variant="destructive" onclick={ondelete}>Delete</AlertDialogAction>
-		</AlertDialogFooter>
-	</AlertDialogContent>
-</AlertDialog>
-
-<AlertDialog open={isEditing}>
-	<AlertDialogContent>
-		<AlertDialogHeader>
-			<AlertDialogTitle>Rename Chat</AlertDialogTitle>
-		</AlertDialogHeader>
-		<Input bind:value={editTitle} autofocus maxlength={255} />
-		<AlertDialogFooter>
-			<AlertDialogCancel>Cancel</AlertDialogCancel>
-			<AlertDialogAction onclick={onrename}>Save</AlertDialogAction>
 		</AlertDialogFooter>
 	</AlertDialogContent>
 </AlertDialog>
