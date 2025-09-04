@@ -8,6 +8,34 @@ export const getUser = query(async () => {
 	return user;
 });
 
+export const register = form(async (formData) => {
+	const name = formData.get('name');
+	const email = formData.get('email');
+	const password = formData.get('password');
+
+	let redirectTo;
+
+	try {
+		await auth.api.signUpEmail({
+			body: {
+				name: name as string,
+				email: email as string,
+				password: password as string
+			}
+		});
+
+		redirectTo = '/';
+	} catch (error) {
+		return {
+			invalid: error.body.message
+		};
+	}
+
+	if (redirectTo) {
+		redirect(307, redirectTo);
+	}
+});
+
 export const signInEmail = form(async (formData) => {
 	const { request } = getRequestEvent();
 
@@ -24,34 +52,6 @@ export const signInEmail = form(async (formData) => {
 				rememberMe: true
 			},
 			headers: request.headers
-		});
-
-		redirectTo = '/';
-	} catch (error) {
-		return {
-			invalid: error.body.message
-		};
-	}
-
-	if (redirectTo) {
-		redirect(307, redirectTo);
-	}
-});
-
-export const register = form(async (formData) => {
-	const name = formData.get('name');
-	const email = formData.get('email');
-	const password = formData.get('password');
-
-	let redirectTo;
-
-	try {
-		await auth.api.signUpEmail({
-			body: {
-				name: name as string,
-				email: email as string,
-				password: password as string
-			}
 		});
 
 		redirectTo = '/';

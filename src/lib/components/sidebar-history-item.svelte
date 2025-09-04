@@ -1,54 +1,57 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+
 	import type { Chat } from '$server/db/schema';
-	import { useSidebar } from './ui/sidebar';
-	import { SidebarMenuButton, SidebarMenuItem, SidebarMenuAction } from './ui/sidebar';
-	import {
-		DropdownMenu,
-		DropdownMenuTrigger,
-		DropdownMenuContent,
-		DropdownMenuItem,
-		DropdownMenuSub,
-		DropdownMenuSubTrigger,
-		DropdownMenuSubContent
-	} from './ui/dropdown-menu';
-	import {
-		TrashIcon,
-		GlobeIcon,
-		CheckCircleFillIcon,
-		LockIcon,
-		ShareIcon,
-		MoreHorizontalIcon,
-		PencilEditIcon
-	} from '$components/icons.svelte';
-	import { Button } from '$components/ui/button';
+
 	import {
 		getChatHistory,
-		getChatVisibility,
+		updateChatFavorite,
 		updateChatVisibility,
 		updateChatTitle,
 		deleteChatById
 	} from '$remote/chat.remote';
-	import { toast } from 'svelte-sonner';
-	import { visibilities } from '$components/visibility-selector.svelte';
-	import { Input } from '$components/ui/input';
+
 	import {
 		AlertDialog,
+		AlertDialogAction,
+		AlertDialogCancel,
 		AlertDialogContent,
-		AlertDialogHeader,
-		AlertDialogTitle,
 		AlertDialogDescription,
 		AlertDialogFooter,
-		AlertDialogCancel,
-		AlertDialogAction
+		AlertDialogHeader,
+		AlertDialogTitle
 	} from '$components/ui/alert-dialog';
-	import { goto } from '$app/navigation';
+	import { Button } from '$components/ui/button';
 	import * as Dialog from '$components/ui/dialog';
+	import {
+		DropdownMenu,
+		DropdownMenuContent,
+		DropdownMenuItem,
+		DropdownMenuTrigger
+	} from '$components/ui/dropdown-menu';
+	import { Input } from '$components/ui/input';
+	import { SidebarMenuAction, SidebarMenuButton, SidebarMenuItem } from './ui/sidebar';
+	import { useSidebar } from './ui/sidebar';
+
+	import {
+		MoreHorizontalIcon,
+		PencilEditIcon,
+		ShareIcon,
+		TrashIcon
+	} from '$components/icons.svelte';
+
+	import { toast } from 'svelte-sonner';
+
+	import StarFillIcon from '@lucide/svelte/icons/star-off';
+	import StarIcon from '@lucide/svelte/icons/star';
 	let {
 		chat,
-		active
+		active,
+		favorite
 	}: {
 		chat: Chat;
 		active: boolean;
+		favorite: boolean;
 	} = $props();
 
 	let sidebar = useSidebar();
@@ -127,46 +130,28 @@
 			{/snippet}
 		</DropdownMenuTrigger>
 		<DropdownMenuContent side="right" align="start">
-			<DropdownMenuSub>
-				<DropdownMenuSubTrigger class="cursor-pointer">
-					{@render ShareIcon()}
-					<span>Share</span>
-				</DropdownMenuSubTrigger>
-				<DropdownMenuSubContent>
-					{#each visibilities as visibility (visibility.id)}
-						<DropdownMenuItem
-							onSelect={async () => {
-								try {
-									await updateChatVisibility({
-										chatId: chat.id,
-										visibility: visibility.id
-									}).updates(
-										getChatHistory().withOverride((chats) =>
-											chats.map((c) => (c.id === chat.id ? { ...c, visibility: visibility.id } : c))
-										),
-										getChatVisibility(chat.id).withOverride(() => visibility.id)
-									);
-								} catch (error) {
-									toast.error('Failed to update chat visibility');
-								}
-							}}
-							class="cursor-pointer flex-row justify-between"
-						>
-							<div class="flex flex-row items-center gap-2">
-								{#if visibility.id === 'public'}
-									{@render GlobeIcon()}
-								{:else}
-									{@render LockIcon(12)}
-								{/if}
-								<span>{visibility.label}</span>
-							</div>
-							{#if visibility.id === chat.visibility}
-								{@render CheckCircleFillIcon()}
-							{/if}
-						</DropdownMenuItem>
-					{/each}
-				</DropdownMenuSubContent>
-			</DropdownMenuSub>
+			<DropdownMenuItem
+				class="cursor-pointer"
+				onclick={async () => {
+					try {
+						updateChatVisibility({
+							chatId: chat.id,
+							visibility: 'public'
+						}).updates(
+							getChatHistory().withOverride((chats) =>
+								chats.map((c) => (c.id === chat.id ? { ...c, visibility: 'public' } : c))
+							)
+						);
+						navigator.clipboard.writeText(window.location.origin + `/chat/${chat.id}`);
+						toast.success('Copied link to clipboard. Shared links can be viewed by anyone with the link.');
+					} catch (error) {
+						toast.error('Failed to share chat');
+					}
+				}}
+			>
+				{@render ShareIcon()}
+				<span>Share</span>
+			</DropdownMenuItem>
 			<DropdownMenuItem
 				class="cursor-pointer"
 				onclick={() => {
@@ -176,9 +161,25 @@
 				{@render PencilEditIcon()}
 				<span>Rename</span>
 			</DropdownMenuItem>
-			<DropdownMenuItem class="cursor-pointer" onclick={() => {}}>
-				{@render PencilEditIcon()}
-				<span>Favorite</span>
+			<DropdownMenuItem
+				class="cursor-pointer"
+				onclick={async () => {
+					await updateChatFavorite({
+						chatId: chat.id,
+						favorite: !favorite
+					}).updates(
+						getChatHistory().withOverride((chats) =>
+							chats.map((c) => (c.id === chat.id ? { ...c, favorite: !favorite } : c))
+						)
+					);
+				}}
+			>
+				{#if favorite}
+					<StarFillIcon />
+				{:else}
+					<StarIcon />
+				{/if}
+				<span>{favorite ? 'Unfavorite' : 'Favorite'}</span>
 			</DropdownMenuItem>
 			<DropdownMenuItem
 				class="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
@@ -214,7 +215,11 @@
 		</AlertDialogHeader>
 		<AlertDialogFooter>
 			<AlertDialogCancel>Cancel</AlertDialogCancel>
-			<AlertDialogAction variant="destructive" onclick={ondelete}>Delete</AlertDialogAction>
+			<AlertDialogAction
+				variant="destructive"
+				onclick={ondelete}
+				disabled={deleteChatById.pending > 0}>Delete</AlertDialogAction
+			>
 		</AlertDialogFooter>
 	</AlertDialogContent>
 </AlertDialog>

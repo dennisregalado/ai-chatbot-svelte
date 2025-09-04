@@ -1,9 +1,7 @@
-import { and, asc, count, desc, eq, gt, gte, inArray, lt, type SQL } from 'drizzle-orm';
+import { and, asc, count, desc, eq, gt, gte, inArray } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-
 import {
-	user,
 	chat,
 	document,
 	type Suggestion,
@@ -11,7 +9,6 @@ import {
 	message,
 	vote,
 	type DBMessage,
-	type Chat,
 	stream
 } from './schema';
 import type { ArtifactKind } from '$components/artifact.svelte';
@@ -315,22 +312,22 @@ export async function updateChatTitleById({ chatId, title }: { chatId: string; t
 	}
 }
 
-export async function updateChatIsFavoriteById({
+export async function updateChatFavoriteById({
 	chatId,
-	isFavorite
+	favorite
 }: {
 	chatId: string;
-	isFavorite: boolean;
+	favorite: boolean;
 }) {
 	try {
 		return await db
 			.update(chat)
 			.set({
-				isFavorite
+				favorite
 			})
 			.where(eq(chat.id, chatId));
 	} catch (error) {
-		throw new ChatSDKError('bad_request:database', 'Failed to update chat isFavorite by id');
+		throw new ChatSDKError('bad_request:database', 'Failed to update chat favorite by id');
 	}
 }
 

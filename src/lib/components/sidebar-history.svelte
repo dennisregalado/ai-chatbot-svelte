@@ -1,19 +1,21 @@
 <script lang="ts">
 	import { page } from '$app/state';
+
+	import { getChatHistory } from '$remote/chat.remote';
+	import type { Chat } from '$server/db/schema';
+
+	import ChatItem from '$components/sidebar-history-item.svelte';
+	import * as Collapsible from '$components/ui/collapsible';
 	import {
 		SidebarGroup,
 		SidebarGroupContent,
-		SidebarMenu,
-		SidebarGroupLabel
+		SidebarGroupLabel,
+		SidebarMenu
 	} from '$components/ui/sidebar';
-	import { getChatHistory } from '$remote/chat.remote';
-	import ChatItem from '$components/sidebar-history-item.svelte';
-	import type { Chat } from '$server/db/schema';
-	import * as Collapsible from '$components/ui/collapsible';
+
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
 
 	let user = $derived(page.data.user);
-	let id = $derived(page.params.id);
 </script>
 
 <Collapsible.Root title="Favorites" open class="group/collapsible">
@@ -33,11 +35,21 @@
 		<Collapsible.Content>
 			<SidebarGroupContent>
 				<SidebarMenu>
-					<div
-						class="flex w-full flex-row items-center justify-center gap-2 p-2 text-xs text-zinc-500"
-					>
-						Favorite chats and projects that you use often.
-					</div>
+					<svelte:boundary>
+						{#snippet pending()}
+							<div class="flex flex-col">
+								{#each [44, 32] as item (item)}
+									<div class="flex h-8 flex-row items-center gap-2 rounded-md px-2">
+										<div
+											class="h-4 max-w-[var(--skeleton-width)] flex-1 rounded-md bg-sidebar-accent-foreground/10"
+											style:--skeleton-width={`${item}%`}
+										></div>
+									</div>
+								{/each}
+							</div>
+						{/snippet}
+						{@render favoriteChats(await getChatHistory())}
+					</svelte:boundary>
 				</SidebarMenu>
 			</SidebarGroupContent>
 		</Collapsible.Content>
@@ -89,11 +101,29 @@
 	</SidebarGroup>
 </Collapsible.Root>
 
-{#snippet recentChats(chats: Chat[])}
-	{#if chats.length > 0}
+{#snippet favoriteChats(chats: Chat[])}
+	{@const filteredChats = chats.filter((chat) => chat.favorite)}
+
+	{#if filteredChats.length > 0}
 		<div class="mt-1.5 flex flex-col gap-0.25">
-			{#each chats as chat (chat.id)}
-				<ChatItem {chat} active={chat.id === id} />
+			{#each filteredChats as chat (chat.id)}
+				<ChatItem {chat} active={chat.id === page.params.id} favorite={chat.favorite} />
+			{/each}
+		</div>
+	{:else}
+		<div class="flex w-full flex-row items-center justify-center gap-2 p-2 text-xs text-zinc-500">
+			Favorite chats and projects that you use often.
+		</div>
+	{/if}
+{/snippet}
+
+{#snippet recentChats(chats: Chat[])}
+	{@const filteredChats = chats?.filter((chat) => !chat.favorite)}
+
+	{#if filteredChats.length > 0}
+		<div class="mt-1.5 flex flex-col gap-0.25">
+			{#each filteredChats as chat (chat.id)}
+				<ChatItem {chat} active={chat.id === page.params.id} favorite={chat.favorite} />
 			{/each}
 		</div>
 	{:else}

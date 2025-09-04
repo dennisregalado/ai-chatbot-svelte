@@ -5,6 +5,7 @@
 	import { Button } from '$components/ui/button';
 	import SidebarUserNav from '$components/sidebar-user-nav.svelte';
 
+	import Credits from '$components/credits.svelte';
 	let { data, children } = $props();
 	let { isCollapsed } = $derived(data);
 </script>
@@ -18,7 +19,8 @@
 			<div class="flex flex-1 items-center justify-end gap-1.5">
 				<Button variant="outline" size="sm">Upgrade</Button>
 				<Button variant="outline" size="sm">Feedback</Button>
-				<Button variant="outline" size="sm">3.02</Button>
+				<Credits />
+
 				<SidebarUserNav />
 			</div>
 		</header>

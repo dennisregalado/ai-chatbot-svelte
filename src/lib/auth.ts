@@ -5,7 +5,17 @@ import { anonymous } from 'better-auth/plugins';
 import { db } from '$server/db/queries';
 import * as schema from '$server/db/schema';
 import { getRequestEvent } from '$app/server';
-import { BETTER_AUTH_SECRET } from '$env/static/private';
+import { BETTER_AUTH_SECRET, POLAR_ACCESS_TOKEN } from '$env/static/private';
+import { polar, checkout, portal, usage } from "@polar-sh/better-auth";
+import { Polar } from "@polar-sh/sdk";
+
+export const polarClient = new Polar({
+	accessToken: POLAR_ACCESS_TOKEN,
+	// Use 'sandbox' if you're using the Polar Sandbox environment
+	// Remember that access tokens, products, etc. are completely separated between environments.
+	// Access tokens obtained in Production are for instance not usable in the Sandbox environment.
+	server: 'sandbox'
+});
 
 export const auth = betterAuth({
 	secret: BETTER_AUTH_SECRET,
@@ -24,8 +34,9 @@ export const auth = betterAuth({
 	},
 	plugins: [
 		sveltekitCookies(getRequestEvent),
-		anonymous()
-		/**
+		anonymous({
+			emailDomainName: "snacks.ai"
+		}),
 		polar({
 			client: polarClient,
 			createCustomerOnSignUp: true,
@@ -44,7 +55,6 @@ export const auth = betterAuth({
 				usage()
 			]
 		})
-		*/
 	]
 });
 

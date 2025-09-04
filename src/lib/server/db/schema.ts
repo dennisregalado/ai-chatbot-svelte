@@ -82,8 +82,8 @@ export const chat = pgTable('Chat', {
 		.references(() => user.id),
 	visibility: varchar('visibility', { enum: ['public', 'private'] })
 		.notNull()
-		.default('private')
-	//	isFavorite: boolean('isFavorite').notNull().default(false)
+		.default('private'),
+	favorite: boolean('favorite').notNull().default(false)
 });
 
 export type Chat = InferSelectModel<typeof chat>;

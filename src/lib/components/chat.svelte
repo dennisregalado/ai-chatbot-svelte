@@ -1,19 +1,23 @@
 <script lang="ts">
-	import {
-		getChatHistory,
-		getVotesByChatId,
-		getChatVisibility,
-		deleteTrailingMessages
-	} from '$remote/chat.remote';
-	import { replaceState } from '$app/navigation';
-	import { DefaultChatTransport } from 'ai';
 	import { Chat } from '@ai-sdk/svelte';
-	import { fetchWithErrorHandlers, generateUUID } from '$lib/utils';
-	import type { VisibilityType } from '$components/visibility-selector.svelte';
+	import { DefaultChatTransport } from 'ai';
+	import { replaceState } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
+	import { chatModels } from '$ai/models';
 	import { ChatSDKError } from '$lib/errors';
 	import type { ChatMessage } from '$lib/types';
+	import { fetchWithErrorHandlers, generateUUID } from '$lib/utils';
+	import type { VisibilityType } from '$components/visibility-selector.svelte';
+	import {
+		deleteTrailingMessages,
+		getChatHistory,
+		getChatVisibility,
+		getVotesByChatId,
+		updateVoteByChatId
+	} from '$remote/chat.remote';
+	import { Actions, Action } from '$components/ai-elements/actions';
 	import { Conversation, ConversationScrollButton } from '$components/ai-elements/conversation';
+	import { Loader } from '$components/ai-elements/loader';
 	import { Message, MessageContent } from '$components/ai-elements/message';
 	import {
 		PromptInput,
@@ -28,17 +32,18 @@
 		PromptInputToolbar,
 		PromptInputTools
 	} from '$components/ai-elements/prompt-input';
-	import { Response } from '$components/ai-elements/response';
-	import { GlobeIcon, PencilEditIcon } from '$components/icons.svelte';
-	import { Source, Sources, SourcesContent, SourcesTrigger } from '$components/ai-elements/source';
 	import { Reasoning, ReasoningContent, ReasoningTrigger } from '$components/ai-elements/reasoning';
-	import { Actions, Action } from '$components/ai-elements/actions';
-	import { CopyIcon, RetryIcon } from '$components/icons.svelte';
-	import { Loader } from '$components/ai-elements/loader';
+	import { Response } from '$components/ai-elements/response';
+	import { Source, Sources, SourcesContent, SourcesTrigger } from '$components/ai-elements/source';
 	import { Suggestions, Suggestion } from '$components/ai-elements/suggestion';
-	import { chatModels } from '$ai/models';
-	import { updateVoteByChatId } from '$remote/chat.remote';
-	import { ThumbDownIcon, ThumbUpIcon } from '$components/icons.svelte';
+	import {
+		CopyIcon,
+		GlobeIcon,
+		PencilEditIcon,
+		RetryIcon,
+		ThumbDownIcon,
+		ThumbUpIcon
+	} from '$components/icons.svelte';
 	import Greeting from '$components/greeting.svelte';
 
 	const suggestions = [
@@ -92,6 +97,7 @@
 				}
 			}),
 			onData: (dataPart) => {
+				alert('dataPart');
 				console.log('dataPart', dataPart);
 				//	setDataStream((ds) => [...ds, dataPart]);
 			},
@@ -105,8 +111,6 @@
 			}
 		})
 	);
-
-	let votes = getVotesByChatId(id);
 
 	const handleSubmit = (e: Event) => {
 		e.preventDefault();
@@ -180,7 +184,7 @@
 											<MessageContent>
 												<Response md={part.text} />
 											</MessageContent>
-											{#if message.role == 'assistant' && isLastMessage && chat.status !== 'streaming'}
+											{#if message.role == 'assistant'}
 												<Actions>
 													{#if !readonly}
 														<Action
@@ -212,91 +216,101 @@
 														{@render CopyIcon()}
 													</Action>
 													{#if !readonly}
-														{@const vote = votes.current?.find(
-															(vote) => vote.messageId === message.id
-														)}
-														<Action
-															disabled={vote && vote.isUpvoted}
-															onclick={async () => {
-																try {
-																	const upvote = updateVoteByChatId({
-																		chatId: chat.id,
-																		messageId: message.id,
-																		type: 'up'
-																	}).updates(
-																		getVotesByChatId(chat.id).withOverride((currentVotes) => {
-																			if (!currentVotes) return [];
+														<svelte:boundary>
+															{#snippet pending()}
+																<Action tooltip="Upvote" label="Upvote">
+																	{@render ThumbUpIcon()}
+																</Action>
+																<Action tooltip="Downvote" label="Downvote">
+																	{@render ThumbDownIcon()}
+																</Action>
+															{/snippet}
+															{@const vote = (await getVotesByChatId(chat.id))?.find(
+																(vote) => vote.messageId === message.id
+															)}
+															<Action
+																disabled={vote && vote.isUpvoted}
+																onclick={async () => {
+																	try {
+																		const upvote = updateVoteByChatId({
+																			chatId: chat.id,
+																			messageId: message.id,
+																			type: 'up'
+																		}).updates(
+																			getVotesByChatId(chat.id).withOverride((currentVotes) => {
+																				if (!currentVotes) return [];
 
-																			const votesWithoutCurrent = currentVotes.filter(
-																				(vote) => vote.messageId !== message.id
-																			);
+																				const votesWithoutCurrent = currentVotes.filter(
+																					(vote) => vote.messageId !== message.id
+																				);
 
-																			return [
-																				...votesWithoutCurrent,
-																				{
-																					chatId: chat.id,
-																					messageId: message.id,
-																					isUpvoted: true
-																				}
-																			];
-																		})
-																	);
+																				return [
+																					...votesWithoutCurrent,
+																					{
+																						chatId: chat.id,
+																						messageId: message.id,
+																						isUpvoted: true
+																					}
+																				];
+																			})
+																		);
 
-																	toast.promise(upvote, {
-																		loading: 'Upvoting Response...',
-																		success: 'Upvoted Response!',
-																		error: 'Failed to upvote response.'
-																	});
-																} catch (error) {
-																	toast.error('Failed to upvote response.');
-																}
-															}}
-															tooltip="Upvote"
-															label="Upvote"
-														>
-															{@render ThumbUpIcon()}
-														</Action>
-														<Action
-															disabled={vote && !vote.isUpvoted}
-															onclick={async () => {
-																try {
-																	const downvote = updateVoteByChatId({
-																		chatId: chat.id,
-																		messageId: message.id,
-																		type: 'down'
-																	}).updates(
-																		getVotesByChatId(chat.id).withOverride((currentVotes) => {
-																			if (!currentVotes) return [];
+																		toast.promise(upvote, {
+																			loading: 'Upvoting Response...',
+																			success: 'Upvoted Response!',
+																			error: 'Failed to upvote response.'
+																		});
+																	} catch (error) {
+																		toast.error('Failed to upvote response.');
+																	}
+																}}
+																tooltip="Upvote"
+																label="Upvote"
+															>
+																{@render ThumbUpIcon()}
+															</Action>
+															<Action
+																disabled={vote && !vote.isUpvoted}
+																onclick={async () => {
+																	try {
+																		const downvote = updateVoteByChatId({
+																			chatId: chat.id,
+																			messageId: message.id,
+																			type: 'down'
+																		}).updates(
+																			getVotesByChatId(chat.id).withOverride((currentVotes) => {
+																				if (!currentVotes) return [];
 
-																			const votesWithoutCurrent = currentVotes.filter(
-																				(vote) => vote.messageId !== message.id
-																			);
+																				const votesWithoutCurrent = currentVotes.filter(
+																					(vote) => vote.messageId !== message.id
+																				);
 
-																			return [
-																				...votesWithoutCurrent,
-																				{
-																					chatId: chat.id,
-																					messageId: message.id,
-																					isUpvoted: false
-																				}
-																			];
-																		})
-																	);
+																				return [
+																					...votesWithoutCurrent,
+																					{
+																						chatId: chat.id,
+																						messageId: message.id,
+																						isUpvoted: false
+																					}
+																				];
+																			})
+																		);
 
-																	toast.promise(downvote, {
-																		loading: 'Downvoting Response...',
-																		success: 'Downvoted Response!',
-																		error: 'Failed to downvote response.'
-																	});
-																} catch (error) {
-																	toast.error('Failed to downvote response.');
-																}
-															}}
-															tooltip="Downvote"
-															label="Downvote"
-														>
-															{@render ThumbDownIcon()}
-														</Action>
+																		toast.promise(downvote, {
+																			loading: 'Downvoting Response...',
+																			success: 'Downvoted Response!',
+																			error: 'Failed to downvote response.'
+																		});
+																	} catch (error) {
+																		toast.error('Failed to downvote response.');
+																	}
+																}}
+																tooltip="Downvote"
+																label="Downvote"
+															>
+																{@render ThumbDownIcon()}
+															</Action>
+														</svelte:boundary>
 													{/if}
 												</Actions>
 											{/if}
@@ -304,7 +318,6 @@
 												<Actions class="justify-end">
 													<Action
 														onclick={() => {
-															editing = true;
 															input = part.text;
 														}}
 														tooltip="Edit"

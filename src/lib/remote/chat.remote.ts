@@ -194,12 +194,12 @@ export const updateChatVisibility = command(
 	}
 );
 
-export const updateChatIsFavorite = command(
+export const updateChatFavorite = command(
 	z.object({
 		chatId: z.string(),
-		isFavorite: z.boolean()
+		favorite: z.boolean()
 	}),
-	async ({ chatId, isFavorite }) => {
+	async ({ chatId, favorite }) => {
 		const {
 			locals: { session }
 		} = getRequestEvent();
@@ -218,7 +218,7 @@ export const updateChatIsFavorite = command(
 			error(403, 'Forbidden');
 		}
 
-		await db.updateChatIsFavoriteById({ chatId, isFavorite });
+		await db.updateChatFavoriteById({ chatId, favorite });
 	}
 );
 
