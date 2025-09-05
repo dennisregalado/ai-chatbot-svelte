@@ -2,7 +2,6 @@ import { command, getRequestEvent, query } from '$app/server';
 import { z } from 'zod';
 import * as db from '$server/db/queries';
 import { generateText } from 'ai';
-import type { VisibilityType } from '$components/visibility-selector.svelte';
 import { myProvider } from '$ai/providers';
 import { error, redirect } from '@sveltejs/kit';
 

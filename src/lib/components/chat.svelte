@@ -71,7 +71,7 @@
 	let input = $state('');
 	let model = $state<string>(chatModels[0].id);
 	let webSearch = $state(false);
-
+	let chatTitle = $state('');
 	let visibilityType = getChatVisibility(id);
 
 	const chat = $derived(
@@ -89,7 +89,7 @@
 						body: {
 							id,
 							message: messages.at(-1),
-							selectedChatModel: 'chat-model-reasoning',
+							selectedChatModel: 'chat-model',
 							selectedVisibilityType: visibilityType?.current || initialVisibilityType,
 							...body
 						}
@@ -97,12 +97,18 @@
 				}
 			}),
 			onData: (dataPart) => {
-				alert('dataPart');
-				console.log('dataPart', dataPart);
-				//	setDataStream((ds) => [...ds, dataPart]);
+				// Refresh the chat history to update the title in the sidebar
+				if (dataPart?.type === 'data-title') {
+					chatTitle = dataPart.data;
+					getChatHistory().refresh();
+				}
+
+				// If you later want to fan out to a shared data stream context:
+				// setDataStream((ds) => [...ds, dataPart]);
 			},
 			onFinish: async () => {
-				getChatHistory().refresh();
+				// no use case for this yet
+				//	getChatHistory().refresh();
 			},
 			onError: (error) => {
 				if (error instanceof ChatSDKError) {

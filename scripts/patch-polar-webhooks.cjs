@@ -2,6 +2,16 @@
 // Create missing shim files for @polar-sh/sdk to satisfy file tracers
 // that try to resolve `webhooks.ts.js`.
 
+// This is a workaround to fix the issue where the @polar-sh/sdk package is not
+// properly shimmed for the webhooks.ts.js file.
+// See: https://github.com/polar-sh/polar-sdk-js/issues/100
+// See: https://github.com/polar-sh/polar-sdk-js/issues/101
+// See: https://github.com/polar-sh/polar-sdk-js/issues/102
+// See: https://github.com/polar-sh/polar-sdk-js/issues/103
+// See: https://github.com/polar-sh/polar-sdk-js/issues/104
+
+// delete when the issue is fixed
+
 const fs = require('fs');
 const path = require('path');
 

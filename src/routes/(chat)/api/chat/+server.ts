@@ -25,7 +25,6 @@ import { myProvider } from '$ai/providers';
 import { entitlementsByUserType } from '$ai/entitlements';
 import { postRequestBodySchema, type PostRequestBody } from './schema';
 import { geolocation } from '@vercel/functions';
-import { json } from '@sveltejs/kit';
 import { ChatSDKError } from '$lib/errors';
 import type { ChatMessage } from '$lib/types';
 import type { ChatModel } from '$ai/models';
@@ -80,6 +79,8 @@ export const POST = async ({ request, locals: { session, user, getStreamContext 
 
 		const chat = await getChatById({ id });
 
+		let streamedTitle: string;
+
 		if (!chat) {
 			const messageText = getTextFromMessage(message);
 			const title = await generateTitleFromUserMessage({
@@ -92,6 +93,9 @@ export const POST = async ({ request, locals: { session, user, getStreamContext 
 				title,
 				visibility: selectedVisibilityType
 			});
+
+			// Make the generated title available for the UI stream
+			streamedTitle = title;
 		} else {
 			if (chat.userId !== session.userId) {
 				return new ChatSDKError('forbidden:chat').toResponse();
@@ -128,6 +132,12 @@ export const POST = async ({ request, locals: { session, user, getStreamContext 
 
 		const stream = createUIMessageStream({
 			execute: ({ writer: dataStream }) => {
+
+				// Stream the chat title early so the UI can update sidebar immediately
+				if (streamedTitle) {
+					dataStream.write({ type: 'data-title', data: streamedTitle, transient: true });
+				}
+
 				const result = streamText({
 					model: myProvider.languageModel(selectedChatModel),
 					system: systemPrompt({ selectedChatModel, requestHints }),
