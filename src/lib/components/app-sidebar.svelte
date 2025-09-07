@@ -27,13 +27,13 @@
 				<kbd
 					class="ml-auto hidden items-center gap-1 opacity-0 transition-opacity group-hover/button:opacity-100 sm:flex"
 					><kbd
-						class="bg-gray-200/75 pointer-events-none flex h-4 w-4 items-center justify-center rounded-sm px-0 text-xs font-normal tracking-tight text-gray-600 tabular-nums select-none"
+						class="pointer-events-none flex h-4 w-4 items-center justify-center rounded-sm bg-gray-200/75 px-0 text-xs font-normal tracking-tight text-gray-600 tabular-nums select-none"
 						>⌘</kbd
 					><kbd
-						class="bg-gray-200/75 pointer-events-none flex h-4 w-4 items-center justify-center rounded-sm px-0 text-xs font-normal tracking-tight text-gray-600 tabular-nums select-none"
+						class="pointer-events-none flex h-4 w-4 items-center justify-center rounded-sm bg-gray-200/75 px-0 text-xs font-normal tracking-tight text-gray-600 tabular-nums select-none"
 						>K</kbd
 					></kbd
-				> 
+				>
 			</Sidebar.MenuButton>
 		</Sidebar.Menu>
 	</Sidebar.Header>

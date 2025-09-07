@@ -4,8 +4,10 @@ import {
 	JsonToSseTransformStream,
 	smoothStream,
 	stepCountIs,
-	streamText
+	streamText,
+	streamObject
 } from 'ai';
+import { z } from 'zod';
 import { type RequestHints, systemPrompt } from '$ai/prompts';
 import {
 	createStreamId,
@@ -132,7 +134,6 @@ export const POST = async ({ request, locals: { session, user, getStreamContext 
 
 		const stream = createUIMessageStream({
 			execute: ({ writer: dataStream }) => {
-
 				// Stream the chat title early so the UI can update sidebar immediately
 				if (streamedTitle) {
 					dataStream.write({ type: 'data-title', data: streamedTitle, transient: true });
@@ -170,6 +171,42 @@ export const POST = async ({ request, locals: { session, user, getStreamContext 
 						sendReasoning: true
 					})
 				);
+
+				// Clear previous follow-ups in the UI and start streaming new ones
+				try {
+					dataStream.write({ type: 'data-clear', data: null, transient: true });
+
+					// Build a compact transcript for suggestion generation
+					const transcript = uiMessages
+						.map((m) => {
+							const prefix =
+								m.role === 'user' ? 'User' : m.role === 'assistant' ? 'Assistant' : 'System';
+							const text = getTextFromMessage(m);
+							return `${prefix}: ${text}`;
+						})
+						.join('\n');
+
+					// Stream 3–5 concise follow-up questions as an array of strings
+					(async () => {
+						const { elementStream } = streamObject({
+							model: myProvider.languageModel('title-model'),
+							system:
+								'Given the conversation transcript, generate 3 to 5 concise, diverse follow-up questions the user might ask next. Keep each under 12 words and avoid repeating the same topic. Output only an array of strings with no additional commentary.',
+							prompt: transcript,
+							output: 'array',
+							schema: z.string()
+						});
+
+						for await (const question of elementStream) {
+							// Stream each follow-up to the UI as it arrives
+							dataStream.write({ type: 'data-followup', data: question, transient: true });
+						}
+					})().catch((err) => {
+						console.error('followup streaming error', err);
+					});
+				} catch (err) {
+					console.error('failed to start followup suggestions', err);
+				}
 			},
 			generateId: generateUUID,
 			onFinish: async ({ messages }) => {

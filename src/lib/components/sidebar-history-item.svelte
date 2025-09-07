@@ -143,7 +143,9 @@
 							)
 						);
 						navigator.clipboard.writeText(window.location.origin + `/chat/${chat.id}`);
-						toast.success('Copied link to clipboard. Shared links can be viewed by anyone with the link.');
+						toast.success(
+							'Copied link to clipboard. Shared links can be viewed by anyone with the link.'
+						);
 					} catch (error) {
 						toast.error('Failed to share chat');
 					}

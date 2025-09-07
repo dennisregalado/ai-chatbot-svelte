@@ -56,3 +56,7 @@ pnpm dev
 ```
 
 Your app template should now be running on [localhost:5173](http://localhost:5173/).
+
+### Guest accounts
+
+- To enable anonymous guest sign-in, set `ALLOW_GUEST_ACCOUNTS=true` in `.env.local` (or your deployment env). When disabled or unset, unauthenticated users are redirected to `/login` and the anonymous auth endpoint is blocked.

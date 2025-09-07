@@ -33,6 +33,8 @@ export type CustomUIDataTypes = {
 	sheetDelta: string;
 	codeDelta: string;
 	suggestion: Suggestion;
+	// Streaming next-question suggestions for chat
+	followup: string;
 	appendMessage: string;
 	id: string;
 	title: string;

@@ -6,8 +6,9 @@ import { db } from '$server/db/queries';
 import * as schema from '$server/db/schema';
 import { getRequestEvent } from '$app/server';
 import { BETTER_AUTH_SECRET, POLAR_ACCESS_TOKEN } from '$env/static/private';
-import { polar, checkout, portal, usage } from "@polar-sh/better-auth";
-import { Polar } from "@polar-sh/sdk";
+import { allowGuestAccounts } from '$server/config';
+import { polar, checkout, portal, usage } from '@polar-sh/better-auth';
+import { Polar } from '@polar-sh/sdk';
 
 export const polarClient = new Polar({
 	accessToken: POLAR_ACCESS_TOKEN,
@@ -34,9 +35,14 @@ export const auth = betterAuth({
 	},
 	plugins: [
 		sveltekitCookies(getRequestEvent),
-		anonymous({
-			emailDomainName: "snacks.ai"
-		}),
+		// Enable anonymous (guest) sign-in only when allowed by env
+		...(allowGuestAccounts
+			? [
+				anonymous({
+					emailDomainName: 'snacks.ai'
+				})
+			]
+			: []),
 		polar({
 			client: polarClient,
 			createCustomerOnSignUp: true,
@@ -44,11 +50,11 @@ export const auth = betterAuth({
 				checkout({
 					products: [
 						{
-							productId: "123-456-789", // ID of Product from Polar Dashboard
-							slug: "pro" // Custom slug for easy reference in Checkout URL, e.g. /checkout/pro
+							productId: '123-456-789', // ID of Product from Polar Dashboard
+							slug: 'pro' // Custom slug for easy reference in Checkout URL, e.g. /checkout/pro
 						}
 					],
-					successUrl: "/success?checkout_id={CHECKOUT_ID}",
+					successUrl: '/success?checkout_id={CHECKOUT_ID}',
 					authenticatedUsersOnly: true
 				}),
 				portal(),

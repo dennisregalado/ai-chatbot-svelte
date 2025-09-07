@@ -77,7 +77,7 @@
 		<div
 			data-slot="sidebar-container"
 			class={cn(
-				'fixed inset-y-0 top-10 z-10 pl-0! hidden h-[calc(100dvh-40px)] w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex',
+				'fixed inset-y-0 top-10 z-10 hidden h-[calc(100dvh-40px)] w-(--sidebar-width) pl-0! transition-[left,right,width] duration-200 ease-linear md:flex',
 				side === 'left'
 					? 'left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]'
 					: 'right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]',

@@ -45,12 +45,17 @@
 		ThumbUpIcon
 	} from '$components/icons.svelte';
 	import Greeting from '$components/greeting.svelte';
+	import { untrack } from 'svelte';
 
-	const suggestions = [
+	// Fallback suggestions shown when we have none streamed yet
+	const fallbackSuggestions = [
 		'What is the UAP Disclosure Act of 2025?',
 		'What is the weather in Tokyo?',
 		'How do I make a really good fish taco?'
 	];
+
+	// Live, streamed follow-up questions from the server
+	let followups = $state<string[]>([]);
 
 	let {
 		id,
@@ -77,7 +82,7 @@
 	const chat = $derived(
 		new Chat({
 			id,
-			messages: initialMessages,
+			messages: untrack(() => initialMessages),
 			// @ts-ignore
 			experimental_throttle: 100,
 			generateId: generateUUID,
@@ -101,6 +106,19 @@
 				if (dataPart?.type === 'data-title') {
 					chatTitle = dataPart.data;
 					getChatHistory().refresh();
+				}
+
+				// Clear any previous follow-up suggestions when signaled
+				if (dataPart?.type === 'data-clear') {
+					followups = [];
+				}
+
+				// Append streamed follow-up questions as they arrive
+				if (dataPart?.type === 'data-followup' && typeof dataPart.data === 'string') {
+					// de-duplicate while preserving order
+					if (!followups.includes(dataPart.data)) {
+						followups = [...followups, dataPart.data];
+					}
 				}
 
 				// If you later want to fan out to a shared data stream context:
@@ -365,9 +383,15 @@
 		{/if}
 		{#if !readonly}
 			<Suggestions>
-				{#each suggestions as suggestion (suggestion)}
-					<Suggestion onclick={() => handleSuggestionClick(suggestion)} {suggestion} />
-				{/each}
+				{#if followups.length > 0}
+					{#each followups as suggestion (suggestion)}
+						<Suggestion onclick={() => handleSuggestionClick(suggestion)} {suggestion} />
+					{/each}
+				{:else}
+					{#each fallbackSuggestions as suggestion (suggestion)}
+						<Suggestion onclick={() => handleSuggestionClick(suggestion)} {suggestion} />
+					{/each}
+				{/if}
 			</Suggestions>
 			<PromptInput onsubmit={handleSubmit} class="mt-4 shrink-0">
 				<PromptInputTextarea bind:value={input} />

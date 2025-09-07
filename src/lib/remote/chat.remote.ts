@@ -4,6 +4,7 @@ import * as db from '$server/db/queries';
 import { generateText } from 'ai';
 import { myProvider } from '$ai/providers';
 import { error, redirect } from '@sveltejs/kit';
+import { allowGuestAccounts } from '$server/config';
 
 export const getChatHistory = query(async () => {
 	const {
@@ -32,7 +33,7 @@ export const getChatById = query(z.string(), async (id) => {
 	}
 
 	if (!session) {
-		redirect(302, '/guest');
+		redirect(302, allowGuestAccounts ? '/guest' : '/login');
 	}
 
 	if (chat.visibility === 'private') {

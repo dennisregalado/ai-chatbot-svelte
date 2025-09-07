@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getCustomer } from '$remote/customer.remote';
 	import { Button } from '$components/ui/button';
-	
+
 	const customer = getCustomer();
 </script>
 
