@@ -14,6 +14,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { Button } from '$components/ui/button';
+	import Upgrade from '$components/upgrade.svelte';
 
 	const theme = getTheme();
 </script>
@@ -26,7 +27,7 @@
 					{#snippet pending()}
 						<Skeleton class="size-6 rounded-full" />
 					{/snippet}
-					{@render user(await getUser(), props)}
+					{@render user(await getUser())}
 				</svelte:boundary>
 			</Button>
 		{/snippet}
@@ -48,12 +49,10 @@
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
 			<DropdownMenu.Item>
-				Billing
-				<DropdownMenu.Shortcut>⌘B</DropdownMenu.Shortcut>
+				Profile 
 			</DropdownMenu.Item>
 			<DropdownMenu.Item>
-				Settings
-				<DropdownMenu.Shortcut>⌘S</DropdownMenu.Shortcut>
+				Settings 
 			</DropdownMenu.Item>
 			<DropdownMenu.Item>
 				Pricing
@@ -67,12 +66,6 @@
 			</DropdownMenu.Label>
 			<DropdownMenu.Item>
 				<div class="flex w-full items-center justify-between gap-4">
-					<span class="text-sm font-normal text-nowrap">Gifted credits</span>
-					<span class="text-sm font-medium text-gray-500">0.00</span>
-				</div>
-			</DropdownMenu.Item>
-			<DropdownMenu.Item>
-				<div class="flex w-full items-center justify-between gap-4">
 					<span class="text-sm font-normal text-nowrap">Monthly credits</span>
 					<span class="text-sm font-medium text-gray-500">2.80</span>
 				</div>
@@ -81,7 +74,7 @@
 				<p
 					class="font-sm [&amp;_button]:font-medium [&amp;_button]:underline [&amp;_button]:font-medium [&amp;_button]:underline [&amp;_button]:text-blue-800 hover:[&amp;_button]:text-blue-700 text-sm text-blue-900"
 				>
-					Upgrade your plan to buy more credits. <Button variant="link">Upgrade plan</Button>
+					Upgrade your plan to buy more credits. <Upgrade class="text-blue-800" variant="link" size="none">Upgrade plan</Upgrade>
 				</p>
 			</div>
 		</DropdownMenu.Group>

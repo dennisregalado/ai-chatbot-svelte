@@ -43,8 +43,7 @@
 		RetryIcon,
 		ThumbDownIcon,
 		ThumbUpIcon
-	} from '$components/icons.svelte';
-	import Greeting from '$components/greeting.svelte';
+	} from '$components/icons.svelte'; 
 	import { untrack } from 'svelte';
 
 	// Fallback suggestions shown when we have none streamed yet
@@ -178,9 +177,7 @@
 
 <div class="relative mx-auto size-full h-full max-w-4xl p-6">
 	<div class="flex h-full flex-col">
-		{#if chat.messages.length == 0}
-			<Greeting />
-		{:else}
+		 
 			<Conversation>
 				{#snippet children()}
 					{#each chat.messages as message, messageIndex (message.id)}
@@ -380,7 +377,7 @@
 					<ConversationScrollButton />
 				{/snippet}
 			</Conversation>
-		{/if}
+	 
 		{#if !readonly}
 			<Suggestions>
 				{#if followups.length > 0}

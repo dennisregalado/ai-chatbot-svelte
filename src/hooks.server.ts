@@ -7,6 +7,7 @@ import { waitUntil } from '@vercel/functions';
 let globalStreamContext: ResumableStreamContext | null = null;
 
 export async function handle({ event, resolve }) {
+	
 	const session = await auth.api.getSession({
 		headers: event.request.headers
 	});

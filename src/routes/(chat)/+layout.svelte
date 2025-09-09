@@ -4,6 +4,7 @@
 	import DataStreamProvider from '$components/data-stream-provider.svelte';
 	import { Button } from '$components/ui/button';
 	import SidebarUserNav from '$components/sidebar-user-nav.svelte';
+	import Upgrade from '$components/upgrade.svelte';
 
 	import Credits from '$components/credits.svelte';
 	let { data, children } = $props();
@@ -17,7 +18,7 @@
 		>
 			<div class="flex min-w-0 flex-1 items-center"></div>
 			<div class="flex flex-1 items-center justify-end gap-1.5">
-				<Button variant="outline" size="sm">Upgrade</Button>
+				<Upgrade variant="outline" size="sm">Upgrade</Upgrade>
 				<Button variant="outline" size="sm">Feedback</Button>
 				<Credits />
 
