@@ -6,12 +6,13 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props extends HTMLAttributes<HTMLDivElement> {
-		children: Snippet;
 		class?: string;
 		md: string;
 	}
 
-	let { class: className, children, md, ...restProps }: Props = $props();
+	let { class: className, md, ...restProps }: Props = $props();
+
+	$inspect(md);
 </script>
 
 <CollapsibleContent

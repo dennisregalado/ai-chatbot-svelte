@@ -588,7 +588,7 @@
 	</svg>
 {/snippet}
 
-{#snippet MessageIcon(size = 16)}
+{#snippet MessageIcon(size = 14)}
 	<svg
 		height={size}
 		stroke-linejoin="round"

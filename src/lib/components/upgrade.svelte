@@ -2,24 +2,13 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { Button, type ButtonVariant, type ButtonSize } from '$components/ui/button';
-	import type { Snippet } from 'svelte';
+	import { Button, type ButtonProps } from '$components/ui/button';
 
-	interface Props {
-		variant?: ButtonVariant;
-		size?: ButtonSize;
-		class?: string;
-		children?: Snippet;
+	interface Props extends ButtonProps {
 		title?: string;
 	}
 
-	let {
-		variant = 'default',
-		size = 'default',
-		class: className,
-		children,
-		title = 'Explore More Plans'
-	}: Props = $props();
+	let { children, title = 'Explore More Plans', ...buttonProps }: Props = $props();
 
 	const plans = {
 		free: {
@@ -52,7 +41,7 @@
 <Dialog.Root>
 	<Dialog.Trigger>
 		{#snippet child({ props })}
-			<Button {...props} {variant} {size} class={className}>
+			<Button {...props} {...buttonProps}>
 				{@render children?.()}
 			</Button>
 		{/snippet}
@@ -108,9 +97,7 @@
 								</div>
 
 								{#if plan.current}
-									<Button class="pointer-events-auto w-full cursor-not-allowed" variant="outline"
-										>Current Plan</Button
-									>
+									<Button class="w-full" disabled variant="outline">Current Plan</Button>
 								{:else}
 									<Button class="w-full">Upgrade to {plan.name}</Button>
 								{/if}
@@ -124,8 +111,9 @@
 		<Dialog.Footer>
 			<p class="text-sm text-muted-foreground">
 				Compare plans and options on our
-				<button
-					type="button"
+				<a
+					href="https://v0.ai/pricing"
+					data-sveltekit-reload
 					class="inline-flex items-center gap-1 text-blue-600 underline underline-offset-4 hover:text-blue-500"
 				>
 					pricing page <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -136,7 +124,7 @@
 							d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
 						></path></svg
 					>
-				</button>
+				</a>
 				.
 			</p>
 		</Dialog.Footer>

@@ -15,7 +15,7 @@
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { Button } from '$components/ui/button';
 	import Upgrade from '$components/upgrade.svelte';
-
+	import { getMonthlyCredits } from '$remote/customer.remote';
 	const theme = getTheme();
 </script>
 
@@ -67,7 +67,10 @@
 			<DropdownMenu.Item>
 				<div class="flex w-full items-center justify-between gap-4">
 					<span class="text-sm font-normal text-nowrap">Monthly credits</span>
-					<span class="text-sm font-medium text-gray-500">2.80</span>
+					<svelte:boundary>
+						{#snippet pending()}{/snippet}
+						<span class="text-sm font-medium text-gray-500">{await getMonthlyCredits()}</span>
+					</svelte:boundary>
 				</div>
 			</DropdownMenu.Item>
 			<div class="mt-1 rounded-lg bg-blue-100 p-2">

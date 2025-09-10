@@ -2,6 +2,7 @@ import { put } from '@vercel/blob';
 import { z } from 'zod';
 import { form, getRequestEvent } from '$app/server';
 import { error } from '@sveltejs/kit';
+import { BLOB_READ_WRITE_TOKEN } from '$env/static/private';
 
 // Use Blob instead of File since File is not available in Node.js environment
 const FileSchema = z.object({
@@ -44,7 +45,8 @@ export const uploadFile = form(async (data) => {
 
 		try {
 			const data = await put(`${filename}`, fileBuffer, {
-				access: 'public'
+				access: 'public',
+				token: BLOB_READ_WRITE_TOKEN
 			});
 
 			return data;

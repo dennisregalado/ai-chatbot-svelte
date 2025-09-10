@@ -13,6 +13,6 @@
 </svelte:head>
 
 <ThemeProvider attribute="class" disableTransitionOnChange>
-	<Toaster position="top-center" />
+	<Toaster position="top-center" richColors />
 	{@render children()}
 </ThemeProvider>

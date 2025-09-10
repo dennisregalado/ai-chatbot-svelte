@@ -2,9 +2,9 @@
 	import * as Sidebar from '$components/ui/sidebar/index.js';
 	import AppSidebar from '$components/app-sidebar.svelte';
 	import DataStreamProvider from '$components/data-stream-provider.svelte';
-	import { Button } from '$components/ui/button';
 	import SidebarUserNav from '$components/sidebar-user-nav.svelte';
 	import Upgrade from '$components/upgrade.svelte';
+	import Feedback from '$components/feedback.svelte';
 
 	import Credits from '$components/credits.svelte';
 	let { data, children } = $props();
@@ -19,7 +19,7 @@
 			<div class="flex min-w-0 flex-1 items-center"></div>
 			<div class="flex flex-1 items-center justify-end gap-1.5">
 				<Upgrade variant="outline" size="sm">Upgrade</Upgrade>
-				<Button variant="outline" size="sm">Feedback</Button>
+				<Feedback variant="outline" size="sm">Feedback</Feedback>
 				<Credits />
 
 				<SidebarUserNav />

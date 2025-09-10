@@ -1,22 +1,22 @@
 <script lang="ts">
-	import { getCustomer } from '$remote/customer.remote';
-	import { Button } from '$components/ui/button';
+	import { getMonthlyCredits } from '$remote/customer.remote';
+	import { Button, type ButtonProps } from '$components/ui/button';
 	import { Skeleton } from '$components/ui/skeleton';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import Upgrade from '$components/upgrade.svelte';
 
-	const customer = getCustomer();
+	let { variant = 'outline', size = 'sm', ...buttonProps }: ButtonProps = $props();
 </script>
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
-			<Button {...props} variant="outline" size="sm">
+			<Button {...props} {variant} {size} {...buttonProps}>
 				<svelte:boundary>
 					{#snippet pending()}
-						<Skeleton class="h-4 w-8" />
+						💸 <Skeleton class="h-3.75 w-7" />
 					{/snippet}
-					4.95
+					💸 {await getMonthlyCredits()}
 				</svelte:boundary>
 			</Button>
 		{/snippet}
@@ -29,7 +29,12 @@
 			<DropdownMenu.Item>
 				<div class="flex w-full items-center justify-between gap-4">
 					<span class="text-sm font-normal">Monthly credits</span>
-					<span class="text-sm font-medium text-gray-500">4.95</span>
+					<svelte:boundary>
+						{#snippet pending()}
+							<Skeleton class="h-3.75 w-7" />
+						{/snippet}
+						<span class="text-sm font-medium text-gray-500">{await getMonthlyCredits()}</span>
+					</svelte:boundary>
 				</div>
 			</DropdownMenu.Item>
 			<DropdownMenu.Item>

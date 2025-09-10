@@ -7,8 +7,8 @@
 
 <Chat
 	id={chat.id}
-	initialMessages={uiMessages}
-	initialVisibilityType={chat.visibility}
+	messages={uiMessages}
+	visibility={chat.visibility}
 	{readonly}
 	autoResume
 />

@@ -42,7 +42,6 @@ export const POST = async ({ request, locals: { session, user, getStreamContext 
 
 	try {
 		const json = await request.json();
-		console.log('json', json);
 
 		requestBody = postRequestBodySchema.parse(json);
 	} catch (error) {
@@ -168,7 +167,8 @@ export const POST = async ({ request, locals: { session, user, getStreamContext 
 
 				dataStream.merge(
 					result.toUIMessageStream({
-						sendReasoning: true
+						sendReasoning: true,
+						sendSources: true
 					})
 				);
 

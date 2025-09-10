@@ -37,7 +37,8 @@
 		MoreHorizontalIcon,
 		PencilEditIcon,
 		ShareIcon,
-		TrashIcon
+		TrashIcon,
+		MessageIcon
 	} from '$components/icons.svelte';
 
 	import { toast } from 'svelte-sonner';
@@ -112,6 +113,9 @@
 	<SidebarMenuButton isActive={active}>
 		{#snippet child({ props })}
 			<a {...props} href={`/chat/${chat.id}`} onclick={() => sidebar.setOpenMobile(false)}>
+				{#if favorite}
+					{@render MessageIcon(14)}
+				{/if}
 				<span>{chat.title}</span>
 			</a>
 		{/snippet}

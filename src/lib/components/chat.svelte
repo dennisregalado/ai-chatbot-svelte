@@ -43,7 +43,7 @@
 		RetryIcon,
 		ThumbDownIcon,
 		ThumbUpIcon
-	} from '$components/icons.svelte'; 
+	} from '$components/icons.svelte';
 	import { untrack } from 'svelte';
 
 	// Fallback suggestions shown when we have none streamed yet
@@ -58,14 +58,14 @@
 
 	let {
 		id,
-		initialMessages = [],
-		initialVisibilityType = 'private',
+		messages: initialMessages = [],
+		visibility: initialVisibilityType = 'private',
 		readonly = false,
-		autoResume
+		autoResume = true
 	}: {
 		id: string;
-		initialMessages?: ChatMessage[];
-		initialVisibilityType?: VisibilityType;
+		messages?: ChatMessage[];
+		visibility?: VisibilityType;
 		readonly?: boolean;
 		autoResume?: boolean;
 	} = $props();
@@ -123,10 +123,6 @@
 				// If you later want to fan out to a shared data stream context:
 				// setDataStream((ds) => [...ds, dataPart]);
 			},
-			onFinish: async () => {
-				// no use case for this yet
-				//	getChatHistory().refresh();
-			},
 			onError: (error) => {
 				if (error instanceof ChatSDKError) {
 					toast.error(error.message);
@@ -147,8 +143,8 @@
 				},
 				{
 					body: {
-						model: model,
-						webSearch: webSearch
+						model,
+						webSearch
 					}
 				}
 			);
@@ -173,211 +169,217 @@
 			}
 		);
 	};
+
+	$inspect(chat.messages);
 </script>
 
 <div class="relative mx-auto size-full h-full max-w-4xl p-6">
 	<div class="flex h-full flex-col">
-		 
-			<Conversation>
-				{#snippet children()}
-					{#each chat.messages as message, messageIndex (message.id)}
-						{#if message.role === 'assistant'}
-							{@const sources = message.parts.filter((part) => part.type === 'source-url')}
-							{#if sources.length > 0}
-								<Sources>
-									<SourcesTrigger count={sources.length} />
-									{#each sources as part, i}
-										{#key `${message.id}-${i}`}
-											<SourcesContent>
-												<Source href={part.url} title={part.url} />
-											</SourcesContent>
-										{/key}
-									{/each}
-								</Sources>
-							{/if}
-						{/if}
-						{#key message.id}
-							<Message from={message.role}>
-								{#each message.parts as part, i}
+		<Conversation>
+			{#snippet children()}
+				{#each chat.messages as message, messageIndex (message.id)}
+					{#if message.role === 'assistant'}
+						{@const sources = message.parts.filter((part) => part.type === 'source-url')}
+						{#if sources.length > 0}
+							<Sources>
+								<SourcesTrigger count={sources.length} />
+								{#each sources as part, i}
 									{#key `${message.id}-${i}`}
-										{#if part.type === 'text'}
-											{@const isLastMessage = messageIndex === chat.messages.length - 1}
-											<MessageContent>
-												<Response md={part.text} />
-											</MessageContent>
-											{#if message.role == 'assistant'}
-												<Actions>
-													{#if !readonly}
-														<Action
-															onclick={async () => {
-																const previousMessage = chat.messages[messageIndex - 1];
-
-																await deleteTrailingMessages({
-																	id: previousMessage.id
-																});
-
-																chat.regenerate({
-																	messageId: previousMessage.id
-																});
-															}}
-															tooltip="Retry"
-															label="Retry"
-														>
-															{@render RetryIcon()}
-														</Action>
-													{/if}
-													<Action
-														onclick={() => {
-															navigator.clipboard.writeText(part.text);
-															toast.success('Copied to clipboard!');
-														}}
-														tooltip="Copy"
-														label="Copy"
-													>
-														{@render CopyIcon()}
-													</Action>
-													{#if !readonly}
-														<svelte:boundary>
-															{#snippet pending()}
-																<Action tooltip="Upvote" label="Upvote">
-																	{@render ThumbUpIcon()}
-																</Action>
-																<Action tooltip="Downvote" label="Downvote">
-																	{@render ThumbDownIcon()}
-																</Action>
-															{/snippet}
-															{@const vote = (await getVotesByChatId(chat.id))?.find(
-																(vote) => vote.messageId === message.id
-															)}
-															<Action
-																disabled={vote && vote.isUpvoted}
-																onclick={async () => {
-																	try {
-																		const upvote = updateVoteByChatId({
-																			chatId: chat.id,
-																			messageId: message.id,
-																			type: 'up'
-																		}).updates(
-																			getVotesByChatId(chat.id).withOverride((currentVotes) => {
-																				if (!currentVotes) return [];
-
-																				const votesWithoutCurrent = currentVotes.filter(
-																					(vote) => vote.messageId !== message.id
-																				);
-
-																				return [
-																					...votesWithoutCurrent,
-																					{
-																						chatId: chat.id,
-																						messageId: message.id,
-																						isUpvoted: true
-																					}
-																				];
-																			})
-																		);
-
-																		toast.promise(upvote, {
-																			loading: 'Upvoting Response...',
-																			success: 'Upvoted Response!',
-																			error: 'Failed to upvote response.'
-																		});
-																	} catch (error) {
-																		toast.error('Failed to upvote response.');
-																	}
-																}}
-																tooltip="Upvote"
-																label="Upvote"
-															>
-																{@render ThumbUpIcon()}
-															</Action>
-															<Action
-																disabled={vote && !vote.isUpvoted}
-																onclick={async () => {
-																	try {
-																		const downvote = updateVoteByChatId({
-																			chatId: chat.id,
-																			messageId: message.id,
-																			type: 'down'
-																		}).updates(
-																			getVotesByChatId(chat.id).withOverride((currentVotes) => {
-																				if (!currentVotes) return [];
-
-																				const votesWithoutCurrent = currentVotes.filter(
-																					(vote) => vote.messageId !== message.id
-																				);
-
-																				return [
-																					...votesWithoutCurrent,
-																					{
-																						chatId: chat.id,
-																						messageId: message.id,
-																						isUpvoted: false
-																					}
-																				];
-																			})
-																		);
-
-																		toast.promise(downvote, {
-																			loading: 'Downvoting Response...',
-																			success: 'Downvoted Response!',
-																			error: 'Failed to downvote response.'
-																		});
-																	} catch (error) {
-																		toast.error('Failed to downvote response.');
-																	}
-																}}
-																tooltip="Downvote"
-																label="Downvote"
-															>
-																{@render ThumbDownIcon()}
-															</Action>
-														</svelte:boundary>
-													{/if}
-												</Actions>
-											{/if}
-											{#if message.role === 'user'}
-												<Actions class="justify-end">
-													<Action
-														onclick={() => {
-															input = part.text;
-														}}
-														tooltip="Edit"
-														label="Edit"
-													>
-														{@render PencilEditIcon()}
-													</Action>
-													<Action
-														onclick={() => {
-															navigator.clipboard.writeText(part.text);
-															toast.success('Copied to clipboard!');
-														}}
-														tooltip="Copy"
-														label="Copy"
-													>
-														{@render CopyIcon()}
-													</Action>
-												</Actions>
-											{/if}
-										{:else if part.type === 'reasoning'}
-											<Reasoning class="w-full" isstreaming={chat.status === 'streaming'}>
-												<ReasoningTrigger />
-												<ReasoningContent md={part.text} />
-											</Reasoning>
-										{/if}
+										<SourcesContent>
+											<Source href={part.url} title={part.url} />
+										</SourcesContent>
 									{/key}
 								{/each}
-							</Message>
-						{/key}
-					{/each}
-					{#if chat.status === 'submitted'}
-						<Loader />
+							</Sources>
+						{/if}
 					{/if}
-				{/snippet}
-				{#snippet button()}
-					<ConversationScrollButton />
-				{/snippet}
-			</Conversation>
-	 
+					{#key message.id}
+						<Message from={message.role}>
+							{#each message.parts as part, i}
+								{#key `${message.id}-${i}`}
+									{#if part.type === 'text'}
+										{@const isLastMessage = messageIndex === chat.messages.length - 1}
+										<MessageContent>
+											<Response md={part.text} />
+										</MessageContent>
+										{#if message.role == 'assistant'}
+											<Actions>
+												{#if !readonly}
+													<Action
+														onclick={async () => {
+															const previousMessage = chat.messages[messageIndex - 1];
+
+															await deleteTrailingMessages({
+																id: previousMessage.id
+															});
+
+															chat.regenerate({
+																messageId: previousMessage.id
+															});
+														}}
+														tooltip="Retry"
+														label="Retry"
+													>
+														{@render RetryIcon()}
+													</Action>
+												{/if}
+												<Action
+													onclick={() => {
+														navigator.clipboard.writeText(part.text);
+														toast.success('Copied to clipboard!');
+													}}
+													tooltip="Copy"
+													label="Copy"
+												>
+													{@render CopyIcon()}
+												</Action>
+												{#if !readonly}
+													<svelte:boundary>
+														{#snippet pending()}
+															<Action tooltip="Upvote" label="Upvote">
+																{@render ThumbUpIcon()}
+															</Action>
+															<Action tooltip="Downvote" label="Downvote">
+																{@render ThumbDownIcon()}
+															</Action>
+														{/snippet}
+														{@const vote = (await getVotesByChatId(chat.id))?.find(
+															(vote) => vote.messageId === message.id
+														)}
+														<Action
+															disabled={vote && vote.isUpvoted}
+															onclick={async () => {
+																try {
+																	const upvote = updateVoteByChatId({
+																		chatId: chat.id,
+																		messageId: message.id,
+																		type: 'up'
+																	}).updates(
+																		getVotesByChatId(chat.id).withOverride((currentVotes) => {
+																			if (!currentVotes) return [];
+
+																			const votesWithoutCurrent = currentVotes.filter(
+																				(vote) => vote.messageId !== message.id
+																			);
+
+																			return [
+																				...votesWithoutCurrent,
+																				{
+																					chatId: chat.id,
+																					messageId: message.id,
+																					isUpvoted: true
+																				}
+																			];
+																		})
+																	);
+
+																	toast.promise(upvote, {
+																		loading: 'Upvoting Response...',
+																		success: 'Upvoted Response!',
+																		error: 'Failed to upvote response.'
+																	});
+																} catch (error) {
+																	toast.error('Failed to upvote response.');
+																}
+															}}
+															tooltip="Upvote"
+															label="Upvote"
+														>
+															{@render ThumbUpIcon()}
+														</Action>
+														<Action
+															disabled={vote && !vote.isUpvoted}
+															onclick={async () => {
+																try {
+																	const downvote = updateVoteByChatId({
+																		chatId: chat.id,
+																		messageId: message.id,
+																		type: 'down'
+																	}).updates(
+																		getVotesByChatId(chat.id).withOverride((currentVotes) => {
+																			if (!currentVotes) return [];
+
+																			const votesWithoutCurrent = currentVotes.filter(
+																				(vote) => vote.messageId !== message.id
+																			);
+
+																			return [
+																				...votesWithoutCurrent,
+																				{
+																					chatId: chat.id,
+																					messageId: message.id,
+																					isUpvoted: false
+																				}
+																			];
+																		})
+																	);
+
+																	toast.promise(downvote, {
+																		loading: 'Downvoting Response...',
+																		success: 'Downvoted Response!',
+																		error: 'Failed to downvote response.'
+																	});
+																} catch (error) {
+																	toast.error('Failed to downvote response.');
+																}
+															}}
+															tooltip="Downvote"
+															label="Downvote"
+														>
+															{@render ThumbDownIcon()}
+														</Action>
+													</svelte:boundary>
+												{/if}
+											</Actions>
+										{/if}
+										{#if message.role === 'user'}
+											<Actions class="justify-end">
+												<Action
+													onclick={() => {
+														input = part.text;
+													}}
+													tooltip="Edit"
+													label="Edit"
+												>
+													{@render PencilEditIcon()}
+												</Action>
+												<Action
+													onclick={() => {
+														navigator.clipboard.writeText(part.text);
+														toast.success('Copied to clipboard!');
+													}}
+													tooltip="Copy"
+													label="Copy"
+												>
+													{@render CopyIcon()}
+												</Action>
+											</Actions>
+										{/if}
+									{:else if part.type === 'reasoning'}
+										<Reasoning
+											class="w-full"
+											isstreaming={chat.status === 'streaming' &&
+												i === message.parts.length - 1 &&
+												message.id === chat.messages.at(-1)?.id}
+										>
+											<ReasoningTrigger />
+											<ReasoningContent md={part.text} />
+										</Reasoning>
+									{/if}
+								{/key}
+							{/each}
+						</Message>
+					{/key}
+				{/each}
+				{#if chat.status === 'submitted'}
+					<Loader />
+				{/if}
+			{/snippet}
+			{#snippet button()}
+				<ConversationScrollButton />
+			{/snippet}
+		</Conversation>
+
 		{#if !readonly}
 			<Suggestions>
 				{#if followups.length > 0}
