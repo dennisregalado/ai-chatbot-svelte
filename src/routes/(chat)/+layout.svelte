@@ -11,7 +11,7 @@
 	let { isCollapsed } = $derived(data);
 </script>
 
-<div class="flex max-h-dvh min-h-dvh w-full flex-col overflow-auto bg-sidebar">
+<div class="flex max-h-dvh min-h-dvh w-full flex-col overflow-auto bg-sidebar" data-vaul-drawer-wrapper>
 	<DataStreamProvider>
 		<header
 			class="@container/chat-header relative z-20 flex h-12.5 w-full shrink-0 items-center justify-between gap-4 px-3 sm:px-2"
