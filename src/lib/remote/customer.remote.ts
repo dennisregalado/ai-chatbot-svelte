@@ -1,6 +1,9 @@
-import { getRequestEvent, query } from '$app/server';
+import { getRequestEvent, query, form } from '$app/server';
 import { auth } from '$lib/auth';
 import { error } from '@sveltejs/kit';
+import * as db from '$server/db/queries';
+
+const SENTIMENTS = new Set(['sad', 'neutral', 'happy']);
 
 export const getCustomer = query(async () => {
 	const { locals, request } = getRequestEvent();
@@ -31,9 +34,6 @@ export const getMonthlyCredits = query(async () => {
 		headers: request.headers
 	});
 
-	console.log('meters', meters);
-	meters.result;
-
 	return '4.93';
 });
 
@@ -46,4 +46,24 @@ export const getSubscription = query(async () => {
 	}
 
 	return 'pro';
+});
+
+export const submitFeedback = form(async (formData) => {
+	const {
+		locals: { user }
+	} = getRequestEvent();
+
+	if (!user) {
+		error(401, 'Unauthorized');
+	}
+
+	const message = (formData.get('message') ?? '').toString();
+	const sentimentRaw = (formData.get('sentiment') ?? '').toString();
+	const sentiment = SENTIMENTS.has(sentimentRaw) ? (sentimentRaw as 'sad' | 'neutral' | 'happy') : 'neutral';
+
+	await db.saveFeedback({
+		userId: user.id,
+		message: message.trim() === '' ? null : message.trim(),
+		sentiment
+	});
 });

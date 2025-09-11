@@ -1,33 +1,20 @@
 <script lang="ts">
 	import * as Dialog from '$components/ui/dialog/index.js';
-	import { Button, type ButtonProps } from '$components/ui/button';
+	import { Button, type ButtonProps, buttonVariants } from '$components/ui/button';
 	import { Textarea } from '$components/ui/textarea';
-
+	import { cn } from '$lib/utils'; 
+	import { submitFeedback } from '$remote/customer.remote';
+	import { toast } from 'svelte-sonner';
+	
 	let { children, ...buttonProps }: ButtonProps = $props();
 
-	let feedbackText = $state('');
-	let selectedEmoji = $state<string | null>(null);
 	let open = $state(false);
 
-	function selectEmoji(emoji: string) {
-		selectedEmoji = emoji;
-	}
-
-	function handleSubmit() {
-		// Handle feedback submission here
-		console.log('Feedback:', feedbackText, 'Emoji:', selectedEmoji);
-		// Reset form
-		feedbackText = '';
-		selectedEmoji = null;
-		open = false;
-	}
-
-	function handleCancel() {
-		// Reset form
-		feedbackText = '';
-		selectedEmoji = null;
-		open = false;
-	}
+	const sentiments = [
+		{ value: 'sad', emoji: '😞' },
+		{ value: 'neutral', emoji: '😐' },
+		{ value: 'happy', emoji: '😊' }
+	] as const;
 </script>
 
 <Dialog.Root bind:open>
@@ -42,57 +29,46 @@
 		<Dialog.Header>
 			<Dialog.Title class="text-left">Give feedback</Dialog.Title>
 		</Dialog.Header>
-
-		<div class="space-y-4">
+		<form
+			class="space-y-4"
+			{...submitFeedback.enhance(async ({ form, data, submit }) => {
+				try {
+					open = false;
+					await submit();
+					form.reset();
+					toast.success('Feedback submitted');
+				} catch (error) {
+					toast.error('Failed to submit feedback');
+				}
+			})}
+		>
 			<p class="text-sm text-muted-foreground">
 				We'd love to hear what went well or how we can improve the product experience.
 			</p>
 
-			<Textarea
-				bind:value={feedbackText}
-				placeholder="Your feedback"
-				class="min-h-24 resize-none"
-			/>
+			<Textarea name="message" placeholder="Your feedback" class="min-h-24 resize-none" />
 
 			<div class="flex items-center justify-between">
 				<div class="flex gap-2">
-					<button
-						type="button"
-						onclick={() => selectEmoji('sad')}
-						class="flex h-8 w-8 items-center justify-center rounded-md border transition-colors hover:bg-accent {selectedEmoji ===
-						'sad'
-							? 'bg-accent'
-							: ''}"
-					>
-						😞
-					</button>
-					<button
-						type="button"
-						onclick={() => selectEmoji('neutral')}
-						class="flex h-8 w-8 items-center justify-center rounded-md border transition-colors hover:bg-accent {selectedEmoji ===
-						'neutral'
-							? 'bg-accent'
-							: ''}"
-					>
-						😐
-					</button>
-					<button
-						type="button"
-						onclick={() => selectEmoji('happy')}
-						class="flex h-8 w-8 items-center justify-center rounded-md border transition-colors hover:bg-accent {selectedEmoji ===
-						'happy'
-							? 'bg-accent'
-							: ''}"
-					>
-						😊
-					</button>
+					{#each sentiments as sentiment}
+						<label
+							class={cn(
+								buttonVariants({ variant: 'outline', size: 'sm' }),
+								'relative cursor-pointer [&:has(>input:checked)]:bg-accent'
+							)}
+						>
+							<input type="radio" name="sentiment" value={sentiment.value} class="sr-only" />
+							<span class="text-lg">{sentiment.emoji}</span>
+						</label>
+					{/each}
 				</div>
-
 				<div class="flex gap-2">
-					<Button variant="outline" size="sm" onclick={handleCancel}>Cancel</Button>
-					<Button size="sm" onclick={handleSubmit}>Submit</Button>
+					<Button variant="outline" size="sm" type="button" onclick={() => (open = false)}
+						>Cancel</Button
+					>
+					<Button disabled={submitFeedback.pending > 0} size="sm" type="submit">Submit</Button>
 				</div>
 			</div>
-		</div>
+		</form>
 	</Dialog.Content>
 </Dialog.Root>

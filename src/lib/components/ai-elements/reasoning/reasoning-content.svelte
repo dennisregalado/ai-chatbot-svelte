@@ -2,8 +2,7 @@
 	import { cn, sanitizeText } from '$lib/utils.js';
 	import { CollapsibleContent } from '$lib/components/ui/collapsible';
 	import Response from '../response/response.svelte';
-	import type { HTMLAttributes } from 'svelte/elements';
-	import type { Snippet } from 'svelte';
+	import type { HTMLAttributes } from 'svelte/elements'; 
 
 	interface Props extends HTMLAttributes<HTMLDivElement> {
 		class?: string;
@@ -11,8 +10,6 @@
 	}
 
 	let { class: className, md, ...restProps }: Props = $props();
-
-	$inspect(md);
 </script>
 
 <CollapsibleContent

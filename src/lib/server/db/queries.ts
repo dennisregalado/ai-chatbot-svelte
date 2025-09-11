@@ -11,6 +11,7 @@ import {
 	type DBMessage,
 	stream
 } from './schema';
+import { feedback as feedbackTable } from './schema';
 import type { ArtifactKind } from '$components/artifact.svelte';
 import type { VisibilityType } from '$components/visibility-selector.svelte';
 import { ChatSDKError } from '$lib/errors';
@@ -381,4 +382,30 @@ export async function getStreamIdsByChatId({ chatId }: { chatId: string }) {
 	} catch (error) {
 		throw new ChatSDKError('bad_request:database', 'Failed to get stream ids by chat id');
 	}
+}
+
+export async function saveFeedback({
+  userId,
+  message,
+  sentiment
+}: {
+  userId: string;
+  message: string | null;
+  sentiment: 'sad' | 'neutral' | 'happy';
+}) {
+  try {
+    const [row] = await db
+      .insert(feedbackTable)
+      .values({
+        userId,
+        message: message ?? null,
+        sentiment,
+        createdAt: new Date()
+      })
+      .returning();
+
+    return row;
+  } catch (error) {
+    throw new ChatSDKError('bad_request:database', 'Failed to save feedback');
+  }
 }

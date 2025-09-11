@@ -8,7 +8,7 @@ import {
 	text,
 	primaryKey,
 	foreignKey,
-	boolean
+  boolean
 } from 'drizzle-orm/pg-core';
 
 // Auth tables
@@ -223,3 +223,18 @@ export const stream = pgTable(
 );
 
 export type Stream = InferSelectModel<typeof stream>;
+
+// Product feedback
+export const feedback = pgTable('Feedback', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  userId: text('userId')
+    .notNull()
+    .references(() => user.id),
+  message: text('message'),
+  sentiment: varchar('sentiment', { enum: ['sad', 'neutral', 'happy'] })
+    .notNull()
+    .default('neutral'),
+  createdAt: timestamp('createdAt').notNull()
+});
+
+export type Feedback = InferSelectModel<typeof feedback>;

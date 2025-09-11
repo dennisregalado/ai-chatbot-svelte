@@ -6,7 +6,7 @@
 	import { chatModels } from '$ai/models';
 	import { ChatSDKError } from '$lib/errors';
 	import type { ChatMessage } from '$lib/types';
-	import { fetchWithErrorHandlers, generateUUID } from '$lib/utils';
+	import { cn, fetchWithErrorHandlers, generateUUID } from '$lib/utils';
 	import type { VisibilityType } from '$components/visibility-selector.svelte';
 	import {
 		deleteTrailingMessages,
@@ -45,7 +45,8 @@
 		ThumbUpIcon
 	} from '$components/icons.svelte';
 	import { untrack } from 'svelte';
-
+	import * as Avatar from '$lib/components/ui/avatar/index.js';
+	import { page } from '$app/state';
 	// Fallback suggestions shown when we have none streamed yet
 	const fallbackSuggestions = [
 		'What is the UAP Disclosure Act of 2025?',
@@ -69,6 +70,10 @@
 		readonly?: boolean;
 		autoResume?: boolean;
 	} = $props();
+
+	let user = page.data.user;
+
+	$inspect(user);
 
 	// const { setDataStream } = useDataStream();
 
@@ -199,7 +204,20 @@
 								{#key `${message.id}-${i}`}
 									{#if part.type === 'text'}
 										{@const isLastMessage = messageIndex === chat.messages.length - 1}
-										<MessageContent>
+										{#if message.role === 'user'}
+											<Avatar.Root class="size-4">
+												<Avatar.Image
+													src={user?.image || `https://avatar.vercel.sh/${user?.id}`}
+													alt={user?.name}
+												/>
+												<Avatar.Fallback>CN</Avatar.Fallback>
+											</Avatar.Root>
+										{/if}
+										<MessageContent
+											class={cn(
+												message.role === 'user' && 'rounded-sm bg-secondary! p-2.5 text-primary!'
+											)}
+										>
 											<Response md={part.text} />
 										</MessageContent>
 										{#if message.role == 'assistant'}

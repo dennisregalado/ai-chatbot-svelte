@@ -1,16 +1,9 @@
 <script lang="ts">
 	import type { User } from '$lib/auth';
 	import { cn } from '$lib/utils';
-	import {
-		DropdownMenuContent,
-		DropdownMenuItem,
-		DropdownMenuSeparator,
-		DropdownMenuTrigger
-	} from '$components/ui/dropdown-menu';
 	import { getTheme } from '@sejohnson/svelte-themes';
 	import { signOut, getUser } from '$remote/auth.remote';
 	import { Skeleton } from '$components/ui/skeleton';
-	import { LoaderIcon } from '$components/icons.svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { Button } from '$components/ui/button';
@@ -48,12 +41,8 @@
 		</DropdownMenu.Label>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
-			<DropdownMenu.Item>
-				Profile 
-			</DropdownMenu.Item>
-			<DropdownMenu.Item>
-				Settings 
-			</DropdownMenu.Item>
+			<DropdownMenu.Item>Profile</DropdownMenu.Item>
+			<DropdownMenu.Item>Settings</DropdownMenu.Item>
 			<DropdownMenu.Item>
 				Pricing
 				<DropdownMenu.Shortcut>⌘S</DropdownMenu.Shortcut>
@@ -77,7 +66,11 @@
 				<p
 					class="font-sm [&amp;_button]:font-medium [&amp;_button]:underline [&amp;_button]:font-medium [&amp;_button]:underline [&amp;_button]:text-blue-800 hover:[&amp;_button]:text-blue-700 text-sm text-blue-900"
 				>
-					Upgrade your plan to buy more credits. <Upgrade class="text-blue-800" variant="link" size="none">Upgrade plan</Upgrade>
+					Upgrade your plan to buy more credits. <Upgrade
+						class="text-blue-800"
+						variant="link"
+						size="none">Upgrade plan</Upgrade
+					>
 				</p>
 			</div>
 		</DropdownMenu.Group>
@@ -114,20 +107,11 @@
 			{/snippet}
 		</DropdownMenu.Item>
 	</DropdownMenu.Content>
-</DropdownMenu.Root>
-<DropdownMenu.Root>
-	<DropdownMenuContent side="top" class="w-[--bits-floating-anchor-width]">
-		<DropdownMenuSeparator />
-		<DropdownMenuItem></DropdownMenuItem>
-	</DropdownMenuContent>
-</DropdownMenu.Root>
+</DropdownMenu.Root> 
 
 {#snippet user(user?: User)}
-	<img
-		src="https://avatar.vercel.sh/{user?.id}"
-		alt="User Avatar"
-		width={24}
-		height={24}
-		class="rounded-full"
-	/>
+	<Avatar.Root class="size-6">
+		<Avatar.Image src={user?.image || `https://avatar.vercel.sh/${user?.id}`} alt={user?.name} />
+		<Avatar.Fallback>CN</Avatar.Fallback>
+	</Avatar.Root>
 {/snippet}
