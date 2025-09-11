@@ -51,7 +51,9 @@
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>
 			<div class="mt-2 space-y-2">
-				<Upgrade class="w-full" title="Upgrade your plan to buy more credits">Buy Credits</Upgrade>
+				<Upgrade class="w-full" size="sm" title="Upgrade your plan to buy more credits"
+					>Buy Credits</Upgrade
+				>
 			</div>
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
@@ -96,7 +98,9 @@
 					</div>
 				</div>
 				<div class="space-y-2">
-					<Upgrade class="w-full" title="Upgrade your plan to buy more credits">Buy Credits</Upgrade>
+					<Upgrade size="sm" class="w-full" title="Upgrade your plan to buy more credits"
+						>Buy Credits</Upgrade
+					>
 				</div>
 			</div>
 		</Drawer.Content>

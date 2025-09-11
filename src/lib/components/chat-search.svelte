@@ -101,7 +101,9 @@
 			{#each chats as chat (chat.id)}
 				<Command.Item onSelect={() => selectChat(chat)} value={chat.title}>
 					{@render MessageIcon(14)}
-					<div class="flex items-center max-md:flex-col max-md:items-start flex-wrap w-full justify-between">
+					<div
+						class="flex w-full flex-wrap items-center justify-between max-md:flex-col max-md:items-start"
+					>
 						<span class="truncate">{chat.title}</span>
 						<span class="text-xs text-muted-foreground">
 							{formatDate(new Date(chat.createdAt))}

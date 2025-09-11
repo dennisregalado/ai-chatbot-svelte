@@ -1,10 +1,10 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { sveltekitCookies } from 'better-auth/svelte-kit'; 
+import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { db } from '$server/db/queries';
 import * as schema from '$server/db/schema';
 import { getRequestEvent } from '$app/server';
-import { BETTER_AUTH_SECRET, POLAR_ACCESS_TOKEN } from '$env/static/private'; 
+import { BETTER_AUTH_SECRET, POLAR_ACCESS_TOKEN } from '$env/static/private';
 import { polar, checkout, portal, usage } from '@polar-sh/better-auth';
 import { Polar } from '@polar-sh/sdk';
 

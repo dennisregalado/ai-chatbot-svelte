@@ -385,27 +385,27 @@ export async function getStreamIdsByChatId({ chatId }: { chatId: string }) {
 }
 
 export async function saveFeedback({
-  userId,
-  message,
-  sentiment
+	userId,
+	message,
+	sentiment
 }: {
-  userId: string;
-  message: string | null;
-  sentiment: 'sad' | 'neutral' | 'happy';
+	userId: string;
+	message: string | null;
+	sentiment: 'sad' | 'neutral' | 'happy';
 }) {
-  try {
-    const [row] = await db
-      .insert(feedbackTable)
-      .values({
-        userId,
-        message: message ?? null,
-        sentiment,
-        createdAt: new Date()
-      })
-      .returning();
+	try {
+		const [row] = await db
+			.insert(feedbackTable)
+			.values({
+				userId,
+				message: message ?? null,
+				sentiment,
+				createdAt: new Date()
+			})
+			.returning();
 
-    return row;
-  } catch (error) {
-    throw new ChatSDKError('bad_request:database', 'Failed to save feedback');
-  }
+		return row;
+	} catch (error) {
+		throw new ChatSDKError('bad_request:database', 'Failed to save feedback');
+	}
 }

@@ -3,7 +3,7 @@ import { z } from 'zod';
 import * as db from '$server/db/queries';
 import { generateText } from 'ai';
 import { myProvider } from '$ai/providers';
-import { error, redirect } from '@sveltejs/kit'; 
+import { error, redirect } from '@sveltejs/kit';
 
 export const getChatHistory = query(async () => {
 	const {

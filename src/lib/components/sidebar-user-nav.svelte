@@ -107,7 +107,7 @@
 			{/snippet}
 		</DropdownMenu.Item>
 	</DropdownMenu.Content>
-</DropdownMenu.Root> 
+</DropdownMenu.Root>
 
 {#snippet user(user?: User)}
 	<Avatar.Root class="size-6">

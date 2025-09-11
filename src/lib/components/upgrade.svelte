@@ -6,7 +6,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button, type ButtonProps } from '$components/ui/button';
 
-	import { IsMobile } from '$hooks/is-mobile.svelte.ts';
+	import { IsMobile } from '$hooks/is-mobile.svelte';
 
 	interface Props extends ButtonProps {
 		title?: string;
@@ -68,9 +68,12 @@
 	</Dialog.Root>
 {:else}
 	<Drawer.Root bind:open>
-		<Button {...buttonProps} onclick={() => { 
-			open = true
-		}}>
+		<Button
+			{...buttonProps}
+			onclick={() => {
+				open = true;
+			}}
+		>
 			{@render children?.()}
 		</Button>
 		<Drawer.Content>
@@ -87,7 +90,7 @@
 {/if}
 
 {#snippet content()}
-	<Tabs.Root value="free" class="w-full max-md:px-2.5">
+	<Tabs.Root value="premium" class="w-full max-md:px-2.5">
 		<Tabs.List class="grid w-full grid-cols-2">
 			{#each Object.entries(plans) as [planKey, plan]}
 				<Tabs.Trigger value={planKey}>
@@ -129,9 +132,9 @@
 							</div>
 
 							{#if plan.current}
-								<Button class="w-full" disabled variant="outline">Current Plan</Button>
+								<Button class="w-full" disabled variant="outline" size="sm">Current Plan</Button>
 							{:else}
-								<Button class="w-full">Upgrade to {plan.name}</Button>
+								<Button class="w-full" size="sm">Upgrade to {plan.name}</Button>
 							{/if}
 						</div>
 					</Card.Content>

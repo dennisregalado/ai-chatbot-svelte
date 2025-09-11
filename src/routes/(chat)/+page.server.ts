@@ -1,6 +1,6 @@
-import { generateUUID } from '$lib/utils'; 
+import { generateUUID } from '$lib/utils';
 
-export async function load() { 
+export async function load() {
 	const id = generateUUID();
 
 	return {

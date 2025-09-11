@@ -59,7 +59,9 @@ export const submitFeedback = form(async (formData) => {
 
 	const message = (formData.get('message') ?? '').toString();
 	const sentimentRaw = (formData.get('sentiment') ?? '').toString();
-	const sentiment = SENTIMENTS.has(sentimentRaw) ? (sentimentRaw as 'sad' | 'neutral' | 'happy') : 'neutral';
+	const sentiment = SENTIMENTS.has(sentimentRaw)
+		? (sentimentRaw as 'sad' | 'neutral' | 'happy')
+		: 'neutral';
 
 	await db.saveFeedback({
 		userId: user.id,

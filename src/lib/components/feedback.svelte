@@ -11,7 +11,8 @@
 	let { children, ...buttonProps }: ButtonProps = $props();
 
 	let title = 'Give feedback';
-	let description = 'We\'d love to hear what went well or how we can improve the product experience.';
+	let description =
+		"We'd love to hear what went well or how we can improve the product experience.";
 
 	let open = $state(false);
 
@@ -35,7 +36,7 @@
 		</Dialog.Trigger>
 		<Dialog.Content class="sm:max-w-md" showCloseButton={false}>
 			<Dialog.Header>
-				<Dialog.Title class="text-xl font-semibold">{title}</Dialog.Title> 
+				<Dialog.Title class="text-xl font-semibold">{title}</Dialog.Title>
 				<p class="text-sm text-muted-foreground">
 					{description}
 				</p>
@@ -55,7 +56,7 @@
 		</Button>
 		<Drawer.Content>
 			<Drawer.Header>
-				<Drawer.Title class="text-xl font-semibold">{title}</Drawer.Title> 
+				<Drawer.Title class="text-xl font-semibold">{title}</Drawer.Title>
 				<p class="text-sm text-muted-foreground">
 					{description}
 				</p>
