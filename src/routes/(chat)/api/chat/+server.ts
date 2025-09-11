@@ -67,7 +67,7 @@ export const POST = async ({ request, locals: { session, user, getStreamContext 
 
 		// Determine user type based on Better Auth session
 		// For now, assume all users are regular until we can determine anonymous status
-		const userType = user?.isAnonymous ? 'guest' : 'regular';
+		const userType = 'regular';
 
 		const messageCount = await getMessageCountByUserId({
 			id: session.userId,

@@ -1,12 +1,10 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { sveltekitCookies } from 'better-auth/svelte-kit';
-import { anonymous } from 'better-auth/plugins';
+import { sveltekitCookies } from 'better-auth/svelte-kit'; 
 import { db } from '$server/db/queries';
 import * as schema from '$server/db/schema';
 import { getRequestEvent } from '$app/server';
-import { BETTER_AUTH_SECRET, POLAR_ACCESS_TOKEN } from '$env/static/private';
-import { allowGuestAccounts } from '$server/config';
+import { BETTER_AUTH_SECRET, POLAR_ACCESS_TOKEN } from '$env/static/private'; 
 import { polar, checkout, portal, usage } from '@polar-sh/better-auth';
 import { Polar } from '@polar-sh/sdk';
 
@@ -35,14 +33,6 @@ export const auth = betterAuth({
 	},
 	plugins: [
 		sveltekitCookies(getRequestEvent),
-		// Enable anonymous (guest) sign-in only when allowed by env
-		...(allowGuestAccounts
-			? [
-				anonymous({
-					emailDomainName: 'snacks.ai'
-				})
-			]
-			: []),
 		polar({
 			client: polarClient,
 			createCustomerOnSignUp: true,
