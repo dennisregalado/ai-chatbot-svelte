@@ -98,7 +98,7 @@
 						body: {
 							id,
 							message: messages.at(-1),
-							selectedChatModel: 'chat-model',
+							selectedChatModel: 'chat-model-reasoning',
 							selectedVisibilityType: visibilityType?.current || initialVisibilityType,
 							...body
 						}
@@ -175,7 +175,7 @@
 		);
 	};
 
-	new AutoResume({ autoResume, initialMessages, chat });
+ new AutoResume({ autoResume, initialMessages, resumeStream: () => chat.resumeStream() });
 </script>
 
 <div class="relative mx-auto size-full h-full max-w-4xl p-6">

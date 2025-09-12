@@ -37,7 +37,7 @@ export const config = {
 	maxDuration: 60
 };
 
-export const POST = async ({ request, locals: { session, user, getStreamContext } }) => {
+export const POST = async ({ request, locals: { session, getStreamContext } }) => {
 	let requestBody: PostRequestBody;
 
 	try {
@@ -226,7 +226,7 @@ export const POST = async ({ request, locals: { session, user, getStreamContext 
 			}
 		});
 
-		const streamContext = getStreamContext();
+		const streamContext = await getStreamContext();
 
 		if (streamContext) {
 			return new Response(

@@ -1,12 +1,29 @@
 import { auth } from '$lib/auth';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 import { building } from '$app/environment';
-import { createResumableStreamContext, type ResumableStreamContext } from 'resumable-stream';
 import { waitUntil } from '@vercel/functions';
 import { createClient } from 'redis';
-import { REDIS_URL } from '$env/static/private';
+import { createResumableStreamContext } from 'resumable-stream/redis';
+import { env } from '$env/dynamic/private';
 
-let globalStreamContext: ResumableStreamContext | null = null;
+let publisherClient: ReturnType<typeof createClient> | null = null;
+let subscriberClient: ReturnType<typeof createClient> | null = null;
+
+export const getPublisher = async () => {
+	if (!publisherClient) {
+		publisherClient = createClient({ url: env.REDIS_URL! });
+		await publisherClient.connect();
+	}
+	return publisherClient;
+};
+
+export const getSubscriber = async () => {
+	if (!subscriberClient) {
+		subscriberClient = createClient({ url: env.REDIS_URL! });
+		await subscriberClient.connect();
+	}
+	return subscriberClient;
+};
 
 export async function handle({ event, resolve }) {
 
@@ -20,34 +37,20 @@ export async function handle({ event, resolve }) {
 	}
 
 
-	event.locals.getStreamContext = () => {
+	event.locals.getStreamContext = async () => {
+		const [publisher, subscriber] =
+			await Promise.all([getPublisher(), getSubscriber()]);
 
-		console.log('REDIS_URL', process.env.REDIS_URL);
-
-
-		if (!globalStreamContext) {
-			try {
-				globalStreamContext = createResumableStreamContext({
-					waitUntil,
-					subscriber: createClient({
-						url: REDIS_URL,
-					}),
-					publisher: createClient({
-						url: REDIS_URL,
-					}),
-				});
-			} catch (error: any) {
-				console.error('new error', error);
-				if (error.message.includes('REDIS_URL')) {
-					console.log(' > Resumable streams are disabled due to missing REDIS_URL');
-				} else {
-					console.error(error);
-				}
-			}
-		}
-
-		return globalStreamContext!;
+		return createResumableStreamContext({
+			waitUntil,
+			publisher,
+			subscriber
+		});
 	};
 
 	return svelteKitHandler({ event, resolve, auth, building });
 }
+
+
+
+

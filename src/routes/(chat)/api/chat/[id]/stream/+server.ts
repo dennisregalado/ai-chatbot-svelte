@@ -8,7 +8,7 @@ import { differenceInSeconds } from 'date-fns';
 export const GET = async ({ params, locals: { session, getStreamContext } }) => {
 	const { id: chatId } = params;
 
-	const streamContext = getStreamContext();
+	const streamContext = await getStreamContext();
 	const resumeRequestedAt = new Date();
 
 	if (!streamContext) {

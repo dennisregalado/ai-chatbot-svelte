@@ -7,7 +7,7 @@ declare global {
 		interface Locals {
 			user?: User;
 			session?: Session;
-			getStreamContext: () => ResumableStreamContext;
+			getStreamContext: () => Promise<ResumableStreamContext>;
 		}
 		interface PageData {
 			user?: User;
