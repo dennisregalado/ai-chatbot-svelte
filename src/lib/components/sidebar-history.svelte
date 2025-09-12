@@ -21,7 +21,7 @@
 <Collapsible.Root title="Favorites" open class="group/collapsible">
 	<SidebarGroup class="py-0.5">
 		<SidebarGroupLabel
-			class="group/label text-[13px] text-gray-500 hover:text-sidebar-accent-foreground"
+			class="group/label text-[13px] text-muted-foreground hover:text-sidebar-accent-foreground"
 		>
 			{#snippet child({ props })}
 				<Collapsible.Trigger {...props}>
@@ -58,7 +58,7 @@
 <Collapsible.Root title="Recent Chats" open class="group/collapsible">
 	<SidebarGroup class="py-0.5">
 		<SidebarGroupLabel
-			class="group/label text-[13px] text-gray-500 hover:text-sidebar-accent-foreground"
+			class="group/label text-[13px] text-muted-foreground hover:text-sidebar-accent-foreground"
 		>
 			{#snippet child({ props })}
 				<Collapsible.Trigger {...props}>

@@ -28,7 +28,7 @@ dependencies:
     version: 1.1.3(@polar-sh/sdk@0.34.16)(better-auth@1.3.9)
   '@polar-sh/ingestion':
     specifier: ^0.3.1
-    version: 0.3.1(@aws-sdk/client-s3@3.887.0)(ai@5.0.40)
+    version: 0.3.1(@aws-sdk/client-s3@3.887.0)(ai@5.0.41)
   '@polar-sh/sdk':
     specifier: ^0.34.16
     version: 0.34.16
@@ -92,8 +92,8 @@ dependencies:
 
 devDependencies:
   '@ai-sdk/svelte':
-    specifier: ^3.0.40
-    version: 3.0.40(svelte@5.38.10)(zod@4.1.8)
+    specifier: ^3.0.41
+    version: 3.0.41(svelte@5.38.10)(zod@4.1.8)
   '@ai-sdk/xai':
     specifier: ^2.0.16
     version: 2.0.16(zod@4.1.8)
@@ -134,8 +134,8 @@ devDependencies:
     specifier: ^1.1.1
     version: 1.1.1
   ai:
-    specifier: ^5.0.40
-    version: 5.0.40(zod@4.1.8)
+    specifier: ^5.0.41
+    version: 5.0.41(zod@4.1.8)
   autoprefixer:
     specifier: ^10.4.20
     version: 10.4.21(postcss@8.5.6)
@@ -273,8 +273,8 @@ packages:
     dependencies:
       json-schema: 0.4.0
 
-  /@ai-sdk/svelte@3.0.40(svelte@5.38.10)(zod@4.1.8):
-    resolution: {integrity: sha512-VghAcdyuF4KlvZXCr/Y0gekQll0Pt+a0uhIF896ZKak0EgST9JxqqgeSPBMzFTWhwOk6m0aVxSlaxvObP+PxDA==}
+  /@ai-sdk/svelte@3.0.41(svelte@5.38.10)(zod@4.1.8):
+    resolution: {integrity: sha512-n8kg5EA+6uzCaK6GTuQFPt+SaXpAyXx+WSVF+EAszUBgLlsK1mRmUzjhd5sTLCQP7sESyqwl5WCM+9+jiBjfuQ==}
     peerDependencies:
       svelte: ^5.31.0
       zod: ^3.25.76 || ^4
@@ -283,7 +283,7 @@ packages:
         optional: true
     dependencies:
       '@ai-sdk/provider-utils': 3.0.8(zod@4.1.8)
-      ai: 5.0.40(zod@4.1.8)
+      ai: 5.0.41(zod@4.1.8)
       svelte: 5.38.10
       zod: 4.1.8
     dev: true
@@ -1809,7 +1809,7 @@ packages:
       zod: 3.25.76
     dev: false
 
-  /@polar-sh/ingestion@0.3.1(@aws-sdk/client-s3@3.887.0)(ai@5.0.40):
+  /@polar-sh/ingestion@0.3.1(@aws-sdk/client-s3@3.887.0)(ai@5.0.41):
     resolution: {integrity: sha512-1EDaf/Z9rB785f7OY80VCN8MCicNHOWU55nPHeqv/du4VqOQvCmBZa3JiVhvWJA72xdL6D6hpqobFcsfJifQTw==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -1818,7 +1818,7 @@ packages:
     dependencies:
       '@aws-sdk/client-s3': 3.887.0
       '@polar-sh/sdk': 0.34.16
-      ai: 5.0.40(zod@4.1.8)
+      ai: 5.0.41(zod@4.1.8)
     transitivePeerDependencies:
       - '@modelcontextprotocol/sdk'
     dev: false
@@ -3146,8 +3146,8 @@ packages:
     engines: {node: '>= 14'}
     dev: false
 
-  /ai@5.0.40(zod@4.1.8):
-    resolution: {integrity: sha512-AEKVjVQjnzomEz39f1axnCLtmNRU/BrP12Ou6ztinGhv5u1VxrrRk5qbXugVI0ijeaVwxKQ/SWs0dicUC0qLEA==}
+  /ai@5.0.41(zod@4.1.8):
+    resolution: {integrity: sha512-KQxXaohdTEawUGwBeCTORSNqL8otavTxqIUrOVFq1Fb+cFaTFBtxpdvFlBlsYHUNEHCLKEaBrlZso4ucsNgKuw==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4

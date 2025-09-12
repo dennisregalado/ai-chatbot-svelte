@@ -47,6 +47,8 @@
 	import { untrack } from 'svelte';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { page } from '$app/state';
+	import { useDataStream } from '$components/data-stream-provider.svelte';
+	import { AutoResume } from '$hooks/auto-resume.svelte';
 	// Fallback suggestions shown when we have none streamed yet
 	const fallbackSuggestions = [
 		'What is the UAP Disclosure Act of 2025?',
@@ -73,9 +75,7 @@
 
 	let user = page.data.user;
 
-	$inspect(user);
-
-	// const { setDataStream } = useDataStream();
+	const { setDataStream } = useDataStream();
 
 	let input = $state('');
 	let model = $state<string>(chatModels[0].id);
@@ -126,7 +126,7 @@
 				}
 
 				// If you later want to fan out to a shared data stream context:
-				// setDataStream((ds) => [...ds, dataPart]);
+				setDataStream((ds) => [...ds, dataPart]);
 			},
 			onError: (error) => {
 				if (error instanceof ChatSDKError) {
@@ -175,7 +175,7 @@
 		);
 	};
 
-	$inspect(chat.messages);
+	new AutoResume({ autoResume, initialMessages, chat });
 </script>
 
 <div class="relative mx-auto size-full h-full max-w-4xl p-6">

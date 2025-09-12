@@ -1,5 +1,4 @@
-<script lang="ts">
-	import type { User } from '$lib/auth';
+<script lang="ts"> 
 	import { cn } from '$lib/utils';
 	import { getTheme } from '@sejohnson/svelte-themes';
 	import { signOut, getUser } from '$remote/auth.remote';
@@ -9,6 +8,7 @@
 	import { Button } from '$components/ui/button';
 	import Upgrade from '$components/upgrade.svelte';
 	import { getMonthlyCredits } from '$remote/customer.remote';
+
 	const theme = getTheme();
 </script>
 
@@ -20,7 +20,13 @@
 					{#snippet pending()}
 						<Skeleton class="size-6 rounded-full" />
 					{/snippet}
-					{@render user(await getUser())}
+					{@const user = await getUser()}
+					<Avatar.Root class="size-6">
+						<Avatar.Image
+							src={user?.image || `https://avatar.vercel.sh/${user?.id}`}
+							alt={user?.name}
+						/> 
+					</Avatar.Root>
 				</svelte:boundary>
 			</Button>
 		{/snippet}
@@ -29,20 +35,19 @@
 		<DropdownMenu.Label class="flex flex-col">
 			<svelte:boundary>
 				{#snippet pending()}{/snippet}
-				{#await getUser() then user}
-					{#if user?.isAnonymous}
-						<span class="text-sm font-medium">Guest</span>
-					{:else}
-						<span class="text-sm font-medium">{user?.name}</span>
-						<span class="text-xs font-medium text-gray-500">{user?.email}</span>
-					{/if}
-				{/await}
+				{@const user = await getUser()}
+				<span class="text-sm font-medium">{user?.name}</span>
+				<span class="text-xs font-medium text-muted-foreground">{user?.email}</span>
 			</svelte:boundary>
 		</DropdownMenu.Label>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
 			<DropdownMenu.Item>Profile</DropdownMenu.Item>
-			<DropdownMenu.Item>Settings</DropdownMenu.Item>
+			<DropdownMenu.Item>
+				{#snippet child({ props })}
+				<a href="/portal" {...props} data-sveltekit-reload>Portal</a>
+				{/snippet}
+			</DropdownMenu.Item>
 			<DropdownMenu.Item>
 				Pricing
 				<DropdownMenu.Shortcut>⌘S</DropdownMenu.Shortcut>
@@ -50,7 +55,7 @@
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
-			<DropdownMenu.Label class="text-xs font-medium text-gray-500">
+			<DropdownMenu.Label class="text-xs font-medium text-muted-foreground">
 				Credit Balance
 			</DropdownMenu.Label>
 			<DropdownMenu.Item>
@@ -58,7 +63,7 @@
 					<span class="text-sm font-normal text-nowrap">Monthly credits</span>
 					<svelte:boundary>
 						{#snippet pending()}{/snippet}
-						<span class="text-sm font-medium text-gray-500">{await getMonthlyCredits()}</span>
+						<span class="text-sm font-medium text-muted-foreground">{await getMonthlyCredits()}</span>
 					</svelte:boundary>
 				</div>
 			</DropdownMenu.Item>
@@ -76,7 +81,7 @@
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
-			<DropdownMenu.Label class="text-xs font-medium text-gray-500">Preferences</DropdownMenu.Label>
+			<DropdownMenu.Label class="text-xs font-medium text-muted-foreground">Preferences</DropdownMenu.Label>
 			<DropdownMenu.Item
 				class="cursor-pointer"
 				onSelect={() => (theme.selectedTheme = theme.resolvedTheme === 'light' ? 'dark' : 'light')}
@@ -86,32 +91,16 @@
 		<DropdownMenu.Separator />
 		<DropdownMenu.Item>
 			{#snippet child({ props })}
-				<svelte:boundary>
-					{#snippet pending()}{/snippet}
-					{#await getUser() then user}
-						{#if user?.isAnonymous}
-							<a {...props} href="/login">Login to your account </a>
-						{:else}
-							<form {...signOut}>
-								<button
-									{...props}
-									type="submit"
-									class={cn('w-full cursor-pointer', props.class as string)}
-								>
-									Sign out
-								</button>
-							</form>
-						{/if}
-					{/await}
-				</svelte:boundary>
+				<form {...signOut}>
+					<button
+						{...props}
+						type="submit"
+						class={cn('w-full cursor-pointer', props.class as string)}
+					>
+						Sign out
+					</button>
+				</form>
 			{/snippet}
 		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
-
-{#snippet user(user?: User)}
-	<Avatar.Root class="size-6">
-		<Avatar.Image src={user?.image || `https://avatar.vercel.sh/${user?.id}`} alt={user?.name} />
-		<Avatar.Fallback>CN</Avatar.Fallback>
-	</Avatar.Root>
-{/snippet}

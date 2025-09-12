@@ -1,7 +1,8 @@
 // completed
 import type { ChatMessage } from '$lib/types';
-// import { useDataStream } from '$components/data-stream-provider.svelte';
+import { useDataStream } from '$components/data-stream-provider.svelte';
 import type { Chat } from '@ai-sdk/svelte';
+import { onMount } from 'svelte';
 
 export interface AutoResumeParams {
 	autoResume: boolean;
@@ -19,17 +20,18 @@ export class AutoResume {
 		this.#initialMessages = initialMessages;
 		this.#chat = chat;
 
-		//	const { dataStream } = useDataStream();
+		const { dataStream } = useDataStream();
 
 		// Effect to resume stream if auto-resume is enabled and last message is from user
 		// We run this once on initialization
-		$effect(() => {
+		onMount(() => {
 			if (!this.#autoResume) return;
 
 			const mostRecentMessage = this.#initialMessages.at(-1);
 
 			if (mostRecentMessage?.role === 'user') {
 				this.#chat.resumeStream();
+				alert('resume stream');
 			}
 		});
 
@@ -38,6 +40,7 @@ export class AutoResume {
 		$effect(() => {
 			if (!dataStream) return;
 			if (dataStream.length === 0) return;
+			console.log('dataStream', dataStream);
 
 			const dataPart = dataStream[0];
 

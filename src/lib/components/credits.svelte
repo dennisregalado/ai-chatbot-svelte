@@ -28,7 +28,7 @@
 			{/snippet}
 		</DropdownMenu.Trigger>
 		<DropdownMenu.Content class="w-80" align="end" side="bottom" sideOffset={8}>
-			<DropdownMenu.Label class="text-xs font-medium text-gray-500">
+			<DropdownMenu.Label class="text-xs font-medium text-muted-foreground">
 				Credit Balance
 			</DropdownMenu.Label>
 			<DropdownMenu.Group>
@@ -39,14 +39,14 @@
 							{#snippet pending()}
 								<Skeleton class="h-3.75 w-7" />
 							{/snippet}
-							<span class="text-sm font-medium text-gray-500">{await getMonthlyCredits()}</span>
+							<span class="text-sm font-medium text-muted-foreground">{await getMonthlyCredits()}</span>
 						</svelte:boundary>
 					</div>
 				</DropdownMenu.Item>
 				<DropdownMenu.Item>
 					<div class="flex w-full items-center justify-between gap-4">
 						<span class="text-sm font-normal">Purchased credits</span>
-						<span class="text-sm font-medium text-gray-500">0.00</span>
+						<span class="text-sm font-medium text-muted-foreground">0.00</span>
 					</div>
 				</DropdownMenu.Item>
 			</DropdownMenu.Group>
@@ -89,12 +89,12 @@
 							{#snippet pending()}
 								<Skeleton class="h-3.75 w-7" />
 							{/snippet}
-							<span class="text-sm font-medium text-gray-500">{await getMonthlyCredits()}</span>
+							<span class="text-sm font-medium text-muted-foreground">{await getMonthlyCredits()}</span>
 						</svelte:boundary>
 					</div>
 					<div class="flex w-full items-center justify-between gap-4">
 						<span class="text-sm font-normal">Purchased credits</span>
-						<span class="text-sm font-medium text-gray-500">0.00</span>
+						<span class="text-sm font-medium text-muted-foreground">0.00</span>
 					</div>
 				</div>
 				<div class="space-y-2">

@@ -32,7 +32,6 @@ import type { ChatMessage } from '$lib/types';
 import type { ChatModel } from '$ai/models';
 import type { VisibilityType } from '$components/visibility-selector.svelte';
 import { dev } from '$app/environment';
-import { redirect } from '@sveltejs/kit';
 
 export const config = {
 	maxDuration: 60

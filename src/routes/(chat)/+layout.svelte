@@ -5,7 +5,7 @@
 	import SidebarUserNav from '$components/sidebar-user-nav.svelte';
 	import Upgrade from '$components/upgrade.svelte';
 	import Feedback from '$components/feedback.svelte';
-	import { Button, buttonVariants } from '$components/ui/button';
+	import { buttonVariants } from '$components/ui/button';
 	import Credits from '$components/credits.svelte';
 	let { data, children } = $props();
 	let { isCollapsed, user } = $derived(data);

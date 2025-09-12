@@ -23,7 +23,7 @@
 		"update:dependencies": "pnpm update --interactive --latest"
 	},
 	"devDependencies": {
-		"@ai-sdk/svelte": "^3.0.40",
+		"@ai-sdk/svelte": "^3.0.41",
 		"@ai-sdk/xai": "^2.0.16",
 		"@eslint/compat": "^1.2.5",
 		"@eslint/js": "^9.35.0",
@@ -37,7 +37,7 @@
 		"@tailwindcss/vite": "^4.1.13",
 		"@types/ms": "^2.1.0",
 		"@vercel/blob": "^1.1.1",
-		"ai": "^5.0.40",
+		"ai": "^5.0.41",
 		"autoprefixer": "^10.4.20",
 		"bcrypt-ts": "^7.1.0",
 		"bits-ui": "^2.9.6",

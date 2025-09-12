@@ -21,7 +21,7 @@
 	<div class="flex w-full max-w-md flex-col gap-12 overflow-hidden rounded-2xl">
 		<div class="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
 			<h3 class="text-xl font-semibold dark:text-zinc-50">Sign In</h3>
-			<p class="text-sm text-gray-500 dark:text-zinc-400">Use your email and password to sign in</p>
+			<p class="text-sm text-muted-foreground dark:text-zinc-400">Use your email and password to sign in</p>
 		</div>
 		<form {...signInEmail} class="flex flex-col gap-4 px-4 sm:px-16">
 			<div class="flex flex-col gap-2">
