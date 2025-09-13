@@ -26,7 +26,6 @@ export const getSubscriber = async () => {
 };
 
 export async function handle({ event, resolve }) {
-
 	const session = await auth.api.getSession({
 		headers: event.request.headers
 	});
@@ -36,10 +35,8 @@ export async function handle({ event, resolve }) {
 		event.locals.user = session.user;
 	}
 
-
 	event.locals.getStreamContext = async () => {
-		const [publisher, subscriber] =
-			await Promise.all([getPublisher(), getSubscriber()]);
+		const [publisher, subscriber] = await Promise.all([getPublisher(), getSubscriber()]);
 
 		return createResumableStreamContext({
 			waitUntil,
@@ -50,7 +47,3 @@ export async function handle({ event, resolve }) {
 
 	return svelteKitHandler({ event, resolve, auth, building });
 }
-
-
-
-

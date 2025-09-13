@@ -5,7 +5,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import Upgrade from '$components/upgrade.svelte';
-	import { IsMobile } from '$hooks/is-mobile.svelte.ts';
+	import { IsMobile } from '$hooks/is-mobile.svelte';
 
 	let { variant = 'outline', size = 'sm', ...buttonProps }: ButtonProps = $props();
 
@@ -39,7 +39,9 @@
 							{#snippet pending()}
 								<Skeleton class="h-3.75 w-7" />
 							{/snippet}
-							<span class="text-sm font-medium text-muted-foreground">{await getMonthlyCredits()}</span>
+							<span class="text-sm font-medium text-muted-foreground"
+								>{await getMonthlyCredits()}</span
+							>
 						</svelte:boundary>
 					</div>
 				</DropdownMenu.Item>
@@ -89,7 +91,9 @@
 							{#snippet pending()}
 								<Skeleton class="h-3.75 w-7" />
 							{/snippet}
-							<span class="text-sm font-medium text-muted-foreground">{await getMonthlyCredits()}</span>
+							<span class="text-sm font-medium text-muted-foreground"
+								>{await getMonthlyCredits()}</span
+							>
 						</svelte:boundary>
 					</div>
 					<div class="flex w-full items-center justify-between gap-4">

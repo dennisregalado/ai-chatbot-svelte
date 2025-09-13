@@ -1,4 +1,4 @@
-<script lang="ts"> 
+<script lang="ts">
 	import { cn } from '$lib/utils';
 	import { getTheme } from '@sejohnson/svelte-themes';
 	import { signOut, getUser } from '$remote/auth.remote';
@@ -25,7 +25,7 @@
 						<Avatar.Image
 							src={user?.image || `https://avatar.vercel.sh/${user?.id}`}
 							alt={user?.name}
-						/> 
+						/>
 					</Avatar.Root>
 				</svelte:boundary>
 			</Button>
@@ -45,7 +45,7 @@
 			<DropdownMenu.Item>Profile</DropdownMenu.Item>
 			<DropdownMenu.Item>
 				{#snippet child({ props })}
-				<a href="/portal" {...props} data-sveltekit-reload>Portal</a>
+					<a href="/portal" {...props} data-sveltekit-reload>Portal</a>
 				{/snippet}
 			</DropdownMenu.Item>
 			<DropdownMenu.Item>
@@ -63,7 +63,9 @@
 					<span class="text-sm font-normal text-nowrap">Monthly credits</span>
 					<svelte:boundary>
 						{#snippet pending()}{/snippet}
-						<span class="text-sm font-medium text-muted-foreground">{await getMonthlyCredits()}</span>
+						<span class="text-sm font-medium text-muted-foreground"
+							>{await getMonthlyCredits()}</span
+						>
 					</svelte:boundary>
 				</div>
 			</DropdownMenu.Item>
@@ -81,7 +83,9 @@
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
-			<DropdownMenu.Label class="text-xs font-medium text-muted-foreground">Preferences</DropdownMenu.Label>
+			<DropdownMenu.Label class="text-xs font-medium text-muted-foreground"
+				>Preferences</DropdownMenu.Label
+			>
 			<DropdownMenu.Item
 				class="cursor-pointer"
 				onSelect={() => (theme.selectedTheme = theme.resolvedTheme === 'light' ? 'dark' : 'light')}

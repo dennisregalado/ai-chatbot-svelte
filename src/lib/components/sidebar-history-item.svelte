@@ -30,8 +30,10 @@
 		DropdownMenuTrigger
 	} from '$components/ui/dropdown-menu';
 	import { Input } from '$components/ui/input';
+	import * as Drawer from '$components/ui/drawer';
 	import { SidebarMenuAction, SidebarMenuButton, SidebarMenuItem } from './ui/sidebar';
 	import { useSidebar } from './ui/sidebar';
+	import { IsMobile } from '$hooks/is-mobile.svelte';
 
 	import {
 		MoreHorizontalIcon,
@@ -56,6 +58,7 @@
 	} = $props();
 
 	let sidebar = useSidebar();
+	let isMobile = new IsMobile();
 
 	let editTitle = $state(chat.title);
 	let isEditing = $state(false);
@@ -198,34 +201,72 @@
 	</DropdownMenu>
 </SidebarMenuItem>
 
-<Dialog.Root open={isEditing}>
-	<Dialog.Content>
-		<Dialog.Header>
-			<Dialog.Title>Rename Chat</Dialog.Title>
-		</Dialog.Header>
-		<Input bind:value={editTitle} autofocus maxlength={255} />
-		<Dialog.Footer>
-			<Button type="submit" onclick={onrename} disabled={updateChatTitle.pending > 0}>Save</Button>
-		</Dialog.Footer>
-	</Dialog.Content>
-</Dialog.Root>
+{#if !isMobile.current}
+	<Dialog.Root open={isEditing}>
+		<Dialog.Content>
+			<Dialog.Header>
+				<Dialog.Title>Rename Chat</Dialog.Title>
+			</Dialog.Header>
+			<Input bind:value={editTitle} autofocus maxlength={255} />
+			<Dialog.Footer>
+				<Button type="submit" onclick={onrename} disabled={updateChatTitle.pending > 0}>Save</Button
+				>
+			</Dialog.Footer>
+		</Dialog.Content>
+	</Dialog.Root>
+{:else}
+	<Drawer.Root bind:open={isEditing}>
+		<Drawer.Content>
+			<Drawer.Header>
+				<Drawer.Title>Rename Chat</Drawer.Title>
+			</Drawer.Header>
+			<div class="space-y-4 max-md:px-2.5 max-md:pb-4">
+				<Input bind:value={editTitle} autofocus maxlength={255} />
+			</div>
+			<Drawer.Footer>
+				<Button type="submit" onclick={onrename} disabled={updateChatTitle.pending > 0}>Save</Button
+				>
+			</Drawer.Footer>
+		</Drawer.Content>
+	</Drawer.Root>
+{/if}
 
-<AlertDialog open={isDeleting}>
-	<AlertDialogContent>
-		<AlertDialogHeader>
-			<AlertDialogTitle>Delete chat?</AlertDialogTitle>
-			<AlertDialogDescription>
-				This action cannot be undone. This will permanently delete your chat and remove it from our
-				servers.
-			</AlertDialogDescription>
-		</AlertDialogHeader>
-		<AlertDialogFooter>
-			<AlertDialogCancel>Cancel</AlertDialogCancel>
-			<AlertDialogAction
-				variant="destructive"
-				onclick={ondelete}
-				disabled={deleteChatById.pending > 0}>Delete</AlertDialogAction
-			>
-		</AlertDialogFooter>
-	</AlertDialogContent>
-</AlertDialog>
+{#if !isMobile.current}
+	<AlertDialog open={isDeleting}>
+		<AlertDialogContent>
+			<AlertDialogHeader>
+				<AlertDialogTitle>Delete chat?</AlertDialogTitle>
+				<AlertDialogDescription>
+					This action cannot be undone. This will permanently delete your chat and remove it from
+					our servers.
+				</AlertDialogDescription>
+			</AlertDialogHeader>
+			<AlertDialogFooter>
+				<AlertDialogCancel onclick={() => (isDeleting = false)}>Cancel</AlertDialogCancel>
+				<AlertDialogAction
+					variant="destructive"
+					onclick={ondelete}
+					disabled={deleteChatById.pending > 0}>Delete</AlertDialogAction
+				>
+			</AlertDialogFooter>
+		</AlertDialogContent>
+	</AlertDialog>
+{:else}
+	<Drawer.Root bind:open={isDeleting}>
+		<Drawer.Content>
+			<Drawer.Header>
+				<Drawer.Title>Delete chat?</Drawer.Title>
+				<Drawer.Description>
+					This action cannot be undone. This will permanently delete your chat and remove it from
+					our servers.
+				</Drawer.Description>
+			</Drawer.Header>
+			<Drawer.Footer>
+				<Button variant="destructive" onclick={ondelete} disabled={deleteChatById.pending > 0}
+					>Delete</Button
+				>
+				<Button variant="outline" onclick={() => (isDeleting = false)}>Cancel</Button>
+			</Drawer.Footer>
+		</Drawer.Content>
+	</Drawer.Root>
+{/if}

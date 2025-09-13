@@ -175,7 +175,7 @@
 		);
 	};
 
- new AutoResume({ autoResume, initialMessages, resumeStream: () => chat.resumeStream() });
+	new AutoResume({ autoResume, initialMessages, resumeStream: () => chat.resumeStream() });
 </script>
 
 <div class="relative mx-auto size-full h-full max-w-4xl p-6">

@@ -23,13 +23,13 @@ export class AutoResume {
 
 		// Effect to resume stream if auto-resume is enabled and last message is from user
 		// We run this once on initialization
-		onMount(async () => {
+		onMount(async ()=>{
 			if (!this.#autoResume) return;
 
 			const mostRecentMessage = this.#initialMessages.at(-1);
 
 			if (mostRecentMessage?.role === 'user') {
-				this.#resumeStream();
+				await this.#resumeStream();
 			}
 		});
 
@@ -43,7 +43,7 @@ export class AutoResume {
 
 			if (dataPart.type === 'data-appendMessage') {
 				const message = JSON.parse(dataPart.data);
-			//	this.#chat.messages = [...this.#initialMessages, message];
+				//	this.#chat.messages = [...this.#initialMessages, message];
 				console.log('data-appendMessage', message);
 			}
 		});
