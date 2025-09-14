@@ -14,7 +14,7 @@
 	}
 
 	interface Props {
-		isstreaming?: boolean; // HTML attribute name (lowercase)
+		isStreaming?: boolean; // Match React version naming
 		open?: boolean;
 		defaultOpen?: boolean;
 		onOpenChange?: (open: boolean) => void;
@@ -33,7 +33,7 @@
 	// Props with bindable
 	let {
 		class: className,
-		isstreaming = false, // HTML attributes are lowercase
+		isStreaming = false,
 		open = $bindable<boolean>(),
 		defaultOpen = true,
 		onOpenChange,
@@ -45,18 +45,21 @@
 		...restProps
 	}: Props = $props();
 
-	// Use lowercase prop for internal logic
-	const isStreaming = isstreaming;
-
 	// State
 	let duration = $state(durationProp ?? 0);
 	let isOpen = $state(open ?? defaultOpen);
 	let hasAutoClosedRef = $state(false);
 	let startTime = $state<number | null>(null);
 
-	// Computed values
-	let currentIsOpen = $derived(open ?? isOpen);
-	let currentDuration = $derived(durationProp ?? duration);
+	// Keep internal state in sync with controlled props (if provided)
+	$effect(() => {
+		if (open !== undefined && isOpen !== open) {
+			isOpen = open;
+		}
+		if (durationProp !== undefined && duration !== durationProp) {
+			duration = durationProp;
+		}
+	});
 
 	// Functions
 	const setIsOpen = (newOpen: boolean) => {
@@ -83,15 +86,16 @@
 				startTime = Date.now();
 			}
 		} else if (startTime !== null) {
-			const calculatedDuration = Math.round((Date.now() - startTime) / MS_IN_S);
+			const calculatedDuration = Math.ceil((Date.now() - startTime) / MS_IN_S);
 			setDuration(calculatedDuration);
 			startTime = null;
 		}
 	});
 
+	// Auto-open when streaming starts
 	// Auto-close effect
 	$effect(() => {
-		if (defaultOpen && !isStreaming && currentIsOpen && !hasAutoClosedRef) {
+		if (defaultOpen && !isStreaming && isOpen && !hasAutoClosedRef) {
 			const timer = setTimeout(() => {
 				setIsOpen(false);
 				hasAutoClosedRef = true;
@@ -101,12 +105,21 @@
 		}
 	});
 
+	// Fire onOpenChange when internal open state changes (mirror React onChange)
+	let prevIsOpen = $state(isOpen);
+	$effect(() => {
+		if (prevIsOpen !== isOpen) {
+			onOpenChange?.(isOpen);
+			prevIsOpen = isOpen;
+		}
+	});
+
 	// Create reactive context using derived
 	const contextValue = $derived({
 		isStreaming,
-		isOpen: currentIsOpen,
+		isOpen,
 		setIsOpen,
-		duration: currentDuration
+		duration
 	});
 
 	setContext(REASONING_CONTEXT_KEY, () => contextValue);
@@ -114,8 +127,7 @@
 
 <Collapsible
 	class={cn('not-prose mb-4', className)}
-	onOpenChange={setIsOpen}
-	bind:open={currentIsOpen}
+	bind:open={isOpen}
 	{id}
 	{style}
 	{...restProps}

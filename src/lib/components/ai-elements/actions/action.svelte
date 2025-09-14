@@ -27,7 +27,7 @@
 	}: Props = $props();
 
 	let buttonClasses = cn(
-		'size-9 p-1.5 text-muted-foreground hover:text-foreground relative',
+		'size-7 p-0 text-muted-foreground hover:text-foreground relative',
 		className
 	);
 </script>

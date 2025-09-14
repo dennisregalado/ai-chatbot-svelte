@@ -4,6 +4,7 @@
 	import { cn } from '$lib/utils';
 	import type { Snippet } from 'svelte';
 	import type { ClassValue } from 'svelte/elements';
+	import ConversationScrollButton from './conversation-scroll-button.svelte';
 
 	interface Props {
 		class?: ClassValue;
@@ -15,8 +16,7 @@
 
 	let {
 		class: className,
-		children,
-		button,
+		children, 
 		initial = 'smooth',
 		resize = 'smooth',
 		...restProps
@@ -45,14 +45,12 @@
 <!-- Main conversation container -->
 <div
 	bind:this={scrollElement}
-	class={cn('relative flex-1 overflow-y-auto', className)}
+	class={cn('relative flex-1 overflow-y-auto w-full', className)}
 	role="log"
 	{...restProps}
 >
-	<div class="p-4" bind:this={contentElement}>
+	<div class="p-4 mx-auto max-w-3xl" bind:this={contentElement}>
 		{@render children?.()}
 	</div>
-	{#if button}
-		{@render button()}
-	{/if}
+	<ConversationScrollButton />
 </div>
