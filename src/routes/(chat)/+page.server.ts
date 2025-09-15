@@ -1,7 +1,7 @@
-import { generateUUID } from '$lib/utils';
+import { nanoid } from 'nanoid';
 
 export async function load() {
-	const id = generateUUID();
+	const id = nanoid();
 
 	return {
 		id

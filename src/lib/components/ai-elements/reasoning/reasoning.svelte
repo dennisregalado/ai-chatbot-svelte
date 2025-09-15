@@ -106,12 +106,8 @@
 	});
 
 	// Fire onOpenChange when internal open state changes (mirror React onChange)
-	let prevIsOpen = $state(isOpen);
 	$effect(() => {
-		if (prevIsOpen !== isOpen) {
-			onOpenChange?.(isOpen);
-			prevIsOpen = isOpen;
-		}
+		onOpenChange?.(isOpen);
 	});
 
 	// Create reactive context using derived

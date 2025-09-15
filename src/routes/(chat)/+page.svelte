@@ -6,5 +6,5 @@
 	let { id } = $derived(data);
 </script>
 
-<Chat {id} />
+<Chat {id} visibility="private" />
 <DataStreamHandler />

@@ -17,7 +17,8 @@ import {
 	saveChat,
 	saveMessages
 } from '$server/db/queries';
-import { convertToUIMessages, generateUUID, getTextFromMessage } from '$lib/utils';
+import { convertToUIMessages, getTextFromMessage } from '$lib/utils';
+import { nanoid } from 'nanoid';
 import { generateTitleFromUserMessage } from '$remote/chat.remote.js';
 import { createDocument } from '$ai/tools/create-document';
 import { updateDocument } from '$ai/tools/update-document';
@@ -128,7 +129,7 @@ export const POST = async ({ request, locals: { session, getStreamContext } }) =
 			]
 		});
 
-		const streamId = generateUUID();
+		const streamId = nanoid();
 		await createStreamId({ streamId, chatId: id });
 
 		const stream = createUIMessageStream({
@@ -208,7 +209,7 @@ export const POST = async ({ request, locals: { session, getStreamContext } }) =
 					console.error('failed to start followup suggestions', err);
 				}
 			},
-			generateId: generateUUID,
+			generateId: nanoid,
 			onFinish: async ({ messages }) => {
 				await saveMessages({
 					messages: messages.map((message) => ({

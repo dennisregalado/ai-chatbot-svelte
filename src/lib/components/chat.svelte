@@ -6,12 +6,12 @@
 	import { chatModels } from '$ai/models';
 	import { ChatSDKError } from '$lib/errors';
 	import type { ChatMessage } from '$lib/types';
-	import { cn, fetchWithErrorHandlers, generateUUID } from '$lib/utils';
+	import { cn, fetchWithErrorHandlers } from '$lib/utils';
+	import { nanoid } from 'nanoid';
 	import type { VisibilityType } from '$components/visibility-selector.svelte';
 	import {
 		deleteTrailingMessages,
 		getChatHistory,
-		getChatVisibility,
 		getVotesByChatId,
 		updateVoteByChatId
 	} from '$remote/chat.remote';
@@ -81,7 +81,6 @@
 	let model = $state<string>(chatModels[0].id);
 	let webSearch = $state(false);
 	let chatTitle = $state('');
-	let visibilityType = getChatVisibility(id);
 
 	const chat = $derived(
 		new Chat({
@@ -89,7 +88,7 @@
 			messages: untrack(() => initialMessages),
 			// @ts-ignore
 			experimental_throttle: 100,
-			generateId: generateUUID,
+			generateId: nanoid,
 			transport: new DefaultChatTransport({
 				api: '/api/chat',
 				fetch: fetchWithErrorHandlers,
@@ -99,7 +98,7 @@
 							id,
 							message: messages.at(-1),
 							selectedChatModel: 'chat-model-reasoning',
-							selectedVisibilityType: visibilityType?.current || initialVisibilityType,
+							selectedVisibilityType: initialVisibilityType,
 							...body
 						}
 					};
