@@ -46,6 +46,7 @@ export const POST = async ({ request, locals: { session, getStreamContext } }) =
 
 		requestBody = postRequestBodySchema.parse(json);
 	} catch (error) {
+		console.error('Error parsing request body:', error);
 		return new ChatSDKError('bad_request:api').toResponse();
 	}
 
