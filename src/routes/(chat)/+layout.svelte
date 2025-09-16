@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { createAIContext } from '@ai-sdk/svelte';
 	import * as Sidebar from '$components/ui/sidebar/index.js';
 	import AppSidebar from '$components/app-sidebar.svelte';
 	import DataStreamProvider from '$components/data-stream-provider.svelte';
@@ -9,6 +10,10 @@
 	import Credits from '$components/credits.svelte';
 	let { data, children } = $props();
 	let { isCollapsed, user } = $derived(data);
+
+	createAIContext();
+	// all hooks created after this or in components that are children of this component
+	// will have synchronized state
 </script>
 
 <div
