@@ -2,15 +2,15 @@
 	import { cn } from '$lib/utils.js';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import type { Snippet } from 'svelte';
-	import Markdown from '$components/markdown.svelte';
+	import { Streamdown } from 'svelte-streamdown';
 
 	interface Props extends HTMLAttributes<HTMLDivElement> {
 		children?: Snippet;
 		class?: string;
-		md: string;
+		content: string;
 	}
 
-	let { class: className, children, md, ...restProps }: Props = $props();
+	let { class: className, children, content, ...restProps }: Props = $props();
 </script>
 
 <div
@@ -20,5 +20,5 @@
 	)}
 	{...restProps}
 >
-	<Markdown {md} />
+	<Streamdown {content} />
 </div>

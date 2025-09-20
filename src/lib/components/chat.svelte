@@ -6,8 +6,7 @@
 	import { chatModels } from '$ai/models';
 	import { ChatSDKError } from '$lib/errors';
 	import type { ChatMessage } from '$lib/types';
-	import { cn, fetchWithErrorHandlers } from '$lib/utils';
-	import { nanoid } from 'nanoid';
+	import { cn, fetchWithErrorHandlers, generateUUID } from '$lib/utils';
 	import type { VisibilityType } from '$components/visibility-selector.svelte';
 	import {
 		deleteTrailingMessages,
@@ -91,7 +90,7 @@
 			messages: untrack(() => initialMessages),
 			// @ts-ignore
 			experimental_throttle: 100,
-			generateId: nanoid,
+			generateId: generateUUID,
 			transport: new DefaultChatTransport({
 				api: '/api/chat',
 				fetch: fetchWithErrorHandlers,
@@ -223,7 +222,7 @@
 										message.role === 'user' && 'rounded-sm bg-secondary! p-2.5 text-primary!'
 									)}
 								>
-									<Response md={part.text} />
+									<Response content={part.text} />
 								</MessageContent>
 								{#if message.role == 'assistant'}
 									<Actions>
@@ -386,7 +385,7 @@
 										message.id === chat.messages.at(-1)?.id}
 								>
 									<ReasoningTrigger />
-									<ReasoningContent md={part.text} />
+									<ReasoningContent content={part.text} />
 								</Reasoning>
 							{/if}
 						{/key}

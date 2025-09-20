@@ -121,12 +121,6 @@
 	setContext(REASONING_CONTEXT_KEY, () => contextValue);
 </script>
 
-<Collapsible
-	class={cn('not-prose mb-4', className)}
-	bind:open={isOpen}
-	{id}
-	{style}
-	{...restProps}
->
+<Collapsible class={cn('not-prose mb-4', className)} bind:open={isOpen} {id} {style} {...restProps}>
 	{@render children?.()}
 </Collapsible>

@@ -11,23 +11,21 @@ let publisherClient: ReturnType<typeof createClient> | null = null;
 let subscriberClient: ReturnType<typeof createClient> | null = null;
 
 export const init: ServerInit = async () => {
-
 	if (!env.REDIS_URL) {
 		console.error('Resumable Streams are not configured');
 		return;
 	}
 
 	// Initialize Redis connections early to fail fast if Redis is unavailable
-	try { 
+	try {
 		publisherClient = createClient({ url: env.REDIS_URL! });
 		subscriberClient = createClient({ url: env.REDIS_URL! });
-
+		console.log('publisherClient', publisherClient);
+		console.log('subscriberClient', subscriberClient);
 		// Connect both clients
-		await Promise.all([
-			publisherClient.connect(),
-			subscriberClient.connect()
-		]);
+		await Promise.all([publisherClient.connect(), subscriberClient.connect()]);
 	} catch (error) {
+		console.log('env.REDIS_URL', env.REDIS_URL);
 		console.error('❌ Failed to configure Resumable Streams:', error);
 	}
 };
@@ -60,11 +58,13 @@ export async function handle({ event, resolve }) {
 		const publisher = getPublisher();
 		const subscriber = getSubscriber();
 
-		return Promise.resolve(createResumableStreamContext({
-			waitUntil,
-			publisher,
-			subscriber
-		}));
+		return Promise.resolve(
+			createResumableStreamContext({
+				waitUntil,
+				publisher,
+				subscriber
+			})
+		);
 	};
 
 	return svelteKitHandler({ event, resolve, auth, building });

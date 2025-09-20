@@ -6,10 +6,10 @@
 
 	interface Props extends HTMLAttributes<HTMLDivElement> {
 		class?: string;
-		md: string;
+		content: string;
 	}
 
-	let { class: className, md, ...restProps }: Props = $props();
+	let { class: className, content, ...restProps }: Props = $props();
 </script>
 
 <CollapsibleContent
@@ -20,5 +20,5 @@
 	)}
 	{...restProps}
 >
-	<Response class="grid gap-2" md={sanitizeText(md)} />
+	<Response class="grid gap-2" content={sanitizeText(content)} />
 </CollapsibleContent>

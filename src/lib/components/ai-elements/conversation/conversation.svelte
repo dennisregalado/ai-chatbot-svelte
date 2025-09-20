@@ -16,7 +16,7 @@
 
 	let {
 		class: className,
-		children, 
+		children,
 		initial = 'smooth',
 		resize = 'smooth',
 		...restProps
@@ -45,11 +45,11 @@
 <!-- Main conversation container -->
 <div
 	bind:this={scrollElement}
-	class={cn('relative flex-1 overflow-y-auto w-full', className)}
+	class={cn('relative w-full flex-1 overflow-y-auto', className)}
 	role="log"
 	{...restProps}
 >
-	<div class="p-4 mx-auto max-w-3xl" bind:this={contentElement}>
+	<div class="mx-auto max-w-3xl p-4" bind:this={contentElement}>
 		{@render children?.()}
 	</div>
 	<ConversationScrollButton />

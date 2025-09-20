@@ -23,7 +23,7 @@ export class AutoResume {
 
 		// Effect to resume stream if auto-resume is enabled and last message is from user
 		// We run this once on initialization
-		onMount(async ()=>{
+		onMount(async () => {
 			if (!this.#autoResume) return;
 
 			const mostRecentMessage = this.#initialMessages.at(-1);

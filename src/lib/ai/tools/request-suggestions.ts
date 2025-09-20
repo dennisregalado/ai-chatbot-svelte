@@ -3,7 +3,7 @@ import type { Session } from '$lib/auth';
 import { streamObject, tool, type UIMessageStreamWriter } from 'ai';
 import { getDocumentById, saveSuggestions } from '$server/db/queries';
 import type { Suggestion } from '$server/db/schema';
-import { nanoid } from 'nanoid';
+import { generateUUID } from '$lib/utils';
 import { myProvider } from '../providers';
 import type { ChatMessage } from '$lib/types';
 
@@ -48,7 +48,7 @@ export const requestSuggestions = ({ session, dataStream }: RequestSuggestionsPr
 					originalText: element.originalSentence,
 					suggestedText: element.suggestedSentence,
 					description: element.description,
-					id: nanoid(),
+					id: generateUUID(),
 					documentId: documentId,
 					isResolved: false
 				};
