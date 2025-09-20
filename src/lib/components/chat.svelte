@@ -224,7 +224,7 @@
 								>
 									<Response content={part.text} />
 								</MessageContent>
-								{#if message.role == 'assistant'}
+								{#if message.role == 'assistant' && isLastMessage}
 									<Actions>
 										{#if !readonly}
 											<Action

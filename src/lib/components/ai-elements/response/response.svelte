@@ -20,5 +20,5 @@
 	)}
 	{...restProps}
 >
-	<Streamdown {content} />
+	<Streamdown {content} animation={{ enabled: true, type: 'fade' }} />
 </div>

@@ -35,7 +35,7 @@
 		class: className,
 		isStreaming = false,
 		open = $bindable<boolean>(),
-		defaultOpen = true,
+		defaultOpen = false,
 		onOpenChange,
 		duration: durationProp = $bindable<number>(),
 		children,
