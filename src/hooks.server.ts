@@ -20,12 +20,10 @@ export const init: ServerInit = async () => {
 	try {
 		publisherClient = createClient({ url: env.REDIS_URL! });
 		subscriberClient = createClient({ url: env.REDIS_URL! });
-		console.log('publisherClient', publisherClient);
-		console.log('subscriberClient', subscriberClient);
+
 		// Connect both clients
 		await Promise.all([publisherClient.connect(), subscriberClient.connect()]);
 	} catch (error) {
-		console.log('env.REDIS_URL', env.REDIS_URL);
 		console.error('❌ Failed to configure Resumable Streams:', error);
 	}
 };
