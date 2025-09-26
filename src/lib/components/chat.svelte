@@ -51,7 +51,7 @@
 	import { Button } from '$lib/components/ui/button';
 	// Fallback suggestions shown when we have none streamed yet
 	const fallbackSuggestions = [
-		'What is the UAP Disclosure Act of 2025?',
+		'What are the advantages of SvelteKit?',
 		'What is the weather in Tokyo?',
 		'How do I make a really good fish taco?'
 	];
