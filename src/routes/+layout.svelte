@@ -4,8 +4,10 @@
 	import { Toaster } from '$components/ui/sonner';
 
 	let { children } = $props();
-</script>
 
+	
+</script>
+ 
 <svelte:head>
 	<title>SvelteKit Chatbot Template</title>
 	<meta name="description" content="Svelte chatbot template using the AI SDK." />

@@ -4,74 +4,39 @@ import { redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export const getUser = query(async () => {
-	const { locals } = getRequestEvent();
-	const { user } = locals;
-	return user;
+	const { request } = getRequestEvent();
+	const session = await auth.api.getSession(request);
+
+	return session?.user ?? null;
 });
 
-export const register = form(
+export const getLastLoginMethod = query(async () => {
+	const { cookies } = getRequestEvent();
+	return cookies.get('better-auth.last_used_login_method') ?? null;
+});
+
+export const signInMagicLink = form(
 	z.object({
-		name: z.string().min(1, 'Name is required'),
-		email: z.string().min(1, 'Email is required'),
-		password: z.string().min(1, 'Password is required')
+		email: z.email('Invalid email address')
 	}),
-	async ({ name, email, password }) => {
-		let redirectTo;
-
-		try {
-			await auth.api.signUpEmail({
-				body: {
-					name,
-					email,
-					password
-				}
-			});
-
-			redirectTo = '/';
-		} catch (error) {
-			return {
-				invalid: (error as any).body?.message || 'Registration failed'
-			};
-		}
-
-		if (redirectTo) {
-			redirect(307, redirectTo);
-		}
-	}
-);
-
-export const signInEmail = form(
-	z.object({
-		email: z.string().min(1, 'Email is required'),
-		password: z.string().min(1, 'Password is required')
-	}),
-	async ({ email, password }) => {
+	async ({ email }) => {
 		const { request } = getRequestEvent();
 
-		let redirectTo;
+		console.log('signInMagicLink', email);
 
-		try {
-			await auth.api.signInEmail({
-				body: {
-					email,
-					password,
-					rememberMe: true
-				},
-				headers: request.headers
-			});
-
-			redirectTo = '/';
-		} catch (error) {
-			return {
-				invalid: (error as any).body?.message || 'Registration failed'
-			};
-		}
-
-		if (redirectTo) {
-			redirect(307, redirectTo);
-		}
+		redirect(307, '/verify');
 	}
 );
+
+export const signInGoogle = form('unchecked', async () => {
+	const { request } = getRequestEvent();
+
+	const response = await auth.api.signInSocial({ headers: request.headers, body: { provider: 'google' } });
+
+	if (response.redirect && response.url) {
+		redirect(307, response.url);
+	}
+});
 
 export const signOut = form('unchecked', async () => {
 	const { request } = getRequestEvent();
