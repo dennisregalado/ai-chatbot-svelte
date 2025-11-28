@@ -1,10 +1,8 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { page } from '$app/state';
-
+	import { goto } from '$app/navigation'; 
 	import { getChatHistory } from '$remote/chat.remote';
 	import type { Chat } from '$server/db/schema';
-
+	import { getUser } from '$remote/auth.remote';
 	import * as Command from '$components/ui/command';
 	import { useSidebar } from '$components/ui/sidebar';
 
@@ -19,7 +17,7 @@
 		children
 	}: { open?: boolean; children?: Snippet<[{ toggle: () => void }]> } = $props();
 
-	let user = $derived(page.data.user);
+	let user = $derived(await getUser());
 	let sidebar = useSidebar();
 
 	function handleKeydown(e: KeyboardEvent) {

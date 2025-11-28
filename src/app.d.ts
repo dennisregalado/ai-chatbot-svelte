@@ -9,9 +9,7 @@ declare global {
 			session?: Session;
 			getStreamContext: () => Promise<ResumableStreamContext>;
 		}
-		interface PageData {
-			user?: User;
-		}
+		// interface PageData {}
 		// interface Error {}
 		// interface PageState {}
 		// interface Platform {}

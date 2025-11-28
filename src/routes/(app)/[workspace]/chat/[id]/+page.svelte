@@ -3,8 +3,8 @@
 	import DataStreamHandler from '$components/data-stream-handler.svelte';
 
 	let { data } = $props();
-	let { id } = $derived(data);
+	let { readonly, chat, uiMessages } = $derived(data);
 </script>
 
-<Chat {id} visibility="private" />
+<Chat id={chat.id} messages={uiMessages} visibility={chat.visibility} {readonly} autoResume />
 <DataStreamHandler />

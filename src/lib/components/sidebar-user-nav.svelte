@@ -10,35 +10,27 @@
 	import { getMonthlyCredits } from '$remote/customer.remote';
 
 	const theme = getTheme();
+
+	let user = $derived(await getUser());
 </script>
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
 			<Button {...props} variant="outline" size="icon" class="h-max w-max rounded-full">
-				<svelte:boundary>
-					{#snippet pending()}
-						<Skeleton class="size-6 rounded-full" />
-					{/snippet}
-					{@const user = await getUser()}
-					<Avatar.Root class="size-6">
-						<Avatar.Image
-							src={user?.image || `https://avatar.vercel.sh/${user?.id}`}
-							alt={user?.name}
-						/>
-					</Avatar.Root>
-				</svelte:boundary>
+				<Avatar.Root class="size-6">
+					<Avatar.Image
+						src={user?.image || `https://avatar.vercel.sh/${user?.id}`}
+						alt={user?.name}
+					/>
+				</Avatar.Root>
 			</Button>
 		{/snippet}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="w-56" align="end" side="bottom" sideOffset={8} alignOffset={-16}>
 		<DropdownMenu.Label class="flex flex-col">
-			<svelte:boundary>
-				{#snippet pending()}{/snippet}
-				{@const user = await getUser()}
-				<span class="text-sm font-medium">{user?.name}</span>
-				<span class="text-xs font-medium text-muted-foreground">{user?.email}</span>
-			</svelte:boundary>
+			<span class="text-sm font-medium">{user?.name}</span>
+			<span class="text-xs font-medium text-muted-foreground">{user?.email}</span>
 		</DropdownMenu.Label>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
