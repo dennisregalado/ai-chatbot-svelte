@@ -19,7 +19,7 @@
 	}
 </script>
 
-<Sidebar.Root variant="inset" collapsible="offcanvas">
+<Sidebar.Root variant="inset" collapsible="icon">
 	<Sidebar.Header>
 		{#if isMobile.current}
 			<WorkspaceSwitcher />

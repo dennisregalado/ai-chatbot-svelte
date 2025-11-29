@@ -58,9 +58,9 @@
 		<Drawer.Content>
 			<Drawer.Header>
 				<Drawer.Title class="text-xl font-semibold">{title}</Drawer.Title>
-				<p class="text-sm text-muted-foreground">
+				<Field.Description class="text-sm">
 					{description}
-				</p>
+				</Field.Description>
 			</Drawer.Header>
 			{@render feedbackForm()}
 		</Drawer.Content>

@@ -48,7 +48,7 @@
 	</Field.Description>
 </div>
 
-{#snippet magicLink()}
+{#snippet magicLink({ disabled = false, placeholder = 'tim@apple.com', text = 'Continue with email' }: { disabled?: boolean, placeholder?: string, text?: string } = { disabled: false, placeholder: 'tim@apple.com', text: 'Continue with email' })}
 	<Field.Group class="gap-2.5">
 		<Field.Field aria-invalid={signInMagicLink.fields.email.issues()?.length ? true : false}>
 			{#each signInMagicLink.fields.email.issues() as issue}
@@ -56,7 +56,8 @@
 		{/each}
 			<Input
 				type="email"
-				placeholder="tim@apple.com"
+				placeholder={placeholder}
+				disabled={disabled}
 				{...signInMagicLink.fields.email.as('text')}
 			/>
 			
@@ -65,7 +66,7 @@
 			{#if signInMagicLink.pending > 0}
 				<Spinner />
 			{/if}
-			Continue with email
+			{text}
 			{#if await getLastLoginMethod() === 'email'}
 				<Badge class="bg-pink-200 text-pink-600 absolute -top-2.5 -right-2.5" variant="secondary">
 					Last used

@@ -36,7 +36,7 @@ export const signInMagicLink = form(
 		} catch (e) {
 			error(500, 'Failed to sign in with magic link');
 		} finally {
-			redirect(307, '/verify');
+			redirect(307, `/verify/${email}`);
 		}
 	}
 );
