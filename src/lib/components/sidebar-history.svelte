@@ -6,7 +6,7 @@
 
 	import ChatItem from '$components/sidebar-history-item.svelte';
 	import * as Collapsible from '$components/ui/collapsible';
-	import * as Empty from "$lib/components/ui/empty/index.js";
+	import * as Empty from '$lib/components/ui/empty/index.js';
 
 	import {
 		SidebarGroup,
@@ -15,8 +15,8 @@
 		SidebarMenu
 	} from '$components/ui/sidebar';
 
-	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right'; 
- 
+	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
+
 	let chats = $derived(await getChatHistory());
 </script>
 
@@ -77,7 +77,9 @@
 			{/each}
 		</div>
 	{:else}
-	<Empty.Description class="p-2 text-xs">Favorite chats and projects that you use often.</Empty.Description>
+		<Empty.Description class="p-2 text-xs"
+			>Favorite chats and projects that you use often.</Empty.Description
+		>
 	{/if}
 {/snippet}
 
@@ -91,7 +93,8 @@
 			{/each}
 		</div>
 	{:else}
-	<Empty.Description class="p-2 text-xs">Your conversations will appear here once you start chatting!</Empty.Description>
-	 
+		<Empty.Description class="p-2 text-xs"
+			>Your conversations will appear here once you start chatting!</Empty.Description
+		>
 	{/if}
 {/snippet}

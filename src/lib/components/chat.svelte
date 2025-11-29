@@ -45,7 +45,7 @@
 	} from '$components/icons.svelte';
 	import { untrack } from 'svelte';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
- 	import { useDataStream } from '$components/data-stream-provider.svelte';
+	import { useDataStream } from '$components/data-stream-provider.svelte';
 	import { AutoResume } from '$hooks/auto-resume.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { getUser } from '$remote/auth.remote';
@@ -421,7 +421,6 @@
 							{@render GlobeIcon(16)}
 							<span>Search</span>
 						</PromptInputButton>
-						
 					</PromptInputTools>
 					<PromptInputSubmit
 						disabled={!input.trim()}

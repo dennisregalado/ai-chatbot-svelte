@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { cn, sanitizeText } from '$lib/utils.js';
 	import { CollapsibleContent } from '$lib/components/ui/collapsible';
-	import Response from '../response/response.svelte'; 
+	import Response from '../response/response.svelte';
 
 	let { class: className, content, ...restProps } = $props();
 </script>

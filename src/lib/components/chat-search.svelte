@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation'; 
+	import { goto } from '$app/navigation';
 	import { getChatHistory } from '$remote/chat.remote';
 	import type { Chat } from '$server/db/schema';
 	import { getUser } from '$remote/auth.remote';

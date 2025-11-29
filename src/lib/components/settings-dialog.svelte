@@ -1,39 +1,39 @@
 <script lang="ts">
-	import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
-	import { Button } from "$lib/components/ui/button/index.js";
-	import * as Dialog from "$lib/components/ui/dialog/index.js";
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import BellIcon from "@lucide/svelte/icons/bell";
-	import CheckIcon from "@lucide/svelte/icons/check";
-	import GlobeIcon from "@lucide/svelte/icons/globe";
-	import HouseIcon from "@lucide/svelte/icons/house";
-	import KeyboardIcon from "@lucide/svelte/icons/keyboard";
-	import LinkIcon from "@lucide/svelte/icons/link";
-	import LockIcon from "@lucide/svelte/icons/lock";
-	import MenuIcon from "@lucide/svelte/icons/menu";
-	import MessageCircleIcon from "@lucide/svelte/icons/message-circle";
-	import PaintbrushIcon from "@lucide/svelte/icons/paintbrush";
-	import SettingsIcon from "@lucide/svelte/icons/settings";
-	import VideoIcon from "@lucide/svelte/icons/video";
-	import type { Snippet } from "svelte";
+	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import BellIcon from '@lucide/svelte/icons/bell';
+	import CheckIcon from '@lucide/svelte/icons/check';
+	import GlobeIcon from '@lucide/svelte/icons/globe';
+	import HouseIcon from '@lucide/svelte/icons/house';
+	import KeyboardIcon from '@lucide/svelte/icons/keyboard';
+	import LinkIcon from '@lucide/svelte/icons/link';
+	import LockIcon from '@lucide/svelte/icons/lock';
+	import MenuIcon from '@lucide/svelte/icons/menu';
+	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
+	import PaintbrushIcon from '@lucide/svelte/icons/paintbrush';
+	import SettingsIcon from '@lucide/svelte/icons/settings';
+	import VideoIcon from '@lucide/svelte/icons/video';
+	import type { Snippet } from 'svelte';
 
 	let { children }: { children: Snippet } = $props();
 
 	const data = {
 		nav: [
-			{ name: "Notifications", icon: BellIcon },
-			{ name: "Navigation", icon: MenuIcon },
-			{ name: "Home", icon: HouseIcon },
-			{ name: "Appearance", icon: PaintbrushIcon },
-			{ name: "Messages & media", icon: MessageCircleIcon },
-			{ name: "Language & region", icon: GlobeIcon },
-			{ name: "Accessibility", icon: KeyboardIcon },
-			{ name: "Mark as read", icon: CheckIcon },
-			{ name: "Audio & video", icon: VideoIcon },
-			{ name: "Connected accounts", icon: LinkIcon },
-			{ name: "Privacy & visibility", icon: LockIcon },
-			{ name: "Advanced", icon: SettingsIcon },
-		],
+			{ name: 'Notifications', icon: BellIcon },
+			{ name: 'Navigation', icon: MenuIcon },
+			{ name: 'Home', icon: HouseIcon },
+			{ name: 'Appearance', icon: PaintbrushIcon },
+			{ name: 'Messages & media', icon: MessageCircleIcon },
+			{ name: 'Language & region', icon: GlobeIcon },
+			{ name: 'Accessibility', icon: KeyboardIcon },
+			{ name: 'Mark as read', icon: CheckIcon },
+			{ name: 'Audio & video', icon: VideoIcon },
+			{ name: 'Connected accounts', icon: LinkIcon },
+			{ name: 'Privacy & visibility', icon: LockIcon },
+			{ name: 'Advanced', icon: SettingsIcon }
+		]
 	};
 
 	let open = $state(false);
@@ -42,7 +42,7 @@
 <Dialog.Root bind:open>
 	<Dialog.Trigger>
 		{#snippet child({ props })}
-		{@render children?.({ ...props })}
+			{@render children?.({ ...props })}
 		{/snippet}
 	</Dialog.Trigger>
 	<Dialog.Content
@@ -59,9 +59,7 @@
 							<Sidebar.Menu>
 								{#each data.nav as item (item.name)}
 									<Sidebar.MenuItem>
-										<Sidebar.MenuButton
-											isActive={item.name === "Messages & media"}
-										>
+										<Sidebar.MenuButton isActive={item.name === 'Messages & media'}>
 											{#snippet child({ props })}
 												<a href="##" {...props}>
 													<item.icon />
@@ -96,7 +94,7 @@
 				</header>
 				<div class="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-0">
 					{#each Array.from({ length: 10 }) as _, i (i)}
-						<div class="bg-muted/50 aspect-video max-w-3xl rounded-xl"></div>
+						<div class="aspect-video max-w-3xl rounded-xl bg-muted/50"></div>
 					{/each}
 				</div>
 			</main>

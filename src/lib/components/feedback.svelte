@@ -73,47 +73,54 @@
 		{...submitFeedback}
 		oninput={() => submitFeedback.validate()}
 	>
-	<Field.Group>
-	<Field.Set>
 		<Field.Group>
-		  <Field.Field> 
-			<Textarea 
-				class="min-h-24 resize-none"
-			  placeholder="Your feedback helps us improve..."
-			  rows={6}
-			  {...submitFeedback.fields.message.as('text')}
-			/>
-			{#each submitFeedback.fields.message.issues() as issue}
-			<Field.Error>{issue.message}</Field.Error>
-		{/each}
-			
-		  </Field.Field>
+			<Field.Set>
+				<Field.Group>
+					<Field.Field>
+						<Textarea
+							class="min-h-24 resize-none"
+							placeholder="Your feedback helps us improve..."
+							rows={6}
+							{...submitFeedback.fields.message.as('text')}
+						/>
+						{#each submitFeedback.fields.message.issues() as issue}
+							<Field.Error>{issue.message}</Field.Error>
+						{/each}
+					</Field.Field>
+				</Field.Group>
+			</Field.Set>
+			<Field.Set>
+				<Field.Group>
+					<Field.Field orientation="horizontal" class="justify-between">
+						<Field.Field
+							class="flex w-max gap-2"
+							orientation="horizontal"
+							aria-invalid={submitFeedback.fields.sentiment.issues()?.length ? true : false}
+						>
+							{#each sentiments as sentiment}
+								<Field.Label
+									class={cn(
+										buttonVariants({ variant: 'outline', size: 'sm' }),
+										'relative cursor-pointer [&:has(>input:checked)]:bg-accent'
+									)}
+								>
+									<input
+										class="sr-only"
+										{...submitFeedback.fields.sentiment.as('radio', sentiment.value)}
+									/>
+									<span class="text-lg">{sentiment.emoji}</span>
+								</Field.Label>
+							{/each}
+						</Field.Field>
+						<Field.Field class="flex w-max gap-2" orientation="horizontal">
+							<Button type="submit" size="sm" disabled={submitFeedback.pending > 0}>Submit</Button>
+							<Button variant="outline" type="button" size="sm" onclick={() => (open = false)}
+								>Cancel</Button
+							>
+						</Field.Field>
+					</Field.Field>
+				</Field.Group>
+			</Field.Set>
 		</Field.Group>
-	  </Field.Set>
-	  <Field.Set>
-		<Field.Group>
-	  <Field.Field orientation="horizontal" class="justify-between">
-		<Field.Field class="flex gap-2 w-max" orientation="horizontal" aria-invalid={submitFeedback.fields.sentiment.issues()?.length ? true : false}>
-			{#each sentiments as sentiment}
-				<Field.Label
-					class={cn(
-						buttonVariants({ variant: 'outline', size: 'sm' }),
-						'relative cursor-pointer [&:has(>input:checked)]:bg-accent'
-					)}
-				>
-					<input class="sr-only" {...submitFeedback.fields.sentiment.as('radio', sentiment.value)} />
-					<span class="text-lg">{sentiment.emoji}</span>
-				</Field.Label>
-				{/each} 
-		
-			</Field.Field>
-			<Field.Field class="flex gap-2 w-max" orientation="horizontal">
-        <Button type="submit" size="sm" disabled={submitFeedback.pending > 0}>Submit</Button>
-        <Button variant="outline" type="button" size="sm" onclick={() => (open = false)}>Cancel</Button>
-	</Field.Field>
-      </Field.Field>
-	  </Field.Group>
-	</Field.Set>
-	</Field.Group>
 	</form>
 {/snippet}

@@ -3,4 +3,4 @@
 	import DataStreamHandler from '$components/data-stream-handler.svelte';
 
 	let { data } = $props();
-</script> 
+</script>
