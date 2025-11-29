@@ -2,12 +2,9 @@
 	import { cn } from '$lib/utils';
 	import { getTheme } from '@sejohnson/svelte-themes';
 	import { signOut, getUser } from '$remote/auth.remote';
-	import { Skeleton } from '$components/ui/skeleton';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { Button } from '$components/ui/button';
-	import Upgrade from '$components/upgrade.svelte';
-	import { getMonthlyCredits } from '$remote/customer.remote';
 
 	const theme = getTheme();
 
