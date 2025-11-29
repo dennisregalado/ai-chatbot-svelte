@@ -1,6 +1,4 @@
 import { and, asc, count, desc, eq, gt, gte, inArray } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
 import {
 	chat,
 	document,
@@ -15,15 +13,16 @@ import { feedback as feedbackTable } from './schema';
 import type { ArtifactKind } from '$components/artifact.svelte';
 import type { VisibilityType } from '$components/visibility-selector.svelte';
 import { ChatSDKError } from '$lib/errors';
-import { POSTGRES_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
+import { drizzle } from 'drizzle-orm/libsql';
+import { createClient } from '@libsql/client';
 
-// Optionally, if not using email/pass login, you can
-// use the Drizzle adapter for Auth.js / NextAuth
-// https://authjs.dev/reference/adapter/drizzle
+if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
+
+const client = createClient({ url: env.DATABASE_URL });
+export const db = drizzle(client);
 
 // biome-ignore lint: Forbidden non-null assertion.
-export const client = postgres(POSTGRES_URL);
-export const db = drizzle(client);
 
 export async function saveChat({
 	id,

@@ -1,14 +1,14 @@
 import { createAuth } from '$lib/auth';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
-import { building } from '$app/environment'; 
-import { env } from '$env/dynamic/private';
+import { building } from '$app/environment';
 import type { IncomingRequestCfProperties } from '@cloudflare/workers-types';
+import type { Handle } from '@sveltejs/kit';
 
 export async function handle({ event, resolve }) {
 	const { platform } = event;
- 
-	let auth = createAuth(env, platform?.cf as IncomingRequestCfProperties);
-	
+
+	let auth = createAuth(platform?.cf as IncomingRequestCfProperties);
+
 	event.locals.auth = auth;
 
 	const session = await auth.api.getSession({
@@ -16,7 +16,6 @@ export async function handle({ event, resolve }) {
 	});
 
 	if (session) {
-
 		event.locals.session = session.session;
 		event.locals.user = session.user;
 	}

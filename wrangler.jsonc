@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "svelte-guestbook-auth",
+	"name": "ai-sass",
 	"main": ".svelte-kit/cloudflare/_worker.js",
 	"compatibility_date": "2025-04-05",
 	"compatibility_flags": ["nodejs_compat"],
@@ -45,21 +45,8 @@
 			"binding": "R2_BUCKET",
 			"bucket_name": "ai-sass"
 		}
-	],
-	"durable_objects": {
-		"bindings": [
-			{
-				"name": "Chat",
-				"class_name": "Chat"
-			}
-		]
-	},
-	"migrations": [
-		{
-			"tag": "v1",
-			"new_sqlite_classes": ["Chat"]
-		}
-	],
+	]
+	,
 	/**
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables

@@ -1,198 +1,126 @@
 import type { InferSelectModel } from 'drizzle-orm';
-import {
-	pgTable,
-	varchar,
-	timestamp,
-	json,
-	uuid,
-	text,
-	primaryKey,
-	foreignKey,
-	boolean
-} from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { sqliteTable, text, integer, primaryKey, foreignKey } from 'drizzle-orm/sqlite-core';
+import * as authSchema from './auth.schema';
 
-// Auth tables
-export const user = pgTable('user', {
-	id: text('id').primaryKey(),
-	name: text('name').notNull(),
-	email: text('email').notNull().unique(),
-	emailVerified: boolean('email_verified')
-		.$defaultFn(() => false)
-		.notNull(),
-	image: text('image'),
-	createdAt: timestamp('created_at')
-		.$defaultFn(() => /* @__PURE__ */ new Date())
-		.notNull(),
-	updatedAt: timestamp('updated_at')
-		.$defaultFn(() => /* @__PURE__ */ new Date())
-		.notNull()
-});
-
-export type User = InferSelectModel<typeof user>;
-
-export const session = pgTable('session', {
-	id: text('id').primaryKey(),
-	expiresAt: timestamp('expires_at').notNull(),
-	token: text('token').notNull().unique(),
-	createdAt: timestamp('created_at').notNull(),
-	updatedAt: timestamp('updated_at').notNull(),
-	ipAddress: text('ip_address'),
-	userAgent: text('user_agent'),
-	userId: text('user_id')
-		.notNull()
-		.references(() => user.id, { onDelete: 'cascade' })
-});
-
-export const account = pgTable('account', {
-	id: text('id').primaryKey(),
-	accountId: text('account_id').notNull(),
-	providerId: text('provider_id').notNull(),
-	userId: text('user_id')
-		.notNull()
-		.references(() => user.id, { onDelete: 'cascade' }),
-	accessToken: text('access_token'),
-	refreshToken: text('refresh_token'),
-	idToken: text('id_token'),
-	accessTokenExpiresAt: timestamp('access_token_expires_at'),
-	refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
-	scope: text('scope'),
-	password: text('password'),
-	createdAt: timestamp('created_at').notNull(),
-	updatedAt: timestamp('updated_at').notNull()
-});
-
-export const verification = pgTable('verification', {
-	id: text('id').primaryKey(),
-	identifier: text('identifier').notNull(),
-	value: text('value').notNull(),
-	expiresAt: timestamp('expires_at').notNull(),
-	createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()),
-	updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date())
-});
+export { authSchema };
 
 // Application tables
-
-export const chat = pgTable('Chat', {
-	id: uuid('id').primaryKey().notNull().defaultRandom(),
-	createdAt: timestamp('createdAt').notNull(),
+export const chat = sqliteTable('Chat', {
+	id: text('id').primaryKey().notNull().$defaultFn(() => crypto.randomUUID()),
+	createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
 	title: text('title').notNull(),
 	userId: text('userId')
 		.notNull()
-		.references(() => user.id),
-	visibility: varchar('visibility', { enum: ['public', 'private'] })
+		.references(() => authSchema.users.id),
+	visibility: text('visibility', { enum: ['public', 'private'] })
 		.notNull()
 		.default('private'),
-	favorite: boolean('favorite').notNull().default(false)
+	favorite: integer('favorite', { mode: 'boolean' }).notNull().default(false)
 });
 
 export type Chat = InferSelectModel<typeof chat>;
 
 // DEPRECATED: The following schema is deprecated and will be removed in the future.
 // Read the migration guide at https://chat-sdk.dev/docs/migration-guides/message-parts
-export const messageDeprecated = pgTable('Message', {
-	id: uuid('id').primaryKey().notNull().defaultRandom(),
-	chatId: uuid('chatId')
+export const messageDeprecated = sqliteTable('Message', {
+	id: text('id').primaryKey().notNull().$defaultFn(() => crypto.randomUUID()),
+	chatId: text('chatId')
 		.notNull()
 		.references(() => chat.id),
-	role: varchar('role').notNull(),
-	content: json('content').notNull(),
-	createdAt: timestamp('createdAt').notNull()
+	role: text('role').notNull(),
+	content: text('content', { mode: 'json' }).notNull(),
+	createdAt: integer('createdAt', { mode: 'timestamp' }).notNull()
 });
 
 export type MessageDeprecated = InferSelectModel<typeof messageDeprecated>;
 
-export const message = pgTable('Message_v2', {
-	id: uuid('id').primaryKey().notNull().defaultRandom(),
-	chatId: uuid('chatId')
+export const message = sqliteTable('Message_v2', {
+	id: text('id').primaryKey().notNull().$defaultFn(() => crypto.randomUUID()),
+	chatId: text('chatId')
 		.notNull()
 		.references(() => chat.id),
-	role: varchar('role').notNull(),
-	parts: json('parts').notNull(),
-	attachments: json('attachments').notNull(),
-	createdAt: timestamp('createdAt').notNull()
+	role: text('role').notNull(),
+	parts: text('parts', { mode: 'json' }).notNull(),
+	attachments: text('attachments', { mode: 'json' }).notNull(),
+	createdAt: integer('createdAt', { mode: 'timestamp' }).notNull()
 });
 
 export type DBMessage = InferSelectModel<typeof message>;
 
 // DEPRECATED: The following schema is deprecated and will be removed in the future.
 // Read the migration guide at https://chat-sdk.dev/docs/migration-guides/message-parts
-export const voteDeprecated = pgTable(
+export const voteDeprecated = sqliteTable(
 	'Vote',
 	{
-		chatId: uuid('chatId')
+		chatId: text('chatId')
 			.notNull()
 			.references(() => chat.id),
-		messageId: uuid('messageId')
+		messageId: text('messageId')
 			.notNull()
 			.references(() => messageDeprecated.id),
-		isUpvoted: boolean('isUpvoted').notNull()
+		isUpvoted: integer('isUpvoted', { mode: 'boolean' }).notNull()
 	},
-	(table) => {
-		return {
-			pk: primaryKey({ columns: [table.chatId, table.messageId] })
-		};
-	}
+	(table) => ({
+		pk: primaryKey({ columns: [table.chatId, table.messageId] })
+	})
 );
 
 export type VoteDeprecated = InferSelectModel<typeof voteDeprecated>;
 
-export const vote = pgTable(
+export const vote = sqliteTable(
 	'Vote_v2',
 	{
-		chatId: uuid('chatId')
+		chatId: text('chatId')
 			.notNull()
 			.references(() => chat.id),
-		messageId: uuid('messageId')
+		messageId: text('messageId')
 			.notNull()
 			.references(() => message.id),
-		isUpvoted: boolean('isUpvoted').notNull()
+		isUpvoted: integer('isUpvoted', { mode: 'boolean' }).notNull()
 	},
-	(table) => {
-		return {
-			pk: primaryKey({ columns: [table.chatId, table.messageId] })
-		};
-	}
+	(table) => ({
+		pk: primaryKey({ columns: [table.chatId, table.messageId] })
+	})
 );
 
 export type Vote = InferSelectModel<typeof vote>;
 
-export const document = pgTable(
+export const document = sqliteTable(
 	'Document',
 	{
-		id: uuid('id').notNull().defaultRandom(),
-		createdAt: timestamp('createdAt').notNull(),
+		id: text('id').notNull().$defaultFn(() => crypto.randomUUID()),
+		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
 		title: text('title').notNull(),
 		content: text('content'),
-		kind: varchar('text', { enum: ['text', 'code', 'image', 'sheet'] })
+		kind: text('kind', { enum: ['text', 'code', 'image', 'sheet'] })
 			.notNull()
 			.default('text'),
 		userId: text('userId')
 			.notNull()
-			.references(() => user.id)
+			.references(() => authSchema.users.id)
 	},
-	(table) => {
-		return {
-			pk: primaryKey({ columns: [table.id, table.createdAt] })
-		};
-	}
+	(table) => ({
+		pk: primaryKey({ columns: [table.id, table.createdAt] })
+	})
 );
 
 export type Document = InferSelectModel<typeof document>;
 
-export const suggestion = pgTable(
+export const suggestion = sqliteTable(
 	'Suggestion',
 	{
-		id: uuid('id').notNull().defaultRandom(),
-		documentId: uuid('documentId').notNull(),
-		documentCreatedAt: timestamp('documentCreatedAt').notNull(),
+		id: text('id').notNull().$defaultFn(() => crypto.randomUUID()),
+		documentId: text('documentId').notNull(),
+		documentCreatedAt: integer('documentCreatedAt', { mode: 'timestamp' }).notNull(),
 		originalText: text('originalText').notNull(),
 		suggestedText: text('suggestedText').notNull(),
 		description: text('description'),
-		isResolved: boolean('isResolved').notNull().default(false),
+		isResolved: integer('isResolved', { mode: 'boolean' }).notNull().default(false),
 		userId: text('userId')
 			.notNull()
-			.references(() => user.id),
-		createdAt: timestamp('createdAt').notNull()
+			.references(() => authSchema.users.id),
+		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull()
 	},
 	(table) => ({
 		pk: primaryKey({ columns: [table.id] }),
@@ -205,12 +133,12 @@ export const suggestion = pgTable(
 
 export type Suggestion = InferSelectModel<typeof suggestion>;
 
-export const stream = pgTable(
+export const stream = sqliteTable(
 	'Stream',
 	{
-		id: uuid('id').notNull().defaultRandom(),
-		chatId: uuid('chatId').notNull(),
-		createdAt: timestamp('createdAt').notNull()
+		id: text('id').notNull().$defaultFn(() => crypto.randomUUID()),
+		chatId: text('chatId').notNull(),
+		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull()
 	},
 	(table) => ({
 		pk: primaryKey({ columns: [table.id] }),
@@ -224,16 +152,16 @@ export const stream = pgTable(
 export type Stream = InferSelectModel<typeof stream>;
 
 // Product feedback
-export const feedback = pgTable('Feedback', {
-	id: uuid('id').primaryKey().notNull().defaultRandom(),
+export const feedback = sqliteTable('Feedback', {
+	id: text('id').primaryKey().notNull().$defaultFn(() => crypto.randomUUID()),
 	userId: text('userId')
 		.notNull()
-		.references(() => user.id),
+		.references(() => authSchema.users.id),
 	message: text('message'),
-	sentiment: varchar('sentiment', { enum: ['sad', 'neutral', 'happy'] })
+	sentiment: text('sentiment', { enum: ['sad', 'neutral', 'happy'] })
 		.notNull()
 		.default('neutral'),
-	createdAt: timestamp('createdAt').notNull()
+	createdAt: integer('createdAt', { mode: 'timestamp' }).notNull()
 });
 
 export type Feedback = InferSelectModel<typeof feedback>;

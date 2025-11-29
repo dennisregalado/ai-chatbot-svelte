@@ -3,25 +3,30 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import * as schema from '../lib/server/db/schema';
 import { getRequestEvent } from '$app/server';
-import { GOOGLE_CLIENT_SECRET } from '$env/static/private';
 import { PUBLIC_GOOGLE_CLIENT_ID } from '$env/static/public';
 import { magicLink, organization, lastLoginMethod, oneTap } from 'better-auth/plugins';
 import { onboarding, createOnboardingStep } from '@better-auth-extended/onboarding';
 import { preferences, createPreferenceScope } from '@better-auth-extended/preferences';
 import { z } from 'zod';
 import { resend } from './resend';
-import type { D1Database, IncomingRequestCfProperties, KVNamespace, R2Bucket } from "@cloudflare/workers-types";
-import { drizzle } from "drizzle-orm/d1";
-import { withCloudflare } from "better-auth-cloudflare";
-import { env as cloudflareEnv } from '$env/dynamic/private';
+import type {
+	D1Database,
+	IncomingRequestCfProperties,
+	KVNamespace,
+	R2Bucket
+} from '@cloudflare/workers-types';
+import { drizzle } from 'drizzle-orm/d1';
+import { withCloudflare } from 'better-auth-cloudflare';
+import { env } from '$env/dynamic/private';
 
 // Single auth configuration that handles both CLI and runtime scenarios
-function createAuth(env?: typeof cloudflareEnv, cf?: IncomingRequestCfProperties) {
+function createAuth(cf?: IncomingRequestCfProperties) {
+	console.log(env);
 	// Use actual DB for runtime, empty object for CLI
 	const db = env ? drizzle(env.DATABASE, { schema, logger: true }) : ({} as any);
 
 	// Base URL for auth callbacks (magic links, OAuth redirects, etc.)
-	const baseURL = env?.BASE_URL || "http://localhost:5173";
+	const baseURL = env?.BASE_URL || 'http://localhost:5173';
 
 	return betterAuth({
 		baseURL,
@@ -35,43 +40,43 @@ function createAuth(env?: typeof cloudflareEnv, cf?: IncomingRequestCfProperties
 						db,
 						options: {
 							usePlural: true,
-							debugLogs: true,
-						},
+							debugLogs: true
+						}
 					}
 					: undefined,
 				kv: env?.KV as KVNamespace,
 				r2: {
 					bucket: env?.R2_BUCKET as R2Bucket,
 					maxFileSize: 10 * 1024 * 1024, // 10MB
-					allowedTypes: [".jpg", ".jpeg", ".png", ".gif", ".pdf", ".doc", ".docx"],
+					allowedTypes: ['.jpg', '.jpeg', '.png', '.gif', '.pdf', '.doc', '.docx'],
 					additionalFields: {
-						category: { type: "string", required: false },
-						isPublic: { type: "boolean", required: false },
-						description: { type: "string", required: false },
-					},
-				},
+						category: { type: 'string', required: false },
+						isPublic: { type: 'boolean', required: false },
+						description: { type: 'string', required: false }
+					}
+				}
 			},
 			{
 				emailAndPassword: {
-					enabled: false,
+					enabled: false
 				},
 				socialProviders: {
 					google: {
-						clientId: PUBLIC_GOOGLE_CLIENT_ID,
-						clientSecret: GOOGLE_CLIENT_SECRET,
-					},
+						clientId: env.GOOGLE_CLIENT_ID,
+						clientSecret: env.GOOGLE_CLIENT_SECRET
+					}
 				},
 				user: {
 					additionalFields: {
 						firstName: {
-							type: "string",
-							required: false,
+							type: 'string',
+							required: false
 						},
 						lastName: {
-							type: "string",
-							required: false,
-						},
-					},
+							type: 'string',
+							required: false
+						}
+					}
 				},
 				session: {
 					cookieCache: {
@@ -89,7 +94,7 @@ function createAuth(env?: typeof cloudflareEnv, cf?: IncomingRequestCfProperties
 					magicLink({
 						sendMagicLink: async ({ email, url, token }, ctx) => {
 							console.log('Sending magic link to', email, url, token);
-			
+
 							// Send the email via Resend
 							try {
 								const response = await resend.emails.send({
@@ -124,20 +129,20 @@ function createAuth(env?: typeof cloudflareEnv, cf?: IncomingRequestCfProperties
 								async handler(ctx) {
 									const { firstName, lastName } = ctx.body;
 									const session = ctx.context.session;
-			
+
 									if (!session) {
 										throw ctx.error('UNAUTHORIZED');
 									}
-			
+
 									const userId = session.user.id;
-			
+
 									// Update user profile
 									await ctx.context.adapter.update({
 										model: 'user',
 										where: [{ field: 'id', value: userId }],
 										update: { firstName, lastName, name: `${firstName} ${lastName}` }
 									});
-			
+
 									return { success: true, updatedUser: { firstName, lastName } };
 								},
 								required: true,
@@ -149,7 +154,7 @@ function createAuth(env?: typeof cloudflareEnv, cf?: IncomingRequestCfProperties
 								}),
 								async handler(ctx) {
 									const session = ctx.context.session;
-			
+
 									if (!session) {
 										throw ctx.error('UNAUTHORIZED');
 									}
@@ -164,7 +169,7 @@ function createAuth(env?: typeof cloudflareEnv, cf?: IncomingRequestCfProperties
 								}),
 								async handler(ctx) {
 									const session = ctx.context.session;
-			
+
 									if (!session) {
 										throw ctx.error('UNAUTHORIZED');
 									}
@@ -180,7 +185,7 @@ function createAuth(env?: typeof cloudflareEnv, cf?: IncomingRequestCfProperties
 						scopes: {
 							user: createPreferenceScope({
 								preferences: {
-									theme: { type: z.enum(['light', 'dark', 'system']) },
+									theme: { type: z.enum(['light', 'dark', 'system']) }
 								},
 								defaultValues: {
 									theme: 'system'
@@ -196,16 +201,16 @@ function createAuth(env?: typeof cloudflareEnv, cf?: IncomingRequestCfProperties
 					max: 100, // reqs/window
 					customRules: {
 						// https://github.com/better-auth/better-auth/issues/5452
-						"/sign-in/email": {
+						'/sign-in/email': {
 							window: 60,
-							max: 100,
+							max: 100
 						},
-						"/sign-in/social": {
+						'/sign-in/social': {
 							window: 60,
-							max: 100,
-						},
-					},
-				},
+							max: 100
+						}
+					}
+				}
 			}
 		),
 		// Only add database adapter for CLI schema generation
@@ -213,11 +218,11 @@ function createAuth(env?: typeof cloudflareEnv, cf?: IncomingRequestCfProperties
 			? {}
 			: {
 				database: drizzleAdapter({} as D1Database, {
-					provider: "sqlite",
+					provider: 'sqlite',
 					usePlural: true,
-					debugLogs: true,
-				}),
-			}),
+					debugLogs: true
+				})
+			})
 	});
 }
 

@@ -23,7 +23,6 @@ const config = {
 			$remote: './src/lib/remote',
 			$server: './src/lib/server',
 			$hooks: './src/hooks',
-			$artifacts: './src/artifacts',
 			$components: './src/lib/components'
 		}
 	},
