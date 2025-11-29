@@ -59,7 +59,11 @@ export const signInGoogle = form('unchecked', async () => {
 	try {
 		response = await (auth.api as any).signInSocial({
 			headers: request.headers,
-			body: { provider: 'google' }
+			body: {
+				provider: 'google',
+				callbackURL: "/workspace",
+				newUserCallbackURL: "/welcome",
+			}
 		});
 	} catch (e) {
 		error(500, 'Failed to sign in with Google');

@@ -16,7 +16,10 @@ import { env as dynamicEnv } from '$env/dynamic/private';
 
 // Single auth configuration that handles both CLI and runtime scenarios
 function createAuth(env?: Env, cf?: CfProperties) {
-	const db = env ? drizzle(env.DATABASE, { schema, logger: true }) : ({} as any);
+	const db = env ? drizzle(env.DATABASE, {
+		schema,
+		// logger: true 
+	}) : ({} as any);
 
 	// Base URL for auth callbacks (magic links, OAuth redirects, etc.)
 	const baseURL = 'http://localhost:5173';
@@ -30,12 +33,12 @@ function createAuth(env?: Env, cf?: CfProperties) {
 				cf: cf || {},
 				d1: env
 					? {
-							db,
-							options: {
-								usePlural: true,
-								debugLogs: true
-							}
+						db,
+						options: {
+							usePlural: true,
+							debugLogs: true
 						}
+					}
 					: undefined,
 				kv: env?.KV as KVNamespace,
 				r2: {
@@ -210,12 +213,12 @@ function createAuth(env?: Env, cf?: CfProperties) {
 		...(env
 			? {}
 			: {
-					database: drizzleAdapter({} as D1Database, {
-						provider: 'sqlite',
-						usePlural: true,
-						debugLogs: true
-					})
+				database: drizzleAdapter({} as D1Database, {
+					provider: 'sqlite',
+					usePlural: true,
+					debugLogs: true
 				})
+			})
 	});
 }
 
@@ -226,5 +229,7 @@ export type Session = AuthSession['session'];
 export type User = AuthSession['user'];
 
 export type BetterAuth = ReturnType<typeof createAuth>;
+
+export const auth = createAuth();
 // Export for runtime usage
 export { createAuth };
