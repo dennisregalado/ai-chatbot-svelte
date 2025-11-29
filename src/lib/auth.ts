@@ -12,6 +12,7 @@ import { resend } from './resend';
 import type { D1Database, KVNamespace } from '@cloudflare/workers-types';
 import { drizzle } from 'drizzle-orm/d1';
 import { withCloudflare } from 'better-auth-cloudflare';
+import { env as dynamicEnv } from '$env/dynamic/private';
 
 // Single auth configuration that handles both CLI and runtime scenarios
 function createAuth(env?: Env, cf?: CfProperties) {
@@ -54,8 +55,8 @@ function createAuth(env?: Env, cf?: CfProperties) {
 				},
 				socialProviders: {
 					google: {
-						clientId: env.GOOGLE_CLIENT_ID,
-						clientSecret: env.GOOGLE_CLIENT_SECRET
+						clientId: PUBLIC_GOOGLE_CLIENT_ID,
+						clientSecret: dynamicEnv.GOOGLE_CLIENT_SECRET
 					}
 				},
 				user: {

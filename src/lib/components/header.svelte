@@ -27,8 +27,6 @@
 
 	let user = $derived(await getUser());
 	let isOnboarding = $derived(page.route?.id?.includes('welcome'));
-
-	$inspect(isOnboarding);
 </script>
 
 <header

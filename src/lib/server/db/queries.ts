@@ -13,14 +13,11 @@ import { feedback as feedbackTable } from './schema';
 import type { ArtifactKind } from '$components/artifact.svelte';
 import type { VisibilityType } from '$components/visibility-selector.svelte';
 import { ChatSDKError } from '$lib/errors';
-import { env } from '$env/dynamic/private';
-import { drizzle } from 'drizzle-orm/libsql';
-import { createClient } from '@libsql/client';
+import { getRequestEvent } from '$app/server';
 
-if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
-
-const client = createClient({ url: env.DATABASE_URL });
-export const db = drizzle(client);
+function getDB() {
+	return getRequestEvent().locals.db;
+}
 
 // biome-ignore lint: Forbidden non-null assertion.
 
@@ -35,6 +32,7 @@ export async function saveChat({
 	title: string;
 	visibility: VisibilityType;
 }) {
+	const db = getDB();
 	try {
 		return await db.insert(chat).values({
 			id,
@@ -49,6 +47,7 @@ export async function saveChat({
 }
 
 export async function deleteChatById({ id }: { id: string }) {
+	const db = getDB();
 	try {
 		await db.delete(vote).where(eq(vote.chatId, id));
 		await db.delete(message).where(eq(message.chatId, id));
@@ -63,6 +62,7 @@ export async function deleteChatById({ id }: { id: string }) {
 
 // todo: add pagination support
 export async function getChatsByUserId({ id }: { id: string }) {
+	const db = getDB();
 	try {
 		const chats = await db
 			.select()
@@ -71,11 +71,13 @@ export async function getChatsByUserId({ id }: { id: string }) {
 			.orderBy(desc(chat.createdAt));
 		return chats;
 	} catch (error) {
+		console.error(error);
 		throw new ChatSDKError('bad_request:database', 'Failed to get chats by user id');
 	}
 }
 
 export async function getChatById({ id }: { id: string }) {
+	const db = getDB();
 	try {
 		const [selectedChat] = await db.select().from(chat).where(eq(chat.id, id));
 		return selectedChat;
@@ -85,6 +87,7 @@ export async function getChatById({ id }: { id: string }) {
 }
 
 export async function saveMessages({ messages }: { messages: Array<DBMessage> }) {
+	const db = getDB();
 	try {
 		return await db.insert(message).values(messages);
 	} catch (error) {
@@ -94,6 +97,7 @@ export async function saveMessages({ messages }: { messages: Array<DBMessage> })
 }
 
 export async function getMessagesByChatId({ id }: { id: string }) {
+	const db = getDB();
 	try {
 		return await db
 			.select()
@@ -114,6 +118,7 @@ export async function voteMessage({
 	messageId: string;
 	type: 'up' | 'down';
 }) {
+	const db = getDB();
 	try {
 		const [existingVote] = await db
 			.select()
@@ -137,6 +142,7 @@ export async function voteMessage({
 }
 
 export async function getVotesByChatId({ id }: { id: string }) {
+	const db = getDB();
 	try {
 		return await db.select().from(vote).where(eq(vote.chatId, id));
 	} catch (error) {
@@ -157,6 +163,7 @@ export async function saveDocument({
 	content: string;
 	userId: string;
 }) {
+	const db = getDB();
 	try {
 		return await db
 			.insert(document)
@@ -175,6 +182,7 @@ export async function saveDocument({
 }
 
 export async function getDocumentsById({ id }: { id: string }) {
+	const db = getDB();
 	try {
 		const documents = await db
 			.select()
@@ -189,6 +197,7 @@ export async function getDocumentsById({ id }: { id: string }) {
 }
 
 export async function getDocumentById({ id }: { id: string }) {
+	const db = getDB();
 	try {
 		const [selectedDocument] = await db
 			.select()
@@ -209,6 +218,7 @@ export async function deleteDocumentsByIdAfterTimestamp({
 	id: string;
 	timestamp: Date;
 }) {
+	const db = getDB();
 	try {
 		await db
 			.delete(suggestion)
@@ -227,6 +237,7 @@ export async function deleteDocumentsByIdAfterTimestamp({
 }
 
 export async function saveSuggestions({ suggestions }: { suggestions: Array<Suggestion> }) {
+	const db = getDB();
 	try {
 		return await db.insert(suggestion).values(suggestions);
 	} catch (error) {
@@ -235,6 +246,7 @@ export async function saveSuggestions({ suggestions }: { suggestions: Array<Sugg
 }
 
 export async function getSuggestionsByDocumentId({ documentId }: { documentId: string }) {
+	const db = getDB();
 	try {
 		return await db
 			.select()
@@ -246,6 +258,7 @@ export async function getSuggestionsByDocumentId({ documentId }: { documentId: s
 }
 
 export async function getMessageById({ id }: { id: string }) {
+	const db = getDB();
 	try {
 		return await db.select().from(message).where(eq(message.id, id));
 	} catch (error) {
@@ -260,6 +273,7 @@ export async function deleteMessagesByChatIdAfterTimestamp({
 	chatId: string;
 	timestamp: Date;
 }) {
+	const db = getDB();
 	try {
 		const messagesToDelete = await db
 			.select({ id: message.id })
@@ -292,6 +306,7 @@ export async function updateChatVisiblityById({
 	chatId: string;
 	visibility: 'private' | 'public';
 }) {
+	const db = getDB();
 	try {
 		return await db.update(chat).set({ visibility }).where(eq(chat.id, chatId));
 	} catch (error) {
@@ -300,6 +315,7 @@ export async function updateChatVisiblityById({
 }
 
 export async function updateChatTitleById({ chatId, title }: { chatId: string; title: string }) {
+	const db = getDB();
 	try {
 		return await db
 			.update(chat)
@@ -319,6 +335,7 @@ export async function updateChatFavoriteById({
 	chatId: string;
 	favorite: boolean;
 }) {
+	const db = getDB();
 	try {
 		return await db
 			.update(chat)
@@ -338,6 +355,7 @@ export async function getMessageCountByUserId({
 	id: string;
 	differenceInHours: number;
 }) {
+	const db = getDB();
 	try {
 		const twentyFourHoursAgo = new Date(Date.now() - differenceInHours * 60 * 60 * 1000);
 
@@ -361,6 +379,7 @@ export async function getMessageCountByUserId({
 }
 
 export async function createStreamId({ streamId, chatId }: { streamId: string; chatId: string }) {
+	const db = getDB();
 	try {
 		await db.insert(stream).values({ id: streamId, chatId, createdAt: new Date() });
 	} catch (error) {
@@ -369,6 +388,7 @@ export async function createStreamId({ streamId, chatId }: { streamId: string; c
 }
 
 export async function getStreamIdsByChatId({ chatId }: { chatId: string }) {
+	const db = getDB();
 	try {
 		const streamIds = await db
 			.select({ id: stream.id })
@@ -392,6 +412,7 @@ export async function saveFeedback({
 	message: string | null;
 	sentiment: 'sad' | 'neutral' | 'happy';
 }) {
+	const db = getDB();
 	try {
 		const [row] = await db
 			.insert(feedbackTable)

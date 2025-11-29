@@ -1,1 +1,0 @@
-ALTER TABLE "Chat" RENAME COLUMN "isFavorite" TO "favorite";
