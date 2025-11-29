@@ -7,21 +7,27 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { getLastLoginMethod } from '$remote/auth.remote';
 	import { signInGoogle } from '$remote/auth.remote';
-	import { authClient } from '$lib/auth-client';
+	import { authClient } from '$lib/auth.client';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { Input } from '$lib/components/ui/input';
 	import { Spinner } from '$lib/components/ui/spinner';
 	import * as Field from '$lib/components/ui/field';
 	import { signInMagicLink } from '$remote/auth.remote';
+	import { getActiveWorkspace } from '$remote/workspace.remote';
 
 	let { children } = $props();
+	
 
 	onMount(async () => {
 		await authClient.oneTap({
 			fetchOptions: {
-				onSuccess: () => {
-					goto('/workspace');
+				onSuccess: async () => {
+					const workspace = await getActiveWorkspace();
+					
+					if (workspace) {
+						goto(`/${workspace.slug}`);
+					}
 				}
 			}
 		});
@@ -30,7 +36,6 @@
 
 <div class="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10 relative">
 	<div class="w-full max-w-xs h-full">
- 
 			<form class="flex flex-col gap-6" {...signInMagicLink} oninput={() => signInMagicLink.validate()}>
 			{@render children()}
 			<Field.Separator>Or</Field.Separator>

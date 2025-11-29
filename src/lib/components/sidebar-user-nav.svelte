@@ -47,34 +47,6 @@
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
-			<DropdownMenu.Label class="text-xs font-medium text-muted-foreground">
-				Credit Balance
-			</DropdownMenu.Label>
-			<DropdownMenu.Item>
-				<div class="flex w-full items-center justify-between gap-4">
-					<span class="text-sm font-normal text-nowrap">Monthly credits</span>
-					<svelte:boundary>
-						{#snippet pending()}{/snippet}
-						<span class="text-sm font-medium text-muted-foreground"
-							>{await getMonthlyCredits()}</span
-						>
-					</svelte:boundary>
-				</div>
-			</DropdownMenu.Item>
-			<div class="mt-1 rounded-lg bg-blue-100 p-2">
-				<p
-					class="font-sm [&amp;_button]:font-medium [&amp;_button]:underline [&amp;_button]:font-medium [&amp;_button]:underline [&amp;_button]:text-blue-800 hover:[&amp;_button]:text-blue-700 text-sm text-blue-900"
-				>
-					Upgrade your plan to buy more credits. <Upgrade
-						class="text-blue-800"
-						variant="link"
-						size="none">Upgrade plan</Upgrade
-					>
-				</p>
-			</div>
-		</DropdownMenu.Group>
-		<DropdownMenu.Separator />
-		<DropdownMenu.Group>
 			<DropdownMenu.Label class="text-xs font-medium text-muted-foreground"
 				>Preferences</DropdownMenu.Label
 			>

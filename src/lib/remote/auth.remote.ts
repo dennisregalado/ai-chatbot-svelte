@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 export const getUser = query(async () => {
 	const { request } = getRequestEvent();
+	
 	const session = await auth.api.getSession(request);
 
 	return session?.user ?? null;
@@ -12,7 +13,7 @@ export const getUser = query(async () => {
 
 export const getLastLoginMethod = query(async () => {
 	const { cookies } = getRequestEvent();
-	console.log('Cookies', cookies.getAll());
+	
 	return cookies.get('better-auth.last_used_login_method') ?? null;
 });
 
@@ -26,7 +27,11 @@ export const signInMagicLink = form(
 		try {
 			await auth.api.signInMagicLink({
 				headers: request.headers,
-				body: { email }
+				body: {
+					email,
+					callbackURL: "/workspace",
+					newUserCallbackURL: "/welcome",
+				}
 			});
 		} catch (e) {
 			error(500, 'Failed to sign in with magic link');

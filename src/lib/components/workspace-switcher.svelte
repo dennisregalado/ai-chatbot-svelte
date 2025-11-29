@@ -3,34 +3,19 @@
     import * as Sidebar from "$lib/components/ui/sidebar/index.js";
     import { useSidebar } from "$lib/components/ui/sidebar/index.js";
     import { Badge } from "$lib/components/ui/badge/index.js";
+    import { Skeleton } from "$lib/components/ui/skeleton/index.js";
     import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
-    import PlusIcon from "@lucide/svelte/icons/plus";
-    import GalleryVerticalEndIcon from "@lucide/svelte/icons/gallery-vertical-end";
-    import AudioWaveformIcon from "@lucide/svelte/icons/audio-waveform";
-    import CommandIcon from "@lucide/svelte/icons/command";
+    import PlusIcon from "@lucide/svelte/icons/plus"; 
+    import * as Avatar from '$lib/components/ui/avatar/index.js';
+    import { getActiveWorkspace, getWorkspaces } from "$remote/workspace.remote";
+    import { goto } from "$app/navigation";
 
-    const workspaces =  [
-      {
-        name: "Acme Inc",
-        logo: GalleryVerticalEndIcon,
-        plan: "Enterprise",
-      },
-      {
-        name: "Acme Corp.",
-        logo: AudioWaveformIcon,
-        plan: "Premium",
-      },
-      {
-        name: "Evil Corp.",
-        logo: CommandIcon,
-        plan: "Free",
-      },
-    ]
-    
     const sidebar = useSidebar();
-    let activeWorkspace = $state(workspaces[0]);
+
+    const activeWorkspace = $derived(await getActiveWorkspace());
   </script>
 
+<div class="w-max">
   <Sidebar.Menu>
     <Sidebar.MenuItem>
       <DropdownMenu.Root>
@@ -40,20 +25,24 @@
               {...props}
               class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div
-                class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-6 items-center justify-center rounded-sm"
-              >
-                <activeWorkspace.logo class="size-4" />
-              </div>
-              <div class="flex-1 flex items-center justify-between text-start text-sm leading-tight">
-                <span class="truncate font-medium">
-                  {activeWorkspace.name}
-                </span>
-                <Badge variant="secondary" class="w-fit truncate text-xs">
-                  {activeWorkspace.plan}
-                </Badge>
-              </div>
-              <ChevronsUpDownIcon class="ms-auto" />
+
+              {#if activeWorkspace}
+                <Avatar.Root class="size-6 rounded-sm">
+                  <Avatar.Image
+                    src={`https://avatar.vercel.sh/${activeWorkspace?.slug}`}
+                    alt={activeWorkspace?.name}
+                  />
+                </Avatar.Root>
+                <div class="flex-1 flex items-center justify-between text-start text-sm leading-tight gap-2">
+                  <span class="truncate font-medium">
+                    {activeWorkspace.name}
+                  </span>
+                  <Badge variant="secondary" class="w-fit truncate text-xs">
+                    {activeWorkspace.plan}
+                  </Badge>
+                </div>
+                <ChevronsUpDownIcon class="ms-auto" /> 
+                {/if}
             </Sidebar.MenuButton>
           {/snippet}
         </DropdownMenu.Trigger>
@@ -64,15 +53,36 @@
           sideOffset={4}
         >
           <DropdownMenu.Label class="text-muted-foreground text-xs">Workspaces</DropdownMenu.Label>
-          {#each workspaces as workspace, index (workspace.name)}
-            <DropdownMenu.Item onSelect={() => (activeWorkspace = workspace)} class="gap-2 p-2">
-              <div class="flex size-6 items-center justify-center rounded-md border">
-                <workspace.logo class="size-3.5 shrink-0" />
-              </div>
-              {workspace.name}
-              <DropdownMenu.Shortcut>⌘{index + 1}</DropdownMenu.Shortcut>
-            </DropdownMenu.Item>
-          {/each}
+          <svelte:boundary>
+            {#snippet pending()}
+              {#each [1, 2, 3] as _}
+                <DropdownMenu.Item class="gap-2 p-2" disabled>
+                  <Skeleton class="size-6 rounded-sm" />
+                  <Skeleton class="h-4 w-32" />
+                </DropdownMenu.Item>
+              {/each}
+            {/snippet}
+            {@const workspaces = await getWorkspaces()}
+            {#each workspaces as workspace, index (workspace.name)}
+              <DropdownMenu.Item 
+                onSelect={() => {
+                  goto(`/${workspace.slug}`, {
+                    invalidateAll: true
+                  });
+                }} 
+                class="gap-2 p-2"
+              >
+                <Avatar.Root class="size-6 rounded-sm">
+                  <Avatar.Image
+                    src={`https://avatar.vercel.sh/${workspace?.slug}`}
+                    alt={workspace?.name}
+                  />
+                </Avatar.Root>
+                {workspace.name}
+                <DropdownMenu.Shortcut>⌘{index + 1}</DropdownMenu.Shortcut>
+              </DropdownMenu.Item>
+            {/each}
+          </svelte:boundary>
           <DropdownMenu.Separator />
           <DropdownMenu.Item class="gap-2 p-2">
             <div
@@ -80,10 +90,10 @@
             >
               <PlusIcon class="size-4" />
             </div>
-            <div class="text-muted-foreground font-medium">Add workspace</div>
+            <div class="text-muted-foreground font-medium">Create workspace</div>
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
     </Sidebar.MenuItem>
   </Sidebar.Menu>
-
+</div>

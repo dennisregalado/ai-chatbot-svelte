@@ -142,7 +142,7 @@ export const auth = betterAuth({
 				})
 			},
 			completionStep: 'plan'
-		}) as any,
+		}),
 		preferences({
 			scopes: {
 				user: createPreferenceScope({

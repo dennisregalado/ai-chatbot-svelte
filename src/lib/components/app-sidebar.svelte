@@ -6,8 +6,10 @@
 	import ChatSearch from '$components/chat-search.svelte';
 	import SearchIcon from '@lucide/svelte/icons/search';
 	import WorkspaceSwitcher from './workspace-switcher.svelte';
+	import { IsMobile } from '$hooks/is-mobile.svelte';
 
 	const sidebar = Sidebar.useSidebar();
+	const isMobile = new IsMobile();
 
 	function newChat() {
 		sidebar.setOpenMobile(false);
@@ -19,7 +21,9 @@
 
 <Sidebar.Root variant="inset" collapsible="offcanvas">
 	<Sidebar.Header>
-		<WorkspaceSwitcher />
+		{#if isMobile.current}
+			<WorkspaceSwitcher />
+		{/if}
 		<Sidebar.Menu>
 			<Button variant="outline" type="button" onclick={newChat}>New Chat</Button>
 		</Sidebar.Menu>
