@@ -5,6 +5,7 @@
 	import SidebarHistory from '$components/sidebar-history.svelte';
 	import ChatSearch from '$components/chat-search.svelte';
 	import SearchIcon from '@lucide/svelte/icons/search';
+	import WorkspaceSwitcher from './workspace-switcher.svelte';
 
 	const sidebar = Sidebar.useSidebar();
 
@@ -18,6 +19,7 @@
 
 <Sidebar.Root variant="inset" collapsible="offcanvas">
 	<Sidebar.Header>
+		<WorkspaceSwitcher />
 		<Sidebar.Menu>
 			<Button variant="outline" type="button" onclick={newChat}>New Chat</Button>
 		</Sidebar.Menu>

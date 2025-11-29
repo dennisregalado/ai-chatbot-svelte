@@ -1,9 +1,8 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-
     
 </script>
 
 <div>
-    <h1>Hello World</h1>
-</div>
+    <h1>home page</h1>
+</div> 

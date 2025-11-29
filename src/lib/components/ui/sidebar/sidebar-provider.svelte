@@ -9,6 +9,7 @@
 		SIDEBAR_WIDTH_ICON
 	} from './constants.js';
 	import { setSidebar } from './context.svelte.js';
+	import type { Snippet } from 'svelte';
 
 	let {
 		ref = $bindable(null),
@@ -16,10 +17,13 @@
 		onOpenChange = () => {},
 		class: className,
 		style,
-		children,
+		inset,
+		header,
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
 		open?: boolean;
+		header?: Snippet;
+		inset?: Snippet;
 		onOpenChange?: (open: boolean) => void;
 	} = $props();
 
@@ -37,7 +41,11 @@
 
 <svelte:window onkeydown={sidebar.handleShortcutKeydown} />
 
+{#if header}
+		{@render header()}
+	{/if}
 <Tooltip.Provider delayDuration={0}>
+	
 	<div
 		data-slot="sidebar-wrapper"
 		style="--sidebar-width: {SIDEBAR_WIDTH}; --sidebar-width-icon: {SIDEBAR_WIDTH_ICON}; {style}"
@@ -48,6 +56,7 @@
 		bind:this={ref}
 		{...restProps}
 	>
-		{@render children?.()}
+
+		{@render inset?.()}
 	</div>
 </Tooltip.Provider>

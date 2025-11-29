@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Chat from '$components/chat.svelte';
 	import DataStreamHandler from '$components/data-stream-handler.svelte';
+	import { generateChatId } from '$remote/chat.remote';
 
-	let { data } = $props();
-	let { id } = $derived(data);
+	let id = await generateChatId();
 </script>
 
 <Chat {id} visibility="private" />

@@ -85,7 +85,7 @@
 			>
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
-		<DropdownMenu.Item>
+		<DropdownMenu.Item disabled={signOut.pending > 0}>
 			{#snippet child({ props })}
 				<form {...signOut}>
 					<button

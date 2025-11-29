@@ -5,5 +5,5 @@
 </script>
 
 <div>
-    <h1>Hello World</h1>
+    <h1>demo page</h1>
 </div>

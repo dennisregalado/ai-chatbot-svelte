@@ -1,6 +1,6 @@
 import { form, getRequestEvent, query } from '$app/server';
 import { auth } from '$lib/auth';
-import { redirect } from '@sveltejs/kit';
+import { redirect, error } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export const getUser = query(async () => {
@@ -12,36 +12,56 @@ export const getUser = query(async () => {
 
 export const getLastLoginMethod = query(async () => {
 	const { cookies } = getRequestEvent();
+	console.log('Cookies', cookies.getAll());
 	return cookies.get('better-auth.last_used_login_method') ?? null;
 });
 
 export const signInMagicLink = form(
 	z.object({
-		email: z.email('Invalid email address')
+		email: z.email('Please enter a valid email address')
 	}),
 	async ({ email }) => {
 		const { request } = getRequestEvent();
 
-		console.log('signInMagicLink', email);
-
-		redirect(307, '/verify');
+		try {
+			await auth.api.signInMagicLink({
+				headers: request.headers,
+				body: { email }
+			});
+		} catch (e) {
+			error(500, 'Failed to sign in with magic link');
+		} finally {
+			redirect(307, '/verify');
+		}
 	}
 );
 
 export const signInGoogle = form('unchecked', async () => {
 	const { request } = getRequestEvent();
+	let response = null;
 
-	const response = await auth.api.signInSocial({ headers: request.headers, body: { provider: 'google' } });
-
-	if (response.redirect && response.url) {
-		redirect(307, response.url);
+	try {
+		response = await auth.api.signInSocial({
+			headers: request.headers,
+			body: { provider: 'google' }
+		});
+	} catch (e) {
+		error(500, 'Failed to sign in with Google');
+	} finally {
+		if (response && response.redirect && response.url) {
+			redirect(307, response.url);
+		}
 	}
 });
 
 export const signOut = form('unchecked', async () => {
 	const { request } = getRequestEvent();
 
-	await auth.api.signOut({ headers: request.headers });
-
-	redirect(307, '/');
+	try {
+		await auth.api.signOut({ headers: request.headers });
+	} catch (e) {
+		error(500, 'Failed to sign out');
+	} finally {
+		redirect(307, '/signin');
+	}
 });

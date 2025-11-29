@@ -4,6 +4,7 @@ import * as db from '$server/db/queries';
 import { generateText } from 'ai';
 import { myProvider } from '$ai/providers';
 import { error, redirect } from '@sveltejs/kit';
+import { generateUUID } from '$lib/utils';
 
 export const getChatHistory = query(async () => {
 	const {
@@ -21,6 +22,10 @@ export const getChatHistory = query(async () => {
 	return chats;
 });
 
+export const generateChatId = query(async () => {
+	return generateUUID();
+});
+
 export const getChatById = query(z.string(), async (id) => {
 	const {
 		locals: { session }
@@ -32,7 +37,7 @@ export const getChatById = query(z.string(), async (id) => {
 	}
 
 	if (!session) {
-		redirect(302, '/login');
+		redirect(302, '/signin');
 	}
 
 	if (chat.visibility === 'private') {

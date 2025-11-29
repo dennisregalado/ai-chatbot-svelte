@@ -12,7 +12,7 @@ export async function load({ locals, params }) {
 	}
 
 	if (!session) {
-		redirect(302, '/login');
+		redirect(302, '/signin');
 	}
 
 	if (chat.visibility === 'private') {

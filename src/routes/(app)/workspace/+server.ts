@@ -1,11 +1,11 @@
-import { redirect } from "@sveltejs/kit";
+import { redirect } from '@sveltejs/kit';
 
 export async function GET({ locals }) {
-    const { session } = locals;
+	const { session } = locals;
 
-    console.log('session', session);
+	console.log('session', session);
 
-    if (!session) {
-        redirect(302, '/signin');
-    }
+	if (!session) {
+		redirect(302, '/signin');
+	}
 }

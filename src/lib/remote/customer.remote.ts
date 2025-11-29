@@ -27,14 +27,6 @@ export const getMonthlyCredits = query(async () => {
 		error(401, 'Unauthorized');
 	}
 
-	const meters = await auth.api.meters({
-		query: {
-			page: 1,
-			limit: 1
-		},
-		headers: request.headers
-	});
-
 	return '4.93';
 });
 
