@@ -12,6 +12,7 @@
 		deleteTrailingMessages,
 		getChatHistory,
 		getVotesByChatId,
+		updateChatTitle,
 		updateVoteByChatId
 	} from '$remote/chat.remote';
 	import { Actions, Action } from '$components/ai-elements/actions';
@@ -111,6 +112,10 @@
 				if (dataPart?.type === 'data-title') {
 					chatTitle = dataPart.data;
 					getChatHistory().refresh();
+					updateChatTitle({
+						chatId: chat.id,
+						title: chatTitle
+					})
 				}
 
 				// Clear any previous follow-up suggestions when signaled

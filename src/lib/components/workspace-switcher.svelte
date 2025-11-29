@@ -13,7 +13,7 @@
 
 	const sidebar = useSidebar();
 
-	const activeWorkspace = $derived(await getWorkspace(page.params.workspace || ''));
+	const activeWorkspace = $derived(await getActiveWorkspace());
 </script>
 
 <div class="w-max">
@@ -90,7 +90,7 @@
 						<div class="flex size-6 items-center justify-center rounded-md border bg-transparent">
 							<PlusIcon class="size-4" />
 						</div>
-						<div class="font-medium text-muted-foreground">Create workspace</div>
+						<div class="font-medium text-muted-foreground">Add workspace</div>
 					</DropdownMenu.Item>
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
