@@ -9,16 +9,12 @@ import { onboarding, createOnboardingStep } from '@better-auth-extended/onboardi
 import { preferences, createPreferenceScope } from '@better-auth-extended/preferences';
 import { z } from 'zod';
 import { resend } from './resend';
-import type {
-	D1Database,
-	KVNamespace,
-} from '@cloudflare/workers-types';
+import type { D1Database, KVNamespace } from '@cloudflare/workers-types';
 import { drizzle } from 'drizzle-orm/d1';
-import { withCloudflare } from 'better-auth-cloudflare'; 
+import { withCloudflare } from 'better-auth-cloudflare';
 
 // Single auth configuration that handles both CLI and runtime scenarios
 function createAuth(env?: Env, cf?: CfProperties) {
-
 	const db = env ? drizzle(env.DATABASE, { schema, logger: true }) : ({} as any);
 
 	// Base URL for auth callbacks (magic links, OAuth redirects, etc.)
@@ -33,12 +29,12 @@ function createAuth(env?: Env, cf?: CfProperties) {
 				cf: cf || {},
 				d1: env
 					? {
-						db,
-						options: {
-							usePlural: true,
-							debugLogs: true
+							db,
+							options: {
+								usePlural: true,
+								debugLogs: true
+							}
 						}
-					}
 					: undefined,
 				kv: env?.KV as KVNamespace,
 				r2: {
@@ -213,12 +209,12 @@ function createAuth(env?: Env, cf?: CfProperties) {
 		...(env
 			? {}
 			: {
-				database: drizzleAdapter({} as D1Database, {
-					provider: 'sqlite',
-					usePlural: true,
-					debugLogs: true
+					database: drizzleAdapter({} as D1Database, {
+						provider: 'sqlite',
+						usePlural: true,
+						debugLogs: true
+					})
 				})
-			})
 	});
 }
 

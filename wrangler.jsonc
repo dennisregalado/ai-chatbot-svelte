@@ -47,32 +47,30 @@
 		}
 	],
 	"durable_objects": {
-    "bindings": [
-      {
-        "name": "Chat",
-        "class_name": "Chat"
-      },
-    ],
-  },
-  "migrations": [
-    {
-      "tag": "v1",
-      "new_sqlite_classes": [
-        "Chat"
-      ]
-    }
-  ],
+		"bindings": [
+			{
+				"name": "Chat",
+				"class_name": "Chat"
+			}
+		]
+	},
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": ["Chat"]
+		}
+	],
 	/**
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
 	 */
 	"vars": {
-    "OPENAI_API_KEY": "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",
-    "BETTER_AUTH_SECRET": "gKvbZlxMZ/JjdwOQidQb3XYy28ssln+4efeS4jhl5pY=",
-    "GOOGLE_CLIENT_ID": "332657827300-edhvoha93sdvhanrhbmd1frn1oqa051d.apps.googleusercontent.com",
-    "GOOGLE_CLIENT_SECRET": "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",
-    "RESEND_API_KEY": "re_R8VJQkbq_PDyCBZpoFkzmL5cDMpGHusY7"
-  },
+		"OPENAI_API_KEY": "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",
+		"BETTER_AUTH_SECRET": "gKvbZlxMZ/JjdwOQidQb3XYy28ssln+4efeS4jhl5pY=",
+		"GOOGLE_CLIENT_ID": "332657827300-edhvoha93sdvhanrhbmd1frn1oqa051d.apps.googleusercontent.com",
+		"GOOGLE_CLIENT_SECRET": "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",
+		"RESEND_API_KEY": "re_R8VJQkbq_PDyCBZpoFkzmL5cDMpGHusY7"
+	}
 	/**
 	 * Note: Use secrets to store sensitive data.
 	 * https://developers.cloudflare.com/workers/configuration/secrets/

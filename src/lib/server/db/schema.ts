@@ -5,7 +5,10 @@ export * from './auth.schema';
 
 // Application tables
 export const chat = sqliteTable('Chat', {
-	id: text('id').primaryKey().notNull().$defaultFn(() => crypto.randomUUID()),
+	id: text('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => crypto.randomUUID()),
 	createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
 	title: text('title').notNull(),
 	userId: text('userId')
@@ -22,7 +25,10 @@ export type Chat = InferSelectModel<typeof chat>;
 // DEPRECATED: The following schema is deprecated and will be removed in the future.
 // Read the migration guide at https://chat-sdk.dev/docs/migration-guides/message-parts
 export const messageDeprecated = sqliteTable('Message', {
-	id: text('id').primaryKey().notNull().$defaultFn(() => crypto.randomUUID()),
+	id: text('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => crypto.randomUUID()),
 	chatId: text('chatId')
 		.notNull()
 		.references(() => chat.id),
@@ -34,7 +40,10 @@ export const messageDeprecated = sqliteTable('Message', {
 export type MessageDeprecated = InferSelectModel<typeof messageDeprecated>;
 
 export const message = sqliteTable('Message_v2', {
-	id: text('id').primaryKey().notNull().$defaultFn(() => crypto.randomUUID()),
+	id: text('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => crypto.randomUUID()),
 	chatId: text('chatId')
 		.notNull()
 		.references(() => chat.id),
@@ -87,7 +96,9 @@ export type Vote = InferSelectModel<typeof vote>;
 export const document = sqliteTable(
 	'Document',
 	{
-		id: text('id').notNull().$defaultFn(() => crypto.randomUUID()),
+		id: text('id')
+			.notNull()
+			.$defaultFn(() => crypto.randomUUID()),
 		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull(),
 		title: text('title').notNull(),
 		content: text('content'),
@@ -108,7 +119,9 @@ export type Document = InferSelectModel<typeof document>;
 export const suggestion = sqliteTable(
 	'Suggestion',
 	{
-		id: text('id').notNull().$defaultFn(() => crypto.randomUUID()),
+		id: text('id')
+			.notNull()
+			.$defaultFn(() => crypto.randomUUID()),
 		documentId: text('documentId').notNull(),
 		documentCreatedAt: integer('documentCreatedAt', { mode: 'timestamp' }).notNull(),
 		originalText: text('originalText').notNull(),
@@ -134,7 +147,9 @@ export type Suggestion = InferSelectModel<typeof suggestion>;
 export const stream = sqliteTable(
 	'Stream',
 	{
-		id: text('id').notNull().$defaultFn(() => crypto.randomUUID()),
+		id: text('id')
+			.notNull()
+			.$defaultFn(() => crypto.randomUUID()),
 		chatId: text('chatId').notNull(),
 		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull()
 	},
@@ -151,7 +166,10 @@ export type Stream = InferSelectModel<typeof stream>;
 
 // Product feedback
 export const feedback = sqliteTable('Feedback', {
-	id: text('id').primaryKey().notNull().$defaultFn(() => crypto.randomUUID()),
+	id: text('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => crypto.randomUUID()),
 	userId: text('userId')
 		.notNull()
 		.references(() => users.id),
