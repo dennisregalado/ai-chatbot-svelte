@@ -1,10 +1,10 @@
 import { form, getRequestEvent, query } from '$app/server';
-import { auth } from '$lib/auth';
 import { redirect, error } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export const getUser = query(async () => {
-	const { request } = getRequestEvent();
+	const { request, locals } = getRequestEvent();
+	const { auth } = locals;
 
 	const session = await auth.api.getSession(request);
 
@@ -12,7 +12,8 @@ export const getUser = query(async () => {
 });
 
 export const getSession = query(async () => {
-	const { request } = getRequestEvent();
+	const { request, locals } = getRequestEvent();
+	const { auth } = locals;
 
 	const session = await auth.api.getSession(request);
 
@@ -30,10 +31,11 @@ export const signInMagicLink = form(
 		email: z.email('Please enter a valid email address')
 	}),
 	async ({ email }) => {
-		const { request } = getRequestEvent();
+		const { request, locals } = getRequestEvent();
+		const { auth } = locals;
 
 		try {
-			await auth.api.signInMagicLink({
+			await (auth.api as any).signInMagicLink({
 				headers: request.headers,
 				body: {
 					email,
@@ -50,11 +52,12 @@ export const signInMagicLink = form(
 );
 
 export const signInGoogle = form('unchecked', async () => {
-	const { request } = getRequestEvent();
+	const { request, locals } = getRequestEvent();
+	const { auth } = locals;
 	let response = null;
 
 	try {
-		response = await auth.api.signInSocial({
+		response = await (auth.api as any).signInSocial({
 			headers: request.headers,
 			body: { provider: 'google' }
 		});
@@ -68,10 +71,11 @@ export const signInGoogle = form('unchecked', async () => {
 });
 
 export const signOut = form('unchecked', async () => {
-	const { request } = getRequestEvent();
+	const { request, locals } = getRequestEvent();
+	const { auth } = locals;
 
 	try {
-		await auth.api.signOut({ headers: request.headers });
+		await (auth.api as any).signOut({ headers: request.headers });
 	} catch (e) {
 		error(500, 'Failed to sign out');
 	} finally {

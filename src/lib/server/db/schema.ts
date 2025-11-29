@@ -1,9 +1,7 @@
 import type { InferSelectModel } from 'drizzle-orm';
-import { sql } from 'drizzle-orm';
 import { sqliteTable, text, integer, primaryKey, foreignKey } from 'drizzle-orm/sqlite-core';
-import * as authSchema from './auth.schema';
-
-export { authSchema };
+import { users } from './auth.schema';
+export * from './auth.schema';
 
 // Application tables
 export const chat = sqliteTable('Chat', {
@@ -12,7 +10,7 @@ export const chat = sqliteTable('Chat', {
 	title: text('title').notNull(),
 	userId: text('userId')
 		.notNull()
-		.references(() => authSchema.users.id),
+		.references(() => users.id),
 	visibility: text('visibility', { enum: ['public', 'private'] })
 		.notNull()
 		.default('private'),
@@ -98,7 +96,7 @@ export const document = sqliteTable(
 			.default('text'),
 		userId: text('userId')
 			.notNull()
-			.references(() => authSchema.users.id)
+			.references(() => users.id)
 	},
 	(table) => ({
 		pk: primaryKey({ columns: [table.id, table.createdAt] })
@@ -119,7 +117,7 @@ export const suggestion = sqliteTable(
 		isResolved: integer('isResolved', { mode: 'boolean' }).notNull().default(false),
 		userId: text('userId')
 			.notNull()
-			.references(() => authSchema.users.id),
+			.references(() => users.id),
 		createdAt: integer('createdAt', { mode: 'timestamp' }).notNull()
 	},
 	(table) => ({
@@ -156,7 +154,7 @@ export const feedback = sqliteTable('Feedback', {
 	id: text('id').primaryKey().notNull().$defaultFn(() => crypto.randomUUID()),
 	userId: text('userId')
 		.notNull()
-		.references(() => authSchema.users.id),
+		.references(() => users.id),
 	message: text('message'),
 	sentiment: text('sentiment', { enum: ['sad', 'neutral', 'happy'] })
 		.notNull()

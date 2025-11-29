@@ -1,5 +1,4 @@
 import { getRequestEvent, query, form } from '$app/server';
-import { auth } from '$lib/auth';
 import { error } from '@sveltejs/kit';
 import * as db from '$server/db/queries';
 import z from 'zod';
@@ -8,13 +7,13 @@ const SENTIMENTS = new Set(['sad', 'neutral', 'happy']);
 
 export const getCustomer = query(async () => {
 	const { locals, request } = getRequestEvent();
-	const { user } = locals;
+	const { user, auth } = locals;
 
 	if (!user) {
 		error(401, 'Unauthorized');
 	}
 
-	return await auth.api.state({
+	return await (auth.api as any).state({
 		headers: request.headers
 	});
 });

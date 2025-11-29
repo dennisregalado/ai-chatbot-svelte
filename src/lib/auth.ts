@@ -11,22 +11,18 @@ import { z } from 'zod';
 import { resend } from './resend';
 import type {
 	D1Database,
-	IncomingRequestCfProperties,
 	KVNamespace,
-	R2Bucket
 } from '@cloudflare/workers-types';
 import { drizzle } from 'drizzle-orm/d1';
-import { withCloudflare } from 'better-auth-cloudflare';
-import { env } from '$env/dynamic/private';
+import { withCloudflare } from 'better-auth-cloudflare'; 
 
 // Single auth configuration that handles both CLI and runtime scenarios
-function createAuth(cf?: IncomingRequestCfProperties) {
-	console.log(env);
-	// Use actual DB for runtime, empty object for CLI
+function createAuth(env?: Env, cf?: CfProperties) {
+
 	const db = env ? drizzle(env.DATABASE, { schema, logger: true }) : ({} as any);
 
 	// Base URL for auth callbacks (magic links, OAuth redirects, etc.)
-	const baseURL = env?.BASE_URL || 'http://localhost:5173';
+	const baseURL = 'http://localhost:5173';
 
 	return betterAuth({
 		baseURL,
@@ -232,8 +228,6 @@ export type Session = AuthSession['session'];
 
 export type User = AuthSession['user'];
 
-// Export for CLI schema generation
-export const auth = createAuth();
-
+export type BetterAuth = ReturnType<typeof createAuth>;
 // Export for runtime usage
 export { createAuth };
