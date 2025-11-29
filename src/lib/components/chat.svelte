@@ -403,8 +403,8 @@
 		{/if}
 	</Conversation>
 	{#if !readonly}
-		<div class="mx-auto max-w-3xl pb-3">
-			<Suggestions class="overflow-x-auto">
+		<div class="mx-auto max-w-3xl pb-3 w-full">
+			<Suggestions class="overflow-x-auto hidden">
 				{#if followups.length > 0}
 					{#each followups as suggestion (suggestion)}
 						<Suggestion onclick={() => handleSuggestionClick(suggestion)} {suggestion} />

@@ -20,14 +20,14 @@
 	let chats = $derived(await getChatHistory());
 </script>
 
-<Collapsible.Root title="Chats" open class="group/collapsible">
+<Collapsible.Root title="Favorites" open class="group/collapsible">
 	<SidebarGroup class="py-0.5">
 		<SidebarGroupLabel
 			class="group/label text-[13px] text-muted-foreground hover:text-sidebar-accent-foreground"
 		>
 			{#snippet child({ props })}
 				<Collapsible.Trigger {...props}>
-					Chats
+					Favorites
 					<ChevronRightIcon
 						class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90"
 					/>
@@ -37,15 +37,15 @@
 		<Collapsible.Content>
 			<SidebarGroupContent>
 				<SidebarMenu>
-					{@render recentChats(chats)}
+					{@render favoriteChats(chats)}
 				</SidebarMenu>
 			</SidebarGroupContent>
 		</Collapsible.Content>
 	</SidebarGroup>
 </Collapsible.Root>
 
-{#snippet recentChats(chats: Chat[])}
-	{@const filteredChats = chats?.filter((chat) => !chat.favorite)}
+{#snippet favoriteChats(chats: Chat[])}
+	{@const filteredChats = chats.filter((chat) => chat.favorite)}
 
 	{#if filteredChats.length > 0}
 		<div class="mt-1.5 flex flex-col gap-0.25">
@@ -55,7 +55,8 @@
 		</div>
 	{:else}
 		<Empty.Description class="p-2 text-xs"
-			>Your conversations will appear here once you start chatting!</Empty.Description
+			>Favorite chats and projects that you use often.</Empty.Description
 		>
 	{/if}
 {/snippet}
+

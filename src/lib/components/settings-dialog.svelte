@@ -61,7 +61,16 @@
 	};
 
 	let open = $state(false);
+
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 's' && (e.metaKey || e.ctrlKey)) {
+			e.preventDefault();
+			open = !open;
+		}
+	}
 </script>
+
+<svelte:document onkeydown={handleKeydown} />
 
 <Dialog.Root bind:open>
 	<Dialog.Trigger>
