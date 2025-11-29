@@ -8,7 +8,7 @@ export async function handle({ event, resolve }) {
 	const { platform } = event;
 
 	let db = getDb(platform?.env.DATABASE, env.DATABASE_URL);
-	let auth = createAuth(platform?.env, platform?.cf);
+	let auth = createAuth(platform?.env, platform?.cf, db);
 
 	event.locals.auth = auth;
 	event.locals.db = db;

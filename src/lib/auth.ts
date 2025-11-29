@@ -1,7 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { sveltekitCookies } from 'better-auth/svelte-kit';
-import * as schema from '../lib/server/db/schema';
+import { sveltekitCookies } from 'better-auth/svelte-kit'; 
 import { getRequestEvent } from '$app/server';
 import { PUBLIC_GOOGLE_CLIENT_ID } from '$env/static/public';
 import { magicLink, organization, lastLoginMethod, oneTap } from 'better-auth/plugins';
@@ -9,17 +8,13 @@ import { onboarding, createOnboardingStep } from '@better-auth-extended/onboardi
 import { preferences, createPreferenceScope } from '@better-auth-extended/preferences';
 import { z } from 'zod';
 import { resend } from './resend';
-import type { D1Database, KVNamespace } from '@cloudflare/workers-types';
-import { drizzle } from 'drizzle-orm/d1';
+import type { D1Database, KVNamespace } from '@cloudflare/workers-types'; 
 import { withCloudflare } from 'better-auth-cloudflare';
 import { env as dynamicEnv } from '$env/dynamic/private';
+import type { DrizzleClient } from './server/db';
 
 // Single auth configuration that handles both CLI and runtime scenarios
-function createAuth(env?: Env, cf?: CfProperties) {
-	const db = env ? drizzle(env.DATABASE, {
-		schema,
-		// logger: true 
-	}) : ({} as any);
+function createAuth(env?: Env, cf?: CfProperties, db?: DrizzleClient) { 
 
 	// Base URL for auth callbacks (magic links, OAuth redirects, etc.)
 	const baseURL = 'http://localhost:5173';
