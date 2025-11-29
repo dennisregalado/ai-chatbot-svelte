@@ -7,12 +7,13 @@
     import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
     import PlusIcon from "@lucide/svelte/icons/plus"; 
     import * as Avatar from '$lib/components/ui/avatar/index.js';
-    import { getActiveWorkspace, getWorkspaces } from "$remote/workspace.remote";
+    import { getActiveWorkspace, getWorkspace, getWorkspaces } from "$remote/workspace.remote";
     import { goto } from "$app/navigation";
+    import { page } from "$app/state";
 
     const sidebar = useSidebar();
 
-    const activeWorkspace = $derived(await getActiveWorkspace());
+    const activeWorkspace = $derived(await getWorkspace(page.params.workspace || ''));
   </script>
 
 <div class="w-max">

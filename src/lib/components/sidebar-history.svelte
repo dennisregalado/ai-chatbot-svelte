@@ -6,6 +6,8 @@
 
 	import ChatItem from '$components/sidebar-history-item.svelte';
 	import * as Collapsible from '$components/ui/collapsible';
+	import * as Empty from "$lib/components/ui/empty/index.js";
+
 	import {
 		SidebarGroup,
 		SidebarGroupContent,
@@ -13,9 +15,9 @@
 		SidebarMenu
 	} from '$components/ui/sidebar';
 
-	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
-
-	let user = $derived(page.data.user);
+	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right'; 
+ 
+	let chats = $derived(await getChatHistory());
 </script>
 
 <Collapsible.Root title="Favorites" open class="group/collapsible">
@@ -35,21 +37,7 @@
 		<Collapsible.Content>
 			<SidebarGroupContent>
 				<SidebarMenu>
-					<svelte:boundary>
-						{#snippet pending()}
-							<div class="flex flex-col">
-								{#each [44, 32] as item (item)}
-									<div class="flex h-8 flex-row items-center gap-2 rounded-md px-2">
-										<div
-											class="h-4 max-w-[var(--skeleton-width)] flex-1 rounded-md bg-sidebar-accent-foreground/10"
-											style:--skeleton-width={`${item}%`}
-										></div>
-									</div>
-								{/each}
-							</div>
-						{/snippet}
-						{@render favoriteChats(await getChatHistory())}
-					</svelte:boundary>
+					{@render favoriteChats(chats)}
 				</SidebarMenu>
 			</SidebarGroupContent>
 		</Collapsible.Content>
@@ -72,29 +60,7 @@
 		<Collapsible.Content>
 			<SidebarGroupContent>
 				<SidebarMenu>
-					{#if !user}
-						<div
-							class="flex w-full flex-row items-center justify-center gap-2 p-2 text-sm text-zinc-500"
-						>
-							Login to save and revisit previous chats!
-						</div>
-					{:else}
-						<svelte:boundary>
-							{#snippet pending()}
-								<div class="flex flex-col">
-									{#each [44, 32, 28, 64, 52] as item (item)}
-										<div class="flex h-8 flex-row items-center gap-2 rounded-md px-2">
-											<div
-												class="h-4 max-w-[var(--skeleton-width)] flex-1 rounded-md bg-sidebar-accent-foreground/10"
-												style:--skeleton-width={`${item}%`}
-											></div>
-										</div>
-									{/each}
-								</div>
-							{/snippet}
-							{@render recentChats(await getChatHistory())}
-						</svelte:boundary>
-					{/if}
+					{@render recentChats(chats)}
 				</SidebarMenu>
 			</SidebarGroupContent>
 		</Collapsible.Content>
@@ -111,9 +77,7 @@
 			{/each}
 		</div>
 	{:else}
-		<div class="flex w-full flex-row items-center justify-center gap-2 p-2 text-xs text-zinc-500">
-			Favorite chats and projects that you use often.
-		</div>
+	<Empty.Description class="p-2 text-xs">Favorite chats and projects that you use often.</Empty.Description>
 	{/if}
 {/snippet}
 
@@ -127,8 +91,7 @@
 			{/each}
 		</div>
 	{:else}
-		<div class="flex w-full flex-row items-center justify-center gap-2 p-2 text-xs text-zinc-500">
-			Your conversations will appear here once you start chatting!
-		</div>
+	<Empty.Description class="p-2 text-xs">Your conversations will appear here once you start chatting!</Empty.Description>
+	 
 	{/if}
 {/snippet}

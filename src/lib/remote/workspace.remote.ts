@@ -44,7 +44,7 @@ export const getActiveWorkspace = query(async () => {
 	}
 
 	// temp just returm the first workspace
-	const workspace = workspaces[1];
+	const workspace = workspaces[0];
 
 	if (!workspace) {
 		error(404, 'Workspace not found');

@@ -45,10 +45,10 @@
 	} from '$components/icons.svelte';
 	import { untrack } from 'svelte';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
-	import { page } from '$app/state';
-	import { useDataStream } from '$components/data-stream-provider.svelte';
+ 	import { useDataStream } from '$components/data-stream-provider.svelte';
 	import { AutoResume } from '$hooks/auto-resume.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { getUser } from '$remote/auth.remote';
 	// Fallback suggestions shown when we have none streamed yet
 	const fallbackSuggestions = [
 		'What are the advantages of SvelteKit?',
@@ -73,7 +73,7 @@
 		autoResume?: boolean;
 	} = $props();
 
-	let user = page.data.user;
+	let user = $derived(await getUser());
 
 	const { setDataStream } = useDataStream();
 
@@ -421,23 +421,7 @@
 							{@render GlobeIcon(16)}
 							<span>Search</span>
 						</PromptInputButton>
-						<PromptInputModelSelect>
-							<PromptInputModelSelectTrigger>
-								<PromptInputModelSelectValue>
-									{chatModels.find((m) => m.id === model)?.name}
-								</PromptInputModelSelectValue>
-							</PromptInputModelSelectTrigger>
-							<PromptInputModelSelectContent>
-								{#each chatModels as chatModel (chatModel.id)}
-									<PromptInputModelSelectItem
-										value={chatModel.id}
-										onSelect={() => (model = chatModel.id)}
-									>
-										{chatModel.name}
-									</PromptInputModelSelectItem>
-								{/each}
-							</PromptInputModelSelectContent>
-						</PromptInputModelSelect>
+						
 					</PromptInputTools>
 					<PromptInputSubmit
 						disabled={!input.trim()}

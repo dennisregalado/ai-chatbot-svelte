@@ -1,11 +1,12 @@
 <script lang="ts">
-    import { getUser } from '$remote/auth.remote';
+    import { getUser, signOut } from '$remote/auth.remote';
     import WorkspaceSwitcher from './workspace-switcher.svelte';
     import Upgrade from './upgrade.svelte';
     import Feedback from './feedback.svelte';
     import SidebarUserNav from './sidebar-user-nav.svelte';
     import { buttonVariants } from './ui/button/button.svelte';
     import SettingsDialog from './settings-dialog.svelte';
+    import * as Field from '$lib/components/ui/field';
     import type { User } from '$lib/auth';
     import * as Avatar from '$lib/components/ui/avatar/index.js';
     import { Button } from '$components/ui/button';
@@ -16,6 +17,7 @@
     import CircleHelpIcon from '@lucide/svelte/icons/circle-help';
     import CircleIcon from '@lucide/svelte/icons/circle';
     import CircleCheckIcon from '@lucide/svelte/icons/circle-check';
+	import { page } from '$app/state';
 
     type ListItemProps = HTMLAttributes<HTMLAnchorElement> & {
         title: string;
@@ -24,13 +26,19 @@
     };
 
     let user = $derived(await getUser());
+    let isOnboarding = $derived(page.route?.id?.includes('welcome'));
+
+    $inspect(isOnboarding);
 </script>
 
 <header
 		class="@container/chat-header relative z-20 flex h-12.5 w-full shrink-0 items-center justify-between gap-4 px-3 sm:px-2"
 	>
-    {#if user}
-        {@render privateHeader({ user })}
+    {#if user && isOnboarding}
+    {@render welcomeHeader({ user })}
+    
+    {:else if user}
+    {@render privateHeader({ user })}
     {:else}
         {@render publicHeader()}
     {/if}
@@ -152,5 +160,26 @@
         <Upgrade variant="outline" size="sm">Upgrade</Upgrade>
         <Feedback variant="outline" size="sm">Feedback</Feedback>
         <SidebarUserNav />  
+</div>
+{/snippet}
+
+{#snippet welcomeHeader({ user }: { user: User })}
+<div class="flex min-w-0 flex-1 items-center">
+    
+</div>
+<div class="flex flex-1 items-center justify-end gap-2.5"> 
+    <form {...signOut}>
+        <Field.Description>
+            Not {user.name}? <button type="submit" class="text-primary">Sign Out</button>
+        </Field.Description>
+    </form>
+    <Button variant="outline" size="icon" class="h-max w-max rounded-full">
+        <Avatar.Root class="size-6">
+            <Avatar.Image
+                src={user?.image || `https://avatar.vercel.sh/${user?.id}`}
+                alt={user?.name}
+            />
+        </Avatar.Root>
+    </Button>
 </div>
 {/snippet}
