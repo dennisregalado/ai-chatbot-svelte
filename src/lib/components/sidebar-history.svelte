@@ -43,14 +43,14 @@
 		</Collapsible.Content>
 	</SidebarGroup>
 </Collapsible.Root>
-<Collapsible.Root title="Recent Chats" open class="group/collapsible">
+<Collapsible.Root title="Chats" open class="group/collapsible">
 	<SidebarGroup class="py-0.5">
 		<SidebarGroupLabel
 			class="group/label text-[13px] text-muted-foreground hover:text-sidebar-accent-foreground"
 		>
 			{#snippet child({ props })}
 				<Collapsible.Trigger {...props}>
-					Recent Chats
+					Chats
 					<ChevronRightIcon
 						class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90"
 					/>

@@ -69,7 +69,7 @@
 		{#if user}
 			<svelte:boundary>
 				{#snippet pending()}
-					<Command.Group heading="Recent Chats">
+					<Command.Group heading="Chats">
 						{#each [1, 2, 3] as item (item)}
 							<Command.Item disabled>
 								{@render MessageIcon(14)}
@@ -95,7 +95,7 @@
 
 {#snippet chatResults(chats: Chat[])}
 	{#if chats.length > 0}
-		<Command.Group heading="Recent Chats">
+		<Command.Group heading="Chats">
 			{#each chats as chat (chat.id)}
 				<Command.Item onSelect={() => selectChat(chat)} value={chat.title}>
 					{@render MessageIcon(14)}

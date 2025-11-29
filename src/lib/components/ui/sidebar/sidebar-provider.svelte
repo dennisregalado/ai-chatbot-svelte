@@ -19,12 +19,14 @@
 		style,
 		header,
 		inset,
+		children,
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
 		open?: boolean;
 		onOpenChange?: (open: boolean) => void;
 		header?: Snippet;
 		inset?: Snippet;
+		children?: Snippet;
 	} = $props();
 
 	const sidebar = setSidebar({
@@ -57,6 +59,8 @@
 	>
 		{#if inset}
 			{@render inset?.()}
+		{:else if children}
+			{@render children?.()}
 		{/if}
 	</div>
 </Tooltip.Provider>

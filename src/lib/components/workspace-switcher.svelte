@@ -10,10 +10,19 @@
 	import { getActiveWorkspace, getWorkspace, getWorkspaces } from '$remote/workspace.remote';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import SettingsIcon from '@lucide/svelte/icons/settings';
+	import { getUser } from '$remote/auth.remote';
+	import SparklesIcon from '@lucide/svelte/icons/sparkles';
+	import LogOutIcon from '@lucide/svelte/icons/log-out';
+	import { signOut } from '$remote/auth.remote';
+	import { cn } from '$lib/utils';
+	import * as Kbd from "$lib/components/ui/kbd/index.js";
+	import SettingsDialog from './settings-dialog.svelte';
 
 	const sidebar = useSidebar();
 
 	const activeWorkspace = $derived(await getActiveWorkspace());
+	let user = $derived(await getUser());
 </script>
 
 <div class="w-max">
@@ -49,16 +58,36 @@
 					{/snippet}
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content
-					class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-lg"
+					class="w-(--bits-dropdown-menu-anchor-width) min-w-75 rounded-lg"
 					align="start"
 					side={sidebar.isMobile ? 'bottom' : 'right'}
 					sideOffset={4}
 				>
-					<DropdownMenu.Label class="text-xs text-muted-foreground">Workspaces</DropdownMenu.Label>
+					<DropdownMenu.Label class="p-0 font-normal">
+						<div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
+							<Avatar.Root class="size-9 rounded-sm">
+								<Avatar.Image
+									src={`https://avatar.vercel.sh/${activeWorkspace?.slug}`}
+									alt={activeWorkspace?.name}
+								/>
+							</Avatar.Root>
+							<div class="grid flex-1 text-start text-sm leading-tight">
+								<span class="truncate font-medium">{activeWorkspace?.name}</span>
+								<span class="text-xs text-muted-foreground"
+									> 8 members</span
+								>
+							</div>
+							<Badge variant="secondary" class="w-fit truncate text-xs">{activeWorkspace?.plan}</Badge>
+						</div>
+					</DropdownMenu.Label>
+				
+					<DropdownMenu.Separator />
+					<DropdownMenu.Label class="text-xs text-muted-foreground">{user.email}</DropdownMenu.Label
+					>
 					<svelte:boundary>
 						{#snippet pending()}
 							{#each [1, 2, 3] as _}
-								<DropdownMenu.Item class="gap-2 p-2" disabled>
+								<DropdownMenu.Item class="gap-2" disabled>
 									<Skeleton class="size-6 rounded-sm" />
 									<Skeleton class="h-4 w-32" />
 								</DropdownMenu.Item>
@@ -72,7 +101,7 @@
 										invalidateAll: true
 									});
 								}}
-								class="gap-2 p-2"
+								class="gap-2"
 							>
 								<Avatar.Root class="size-6 rounded-sm">
 									<Avatar.Image
@@ -81,16 +110,33 @@
 									/>
 								</Avatar.Root>
 								{workspace.name}
-								<DropdownMenu.Shortcut>⌘{index + 1}</DropdownMenu.Shortcut>
+								<Kbd.Root class="ml-auto">⌘{index + 1}</Kbd.Root>
 							</DropdownMenu.Item>
 						{/each}
 					</svelte:boundary>
+					<DropdownMenu.Item class="gap-2">
+						<PlusIcon class="size-4" />
+						Add workspace
+					</DropdownMenu.Item>
 					<DropdownMenu.Separator />
-					<DropdownMenu.Item class="gap-2 p-2">
-						<div class="flex size-6 items-center justify-center rounded-md border bg-transparent">
-							<PlusIcon class="size-4" />
-						</div>
-						<div class="font-medium text-muted-foreground">Add workspace</div>
+					<DropdownMenu.Item>
+						<SettingsIcon />
+						Settings
+						<Kbd.Root class="ml-auto">⌘S</Kbd.Root>
+					</DropdownMenu.Item>
+					<DropdownMenu.Item disabled={signOut.pending > 0}>
+						{#snippet child({ props })}
+							<form {...signOut}>
+								<button
+									{...props}
+									type="submit"
+									class={cn('w-full cursor-pointer', props.class as string)}
+								>
+									<LogOutIcon />
+									Sign out
+								</button>
+							</form>
+						{/snippet}
 					</DropdownMenu.Item>
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>

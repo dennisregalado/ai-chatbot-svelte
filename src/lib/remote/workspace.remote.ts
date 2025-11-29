@@ -6,12 +6,12 @@ import z from 'zod';
 const workspaces = [
 	{
 		name: 'Evil Corp.',
-		plan: 'Free',
+		plan: 'Trial',
 		slug: 'evil-corp'
 	},
 	{
 		name: 'Acme Corp.',
-		plan: 'Pro',
+		plan: 'Business',
 		slug: 'acme-corp'
 	},
 	{

@@ -164,7 +164,18 @@
 	<div class="flex flex-1 items-center justify-end gap-1.5">
 		<Upgrade variant="outline" size="sm">Upgrade</Upgrade>
 		<Feedback variant="outline" size="sm">Feedback</Feedback>
-		<SidebarUserNav />
+		<SettingsDialog>
+			{#snippet children({ ...props })}
+				<Button {...props}>
+					<Avatar.Root class="size-6">
+						<Avatar.Image
+							src={user?.image || `https://avatar.vercel.sh/${user?.id}`}
+							alt={user?.name}
+						/>
+					</Avatar.Root>
+				</Button>
+			{/snippet}
+		</SettingsDialog>
 	</div>
 {/snippet}
 

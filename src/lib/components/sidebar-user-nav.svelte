@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { cn } from '$lib/utils';
 	import { getTheme } from '@sejohnson/svelte-themes';
-	import { signOut, getUser } from '$remote/auth.remote';
+	import { getUser } from '$remote/auth.remote';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { Button } from '$components/ui/button';
@@ -29,20 +29,7 @@
 			<span class="text-sm font-medium">{user?.name}</span>
 			<span class="text-xs font-medium text-muted-foreground">{user?.email}</span>
 		</DropdownMenu.Label>
-		<DropdownMenu.Separator />
-		<DropdownMenu.Group>
-			<DropdownMenu.Item>Profile</DropdownMenu.Item>
-			<DropdownMenu.Item>
-				{#snippet child({ props })}
-					<a href="/portal" {...props} data-sveltekit-reload>Portal</a>
-				{/snippet}
-			</DropdownMenu.Item>
-			<DropdownMenu.Item>
-				Pricing
-				<DropdownMenu.Shortcut>⌘S</DropdownMenu.Shortcut>
-			</DropdownMenu.Item>
-		</DropdownMenu.Group>
-		<DropdownMenu.Separator />
+		<DropdownMenu.Separator />  
 		<DropdownMenu.Group>
 			<DropdownMenu.Label class="text-xs font-medium text-muted-foreground"
 				>Preferences</DropdownMenu.Label
@@ -52,20 +39,6 @@
 				onSelect={() => (theme.selectedTheme = theme.resolvedTheme === 'light' ? 'dark' : 'light')}
 				>Toggle {theme.resolvedTheme === 'light' ? 'dark' : 'light'} mode</DropdownMenu.Item
 			>
-		</DropdownMenu.Group>
-		<DropdownMenu.Separator />
-		<DropdownMenu.Item disabled={signOut.pending > 0}>
-			{#snippet child({ props })}
-				<form {...signOut}>
-					<button
-						{...props}
-						type="submit"
-						class={cn('w-full cursor-pointer', props.class as string)}
-					>
-						Sign out
-					</button>
-				</form>
-			{/snippet}
-		</DropdownMenu.Item>
+		</DropdownMenu.Group> 
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
