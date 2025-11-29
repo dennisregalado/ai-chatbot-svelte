@@ -11,6 +11,14 @@ export const getUser = query(async () => {
 	return session?.user ?? null;
 });
 
+export const getSession = query(async () => {
+	const { request } = getRequestEvent();
+
+	const session = await auth.api.getSession(request);
+
+	return session?.session ?? null;
+});
+
 export const getLastLoginMethod = query(async () => {
 	const { cookies } = getRequestEvent();
 

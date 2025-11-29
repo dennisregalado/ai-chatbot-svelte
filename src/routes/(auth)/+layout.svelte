@@ -76,7 +76,7 @@
 				<Spinner />
 			{/if}
 			{text}
-			{#if (await getLastLoginMethod()) === 'email'}
+			{#if (await getLastLoginMethod()) === 'email' && text === 'Continue with email'}
 				<Badge class="absolute -top-2.5 -right-2.5 bg-pink-200 text-pink-600" variant="secondary">
 					Last used
 				</Badge>

@@ -1,7 +1,4 @@
 <script lang="ts">
-	import { signInMagicLink } from '$remote/auth.remote';
-	import { Button } from '$lib/components/ui/button';
-	import { Spinner } from '$lib/components/ui/spinner';
 	import * as Field from '$lib/components/ui/field';
 	import { magicLink } from '../../+layout.svelte';
 
