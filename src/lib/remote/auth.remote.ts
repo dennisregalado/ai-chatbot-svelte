@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 export const getUser = query(async () => {
 	const { request } = getRequestEvent();
-	
+
 	const session = await auth.api.getSession(request);
 
 	return session?.user ?? null;
@@ -13,7 +13,7 @@ export const getUser = query(async () => {
 
 export const getLastLoginMethod = query(async () => {
 	const { cookies } = getRequestEvent();
-	
+
 	return cookies.get('better-auth.last_used_login_method') ?? null;
 });
 
@@ -29,8 +29,8 @@ export const signInMagicLink = form(
 				headers: request.headers,
 				body: {
 					email,
-					callbackURL: "/workspace",
-					newUserCallbackURL: "/welcome",
+					callbackURL: '/workspace',
+					newUserCallbackURL: '/welcome'
 				}
 			});
 		} catch (e) {
