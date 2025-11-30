@@ -2,13 +2,12 @@ import type { Reroute } from '@sveltejs/kit';
 
 const redirectTo: Record<string, string> = {
     '/': '/home',
+    '/welcome': '/welcome/profile',
 };
 
-export const reroute: Reroute = ({ url }) => {
-    console.log('rerouting');
-    console.log(url.pathname);
+export const reroute: Reroute = ({ url }) => { 
+    
     if (url.pathname in redirectTo) {
-        console.log(redirectTo[url.pathname]);
         return redirectTo[url.pathname];
     }
 };

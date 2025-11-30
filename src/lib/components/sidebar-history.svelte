@@ -37,7 +37,13 @@
 		<Collapsible.Content>
 			<SidebarGroupContent>
 				<SidebarMenu>
-					{@render recentChats(chats)}
+					{#if chats.length > 0}
+						{@render recentChats(chats)}
+					{:else}
+						<Empty.Description class="p-2 text-xs"
+							>Your conversations will appear here once you start chatting!</Empty.Description
+						>
+					{/if}
 				</SidebarMenu>
 			</SidebarGroupContent>
 		</Collapsible.Content>

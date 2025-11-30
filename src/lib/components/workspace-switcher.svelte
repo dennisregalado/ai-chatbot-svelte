@@ -16,7 +16,7 @@
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
 	import { signOut } from '$remote/auth.remote';
 	import { cn } from '$lib/utils';
-	import * as Kbd from "$lib/components/ui/kbd/index.js";
+	import * as Kbd from '$lib/components/ui/kbd/index.js';
 	import SettingsDialog from './settings-dialog.svelte';
 
 	const sidebar = useSidebar();
@@ -73,14 +73,14 @@
 							</Avatar.Root>
 							<div class="grid flex-1 text-start text-sm leading-tight">
 								<span class="truncate font-medium">{activeWorkspace?.name}</span>
-								<span class="text-xs text-muted-foreground"
-									> 8 members</span
-								>
+								<span class="text-xs text-muted-foreground"> 8 members</span>
 							</div>
-							<Badge variant="secondary" class="w-fit truncate text-xs">{activeWorkspace?.plan}</Badge>
+							<Badge variant="secondary" class="w-fit truncate text-xs"
+								>{activeWorkspace?.plan}</Badge
+							>
 						</div>
 					</DropdownMenu.Label>
-				
+
 					<DropdownMenu.Separator />
 					<DropdownMenu.Label class="text-xs text-muted-foreground">{user.email}</DropdownMenu.Label
 					>
@@ -120,9 +120,13 @@
 					</DropdownMenu.Item>
 					<DropdownMenu.Separator />
 					<DropdownMenu.Item>
-						<SettingsIcon />
-						Settings
-						<Kbd.Root class="ml-auto">⌘S</Kbd.Root>
+						{#snippet child({ props })}
+							<a href="{activeWorkspace?.slug}/settings" {...props}>
+								<SettingsIcon />
+								Settings
+								<Kbd.Root class="ml-auto">⌘S</Kbd.Root>
+							</a>
+						{/snippet}
 					</DropdownMenu.Item>
 					<DropdownMenu.Item disabled={signOut.pending > 0}>
 						{#snippet child({ props })}

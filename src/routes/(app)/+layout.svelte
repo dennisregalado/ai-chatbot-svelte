@@ -1,18 +1,13 @@
 <script lang="ts">
 	import { createAIContext } from '@ai-sdk/svelte';
 	import * as Sidebar from '$components/ui/sidebar/index.js';
-	import AppSidebar from '$components/app-sidebar.svelte';
-	import { getSidebarState } from '$remote/sidebar.remote';
-	import { getUser } from '$remote/auth.remote';
-	import DataStreamProvider from '$components/data-stream-provider.svelte';
+ 	import { getSidebarState } from '$remote/sidebar.remote';
+ 	import DataStreamProvider from '$components/data-stream-provider.svelte';
 	import Header from '$components/header.svelte';
-	import { page } from '$app/state';
-
+ 
 	let { children } = $props();
 
-	let isCollapsed = $derived(await getSidebarState());
-	let user = $derived(await getUser());
-	let isOnboarding = $derived(page.route?.id?.includes('welcome'));
+	let isCollapsed = $derived(await getSidebarState()); 
 
 	//	createAIContext();
 	// all hooks created after this or in components that are children of this component
@@ -32,28 +27,7 @@
 				<Header />
 			{/snippet}
 			{#snippet inset()}
-				{#if isOnboarding}
-					<div
-						class="group peer hidden text-sidebar-foreground md:block"
-						data-slot="sidebar"
-						data-state="collapsed"
-						data-collapsible="offcanvas"
-						data-variant="inset"
-						data-side="left"
-					></div>
-				{:else if user}
-					<AppSidebar />
-				{/if}
-				<Sidebar.Inset>
-					{#if user && !isOnboarding}
-						<header class="absolute top-0 left-0 z-10 flex h-16 shrink-0 items-center gap-2">
-							<div class="flex items-center gap-2 px-4">
-								<Sidebar.Trigger class="-ml-1" />
-							</div>
-						</header>
-					{/if}
-					{@render children?.()}
-				</Sidebar.Inset>
+				{@render children?.()}
 			{/snippet}
 		</Sidebar.Provider>
 	</DataStreamProvider>

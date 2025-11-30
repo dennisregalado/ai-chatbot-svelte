@@ -37,7 +37,13 @@
 		<Collapsible.Content>
 			<SidebarGroupContent>
 				<SidebarMenu>
-					{@render favoriteChats(chats)}
+					{#if chats.length > 0}
+						{@render favoriteChats(chats)}
+					{:else}
+						<Empty.Description class="p-2 text-xs"
+							>Your agents will appear here once you create an agent!</Empty.Description
+						>
+					{/if}
 				</SidebarMenu>
 			</SidebarGroupContent>
 		</Collapsible.Content>

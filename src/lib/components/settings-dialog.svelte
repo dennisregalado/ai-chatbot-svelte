@@ -39,10 +39,7 @@
 			{
 				label: 'Account',
 				items: [
-					{ name: user?.name },
-					{ name: 'Mail and Calendar', icon: MailIcon },
-					{ name: 'Notifications', icon: BellIcon },
-					{ name: 'Recording', icon: VideoIcon }
+					{ name: user?.name }
 				]
 			},
 			{
@@ -127,28 +124,7 @@
 				</Sidebar.Content>
 			</Sidebar.Root>
 			<main class="flex h-[480px] flex-1 flex-col overflow-hidden">
-				<header
-					class="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12"
-				>
-					<div class="flex items-center gap-2 px-4">
-						<Breadcrumb.Root>
-							<Breadcrumb.List>
-								<Breadcrumb.Item class="hidden md:block">
-									<Breadcrumb.Link href="##">Settings</Breadcrumb.Link>
-								</Breadcrumb.Item>
-								<Breadcrumb.Separator class="hidden md:block" />
-								<Breadcrumb.Item>
-									<Breadcrumb.Page>Settings</Breadcrumb.Page>
-								</Breadcrumb.Item>
-							</Breadcrumb.List>
-						</Breadcrumb.Root>
-					</div>
-				</header>
-				<div class="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-0">
-					{#each Array.from({ length: 10 }) as _, i (i)}
-						<div class="aspect-video max-w-3xl rounded-xl bg-muted/50"></div>
-					{/each}
-				</div>
+				
 			</main>
 		</Sidebar.Provider>
 	</Dialog.Content>
