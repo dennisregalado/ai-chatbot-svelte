@@ -11,6 +11,7 @@
 	import SidebarAgents from './sidebar-agents.svelte';
 	import HomeIcon from '@lucide/svelte/icons/home';
 	import InboxIcon from '@lucide/svelte/icons/inbox';
+	import * as Kbd from '$components/ui/kbd';
 
 	const sidebar = Sidebar.useSidebar();
 	const isMobile = new IsMobile();
@@ -37,47 +38,19 @@
 					<Sidebar.MenuButton class="group/button" onclick={toggle}>
 						<SearchIcon />
 						<span>Search</span>
-						<kbd
-							class="ml-auto hidden items-center gap-1 opacity-0 transition-opacity group-hover/button:opacity-100 sm:flex"
-							><kbd
-								class="pointer-events-none flex h-4 w-4 items-center justify-center rounded-sm bg-gray-200/75 px-0 text-xs font-normal tracking-tight text-gray-600 tabular-nums select-none"
-								>⌘</kbd
-							><kbd
-								class="pointer-events-none flex h-4 w-4 items-center justify-center rounded-sm bg-gray-200/75 px-0 text-xs font-normal tracking-tight text-gray-600 tabular-nums select-none"
-								>K</kbd
-							></kbd
-						>
+						<Kbd.Root class="ml-auto">⌘K</Kbd.Root>
 					</Sidebar.MenuButton>
 				{/snippet}
 			</ChatSearch>
 			<Sidebar.MenuButton class="group/button" onclick={() => goto('/')}>
 				<HomeIcon />
 				<span>Home</span>
-				<kbd
-					class="ml-auto hidden items-center gap-1 opacity-0 transition-opacity group-hover/button:opacity-100 sm:flex"
-					><kbd
-						class="pointer-events-none flex h-4 w-4 items-center justify-center rounded-sm bg-gray-200/75 px-0 text-xs font-normal tracking-tight text-gray-600 tabular-nums select-none"
-						>⌘</kbd
-					><kbd
-						class="pointer-events-none flex h-4 w-4 items-center justify-center rounded-sm bg-gray-200/75 px-0 text-xs font-normal tracking-tight text-gray-600 tabular-nums select-none"
-						>K</kbd
-					></kbd
-				>
+				<Kbd.Root class="ml-auto">⌘1</Kbd.Root>
 			</Sidebar.MenuButton>
 			<Sidebar.MenuButton class="group/button" onclick={() => goto('/')}>
 				<InboxIcon />
 				<span>Inbox</span>
-				<kbd
-					class="ml-auto hidden items-center gap-1 opacity-0 transition-opacity group-hover/button:opacity-100 sm:flex"
-					><kbd
-						class="pointer-events-none flex h-4 w-4 items-center justify-center rounded-sm bg-gray-200/75 px-0 text-xs font-normal tracking-tight text-gray-600 tabular-nums select-none"
-						>⌘</kbd
-					>
-					<kbd
-						class="pointer-events-none flex h-4 w-4 items-center justify-center rounded-sm bg-gray-200/75 px-0 text-xs font-normal tracking-tight text-gray-600 tabular-nums select-none"
-						>K</kbd
-					></kbd
-				>
+				<Kbd.Root class="ml-auto">⌘2</Kbd.Root>
 			</Sidebar.MenuButton>
 		</Sidebar.Menu>
 	</Sidebar.Header>

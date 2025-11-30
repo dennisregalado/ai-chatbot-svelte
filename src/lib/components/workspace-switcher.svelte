@@ -119,12 +119,12 @@
 						Add workspace
 					</DropdownMenu.Item>
 					<DropdownMenu.Separator />
-					<DropdownMenu.Item>
+					<DropdownMenu.Item class="group/button">
 						{#snippet child({ props })}
 							<a href="{activeWorkspace?.slug}/settings" {...props}>
 								<SettingsIcon />
 								Settings
-								<Kbd.Root class="ml-auto">⌘S</Kbd.Root>
+								<Kbd.Root class="ml-auto opacity-0 transition-opacity group-hover/button:opacity-100">⌘S</Kbd.Root>	 
 							</a>
 						{/snippet}
 					</DropdownMenu.Item>

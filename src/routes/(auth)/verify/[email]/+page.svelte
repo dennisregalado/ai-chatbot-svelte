@@ -9,6 +9,6 @@
 	<h1 class="text-center text-xl font-bold">Check your inbox</h1>
 	{@render magicLink({ disabled: true, placeholder: params.email, text: 'Resend link' })}
 	<Field.Description class="text-center">
-		Already have an account? <a href="/signin">Sign in</a>
+		<a href="/signin">Resend email</a> in the next 30 seconds
 	</Field.Description>
 </Field.Set>

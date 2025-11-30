@@ -12,6 +12,7 @@ import type { D1Database, KVNamespace } from '@cloudflare/workers-types';
 import { withCloudflare } from 'better-auth-cloudflare';
 import { env as dynamicEnv } from '$env/dynamic/private';
 import type { DrizzleClient } from './server/db';
+import { passkey } from "@better-auth/passkey"
 
 // Single auth configuration that handles both CLI and runtime scenarios
 function createAuth(env?: Env, cf?: CfProperties, db?: DrizzleClient) {
@@ -27,12 +28,12 @@ function createAuth(env?: Env, cf?: CfProperties, db?: DrizzleClient) {
 				cf: cf || {},
 				d1: env
 					? {
-							db,
-							options: {
-								usePlural: true,
-								debugLogs: true
-							}
+						db,
+						options: {
+							usePlural: true,
+							debugLogs: true
 						}
+					}
 					: undefined,
 				kv: env?.KV as KVNamespace,
 				r2: {
@@ -76,6 +77,7 @@ function createAuth(env?: Env, cf?: CfProperties, db?: DrizzleClient) {
 				},
 				experimental: { joins: true },
 				plugins: [
+					passkey(),
 					organization({
 						teams: {
 							enabled: true
@@ -83,7 +85,8 @@ function createAuth(env?: Env, cf?: CfProperties, db?: DrizzleClient) {
 					}),
 					magicLink({
 						sendMagicLink: async ({ email, url, token }, ctx) => {
-							console.log('Sending magic link to', email, url, token);
+						//	console.log('Sending magic link to', email, url, token);
+						//	console.log('ctx', ctx);
 
 							// Send the email via Resend
 							try {
@@ -98,10 +101,14 @@ function createAuth(env?: Env, cf?: CfProperties, db?: DrizzleClient) {
 								<p>Token (for manual verification): ${token}</p>
 							  ` // Basic HTML; customize as needed
 								});
+
+								if (response.error) {
+									throw new Error(response.error.message);
+								}
 								console.log(`Magic link sent to ${email}`, response);
 							} catch (error) {
 								console.error('Error sending magic link:', error);
-								throw new Error('Failed to send magic link');
+								throw new Error(error);
 							}
 						}
 					}),
@@ -186,18 +193,15 @@ function createAuth(env?: Env, cf?: CfProperties, db?: DrizzleClient) {
 					sveltekitCookies(getRequestEvent)
 				],
 				rateLimit: {
+				//	storage: "secondary-storage",
 					enabled: true,
 					window: 60, // Minimum KV TTL is 60s
 					max: 100, // reqs/window
 					customRules: {
 						// https://github.com/better-auth/better-auth/issues/5452
-						'/sign-in/email': {
-							window: 60,
-							max: 100
-						},
-						'/sign-in/social': {
-							window: 60,
-							max: 100
+						'/sign-in/magic-link': {
+							window: 10,  // Seconds for the limit window
+							max: 1       // Max requests in that window (e.g., initial send counts as 1, resend blocked until window passes)
 						}
 					}
 				}
@@ -207,12 +211,12 @@ function createAuth(env?: Env, cf?: CfProperties, db?: DrizzleClient) {
 		...(env
 			? {}
 			: {
-					database: drizzleAdapter({} as D1Database, {
-						provider: 'sqlite',
-						usePlural: true,
-						debugLogs: true
-					})
+				database: drizzleAdapter({} as D1Database, {
+					provider: 'sqlite',
+					usePlural: true,
+					debugLogs: true
 				})
+			})
 	});
 }
 

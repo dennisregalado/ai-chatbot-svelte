@@ -1,5 +1,5 @@
 import { form, getRequestEvent, query } from '$app/server';
-import { redirect, error } from '@sveltejs/kit';
+import { redirect, error, invalid } from '@sveltejs/kit';
 import { z } from 'zod';
 
 export const getUser = query(async () => {
@@ -30,23 +30,26 @@ export const signInMagicLink = form(
 	z.object({
 		email: z.email('Please enter a valid email address')
 	}),
-	async ({ email }) => {
+	async ({ email }, issue) => {
 		const { request, locals } = getRequestEvent();
 		const { auth } = locals;
-
 		try {
-			await (auth.api as any).signInMagicLink({
+			// sleep
+			await new Promise(resolve => setTimeout(resolve, 500));
+			const response = await (auth.api as any).signInMagicLink({
 				headers: request.headers,
 				body: {
 					email,
-				//	callbackURL: '/workspace',
+					//	callbackURL: '/workspace',
 					newUserCallbackURL: '/welcome'
 				}
 			});
+			 console.log('response', response);
 		} catch (e) {
-			error(500, 'Failed to sign in with magic link');
+			console.log('e', e.message);
+			invalid(issue.email('test'));
 		} finally {
-			redirect(307, `/verify/${email}`);
+		//	redirect(307, `/verify/${email}`);
 		}
 	}
 );
@@ -61,12 +64,12 @@ export const signInGoogle = form('unchecked', async () => {
 			headers: request.headers,
 			body: {
 				provider: 'google',
-			//	callbackURL: '/workspace',
+				//	callbackURL: '/workspace',
 				newUserCallbackURL: '/welcome'
 			}
 		});
 	} catch (e) {
-		
+
 		error(500, 'Failed to sign in with Google');
 	} finally {
 		if (response && response.redirect && response.url) {

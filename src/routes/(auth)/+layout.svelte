@@ -10,11 +10,13 @@
 	import { authClient } from '$lib/auth.client';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { Input } from '$lib/components/ui/input';
+	import { page } from '$app/state';
 	import { Spinner } from '$lib/components/ui/spinner';
 	import * as Field from '$lib/components/ui/field';
 	import { signInMagicLink } from '$remote/auth.remote';
 	import { getActiveWorkspace } from '$remote/workspace.remote';
+	import * as InputGroup from '$lib/components/ui/input-group';
+	import CheckIcon from '@lucide/svelte/icons/check';
 
 	let { children } = $props();
 
@@ -47,9 +49,12 @@
 			{@render socialProviders()}
 		</form>
 	</div>
-	<Field.Description class="absolute bottom-6 px-6 text-center">
-		By clicking continue, you agree to our <a href="#">Terms of Service</a>{' '}
-		and <a href="#">Privacy Policy</a>.
+	<Field.Description class="absolute bottom-6 px-6 text-center text-xs text-balance">
+		By continuing, you acknowledge & agree to the <a href="/terms"
+			>Terms of Service</a
+		>
+		and
+		<a href="/privacy">Privacy Policy</a>.
 	</Field.Description>
 </div>
 
@@ -69,13 +74,29 @@
 			{#each signInMagicLink.fields.email.issues() as issue}
 				<Field.Error>{issue.message}</Field.Error>
 			{/each}
-			<Input type="email" {placeholder} {disabled} {...signInMagicLink.fields.email.as('text')} />
+			<InputGroup.Root data-disabled>
+				<InputGroup.Input
+					type="email"
+					{...signInMagicLink.fields.email.as('text')}
+					{placeholder}
+					readonly={disabled}
+				/>
+				<InputGroup.Addon align="inline-end">
+					{#if signInMagicLink.pending > 0}
+						<Spinner />
+					{/if}
+					{#if page.url.pathname.includes('verify')}
+						<CheckIcon />
+					{/if}
+				</InputGroup.Addon>
+			</InputGroup.Root>
 		</Field.Field>
 		<Button type="submit" disabled={signInMagicLink.pending > 0}>
-			{#if signInMagicLink.pending > 0}
-				<Spinner />
+			{#if page.url.pathname.includes('verify')}
+				We've sent you a link
+			{:else}
+				Continue with email
 			{/if}
-			{text}
 			{#if (await getLastLoginMethod()) === 'email' && text === 'Continue with email'}
 				<Badge class="absolute -top-2.5 -right-2.5 bg-pink-200 text-pink-600" variant="secondary">
 					Last used
@@ -115,6 +136,34 @@
 			</svg>
 			Continue with Google
 			{#if (await getLastLoginMethod()) === 'google'}
+				<Badge class="absolute -top-2.5 -right-2.5 bg-pink-200 text-pink-600" variant="secondary">
+					Last used
+				</Badge>
+			{/if}
+		</Button>
+		<Button
+			class="relative"
+			variant="outline"
+			type="button"
+			onclick={async () => {
+				const { data, error } = await authClient.signIn.passkey({
+					autoFill: true // Optional: Enables browser autofill for passkeys (e.g., biometric prompt)
+				});
+				console.log('data', data);
+				console.log('error', error);
+			}}
+		>
+			<svg
+				aria-hidden="true"
+				role="graphics-symbol"
+				viewBox="3.68 2.37 15.23 17.3"
+				class="size-4"
+				><path
+					d="M10 2.375c-1.137 0-2.054.47-2.674 1.242-.608.757-.9 1.765-.9 2.824s.292 2.066.9 2.824c.62.772 1.537 1.241 2.674 1.241s2.055-.469 2.675-1.241c.608-.758.9-1.766.9-2.824 0-1.059-.292-2.067-.9-2.824-.62-.773-1.538-1.242-2.675-1.242m0 9.255c-2.7 0-5.101 1.315-6.12 3.305-.361.706-.199 1.421.23 1.923.412.48 1.06.767 1.74.767h7.88v-1.79a3.96 3.96 0 0 1-1.439-3.876 8 8 0 0 0-2.291-.33m8.906 1.09a2.72 2.72 0 0 1-1.51 2.436v1.34l-.906 1.057.906 1.057-1.209 1.058-1.208-1.058v-3.454a2.719 2.719 0 1 1 3.927-2.436m-2.02-.604a.698.698 0 1 0-1.396 0 .698.698 0 0 0 1.395 0"
+				></path></svg
+			>
+			Log in with passkey
+			{#if (await getLastLoginMethod()) === 'passkey'}
 				<Badge class="absolute -top-2.5 -right-2.5 bg-pink-200 text-pink-600" variant="secondary">
 					Last used
 				</Badge>

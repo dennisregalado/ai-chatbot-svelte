@@ -4,7 +4,7 @@
 	import WorkspaceSwitcher from '$components/workspace-switcher.svelte';
 	import { IsMobile } from '$hooks/is-mobile.svelte';
 	import ChevronLeftIcon from '@lucide/svelte/icons/chevron-left';
-
+	import * as Kbd from '$components/ui/kbd';
 	let { children } = $props();
 
 	const sidebar = Sidebar.useSidebar();
@@ -20,17 +20,7 @@
 			<Sidebar.MenuButton class="group/button" onclick={() => goto('/workspace')}>
 				<ChevronLeftIcon />
 				<span>Back to Home</span>
-				<kbd
-					class="ml-auto hidden items-center gap-1 opacity-0 transition-opacity group-hover/button:opacity-100 sm:flex"
-					><kbd
-						class="pointer-events-none flex h-4 w-4 items-center justify-center rounded-sm bg-gray-200/75 px-0 text-xs font-normal tracking-tight text-gray-600 tabular-nums select-none"
-						>⌘</kbd
-					>
-					<kbd
-						class="pointer-events-none flex h-4 w-4 items-center justify-center rounded-sm bg-gray-200/75 px-0 text-xs font-normal tracking-tight text-gray-600 tabular-nums select-none"
-						>K</kbd
-					></kbd
-				>
+				<Kbd.Root class="ml-auto opacity-0 transition-opacity group-hover/button:opacity-100">⌘K</Kbd.Root>	 
 			</Sidebar.MenuButton>
 		</Sidebar.Menu>
 	</Sidebar.Header>
