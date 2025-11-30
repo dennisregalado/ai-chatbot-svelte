@@ -23,7 +23,7 @@
 <Collapsible.Root title="Agents" open class="group/collapsible">
 	<SidebarGroup class="py-0.5">
 		<SidebarGroupLabel
-			class="group/label text-[13px] text-muted-foreground hover:text-sidebar-accent-foreground"
+			class="group/label hover:text-sidebar-accent-foreground"
 		>
 			{#snippet child({ props })}
 				<Collapsible.Trigger {...props}>

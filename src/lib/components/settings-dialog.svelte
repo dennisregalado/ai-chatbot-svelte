@@ -85,9 +85,7 @@
 				<Sidebar.Content>
 					{#each data.groups as group (group.label)}
 						<Sidebar.Group>
-							<Sidebar.GroupLabel class="group/label text-[13px] text-muted-foreground"
-								>{group.label}</Sidebar.GroupLabel
-							>
+							<Sidebar.GroupLabel class="group/label ">{group.label}</Sidebar.GroupLabel>
 							<Sidebar.GroupContent>
 								<Sidebar.Menu>
 									{#each group.items as item (item.name)}
