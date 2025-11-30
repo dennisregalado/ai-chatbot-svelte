@@ -203,7 +203,7 @@
 			</div>
 		{/if}
 
-		<PromptInputTextarea placeholder="Ask me anything..." />
+		<PromptInputTextarea placeholder="Ask me anything (or use @agent or /tool)" />
 
 		<PromptInputActions class="flex items-center justify-between gap-2 pt-2">
 			<PromptInputAction>
