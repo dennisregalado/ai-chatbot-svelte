@@ -2,8 +2,48 @@
 	import { Agent } from '$lib/agents/index.svelte';
 	import { AgentChat } from '$lib/agents/ai.svelte';
 
-	// Input state (managed separately since AbstractChat doesn't have input)
-	let input = $state('');
+	import {
+		Conversation,
+		ConversationContent,
+		ConversationScrollButton
+	} from '$lib/components/ai-elements/conversation';
+
+	import { Message, MessageContent } from '$lib/components/ai-elements/message';
+
+	import { Response } from '$lib/components/ai-elements/response';
+	import { Actions, Action } from '$lib/components/ai-elements/actions';
+
+	import {
+		Sources,
+		SourcesTrigger,
+		SourcesContent,
+		Source
+	} from '$lib/components/ai-elements/source';
+
+	import {
+		Reasoning,
+		ReasoningTrigger,
+		ReasoningContent
+	} from '$lib/components/ai-elements/reasoning';
+
+	import { Loader } from '$lib/components/ai-elements/loader';
+
+	import {
+		PromptInput,
+		PromptInputAction,
+		PromptInputActions,
+		PromptInputTextarea
+	} from '$lib/components/prompt-kit/prompt-input';
+
+	import { Button } from '$lib/components/ui/button/index.js';
+
+	import ArrowUp from '@lucide/svelte/icons/arrow-up';
+	import Paperclip from '@lucide/svelte/icons/paperclip';
+	import Square from '@lucide/svelte/icons/square';
+	import X from '@lucide/svelte/icons/x';
+
+	import CopyIcon from '@lucide/svelte/icons/copy';
+	import RefreshCcwIcon from '@lucide/svelte/icons/refresh-cw';
 
 	// Connect to the chat agent
 	const agent = new Agent({
@@ -16,170 +56,188 @@
 		agent
 	});
 
-	function handleSubmit(e: Event) {
-		e.preventDefault();
-		if (!input.trim()) return;
-		
-		chat.sendMessage({
-			role: 'user',
-			parts: [{ type: 'text', text: input }]
-		});
-		input = '';
-	}
+	let input = $state('');
+	let files = $state<File[]>([]);
+	let uploadInputRef: HTMLInputElement | undefined = $state();
 
-	function handleKeydown(e: KeyboardEvent) {
-		if (e.key === 'Enter' && !e.shiftKey) {
-			e.preventDefault();
-			handleSubmit(e);
+	function handleSubmit() {
+		if (input.trim() || files.length > 0) {
+			chat.sendMessage({
+				role: 'user',
+				parts: [
+					...files.map((file) => ({
+						type: 'file' as const,
+						url: URL.createObjectURL(file),
+						name: file.name,
+						mediaType: file.type
+					})),
+					{ type: 'text', text: input || 'Sent with attachments' }
+				]
+			});
+
+			input = '';
+			files = [];
+			if (uploadInputRef) {
+				uploadInputRef.value = '';
+			}
 		}
 	}
 
+	function handleValueChange(value: string) {
+		input = value;
+	}
+
+	function handleFileChange(event: Event) {
+		const target = event.target as HTMLInputElement;
+		if (target.files) {
+			const newFiles = Array.from(target.files);
+			files = [...files, ...newFiles];
+		}
+	}
+
+	function handleRemoveFile(index: number) {
+		files = files.filter((_, i) => i !== index);
+		if (uploadInputRef) {
+			uploadInputRef.value = '';
+		}
+	}
+
+	function handleRegenerate() {
+		// TODO: Implement regeneration
+		chat.regenerate?.();
+	}
 </script>
 
-<div class="chat-container">
-	<div class="message-history">
-		{#each chat.messages as message, i (message.id ?? i)}
-			<div class="message {message.role}">
-				{message.role === 'user' ? '👤' : '🤖'}
-				{message.content}
+<div class="flex h-full flex-col max-h-screen pb-10">
+	<Conversation class="max-h-full h-full">
+		<ConversationContent>
+			{#each chat.messages as message (message.id)}
+				<div class="mx-auto max-w-(--breakpoint-sm)">
+					{#if message.role === 'assistant' && message.parts.filter((part) => part.type === 'source-url').length > 0}
+						<Sources>
+							<SourcesTrigger
+								count={message.parts.filter((part) => part.type === 'source-url').length}
+							/>
+							{#each message.parts.filter((part) => part.type === 'source-url') as part, i}
+								<SourcesContent>
+									<Source
+										href={(part as { url: string }).url}
+										title={(part as { url: string }).url}
+									/>
+								</SourcesContent>
+							{/each}
+						</Sources>
+					{/if}
+
+					{#each message.parts as part, i}
+						{#key `${message.id}-${i}`}
+							{#if part.type === 'text'}
+								{@const textContent = (part as { text: string }).text}
+								<Message from={message.role}>
+									<MessageContent>
+										<Response content={textContent} />
+									</MessageContent>
+									{#if message.role === 'assistant' && i === message.parts.length - 1 && message.id === chat.messages[chat.messages.length - 1]?.id}
+										<Actions>
+											<Action onclick={handleRegenerate} label="Retry">
+												<RefreshCcwIcon class="size-3" />
+											</Action>
+											<Action
+												onclick={() => navigator.clipboard.writeText(textContent)}
+												label="Copy"
+											>
+												<CopyIcon class="size-3" />
+											</Action>
+										</Actions>
+									{/if}
+								</Message>
+							{:else if part.type === 'reasoning'}
+								{@const reasoningText = (part as { text: string }).text}
+								<Reasoning
+									class="w-full"
+									isStreaming={chat.status === 'streaming' &&
+										i === message.parts.length - 1 &&
+										message.id === chat.messages[chat.messages.length - 1]?.id}
+								>
+									<ReasoningTrigger />
+									<ReasoningContent class="" content={reasoningText} />
+								</Reasoning>
+							{/if}
+						{/key}
+					{/each}
+				</div>
+			{/each}
+
+			{#if chat.status === 'submitted'}
+				<Loader />
+			{/if}
+		</ConversationContent>
+		<ConversationScrollButton />
+	</Conversation>
+	<PromptInput
+		value={input}
+		onValueChange={handleValueChange}
+		isLoading={chat.isLoading}
+		onSubmit={handleSubmit}
+		class="w-full mx-auto max-w-(--breakpoint-sm) mt-auto"
+	>
+		{#if files.length > 0}
+			<div class="flex flex-wrap gap-2 pb-2">
+				{#each files as file, index}
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<div
+						class="flex items-center gap-2 rounded-lg bg-secondary px-3 py-2 text-sm"
+						onclick={(e) => e.stopPropagation()}
+					>
+						<Paperclip class="size-4" />
+						<span class="max-w-[120px] truncate">{file.name}</span>
+						<button
+							onclick={() => handleRemoveFile(index)}
+							class="rounded-full p-1 hover:bg-secondary/50"
+						>
+							<X class="size-4" />
+						</button>
+					</div>
+				{/each}
 			</div>
-		{/each}
-
-		{#if chat.isLoading}
-			<div class="loading">AI is typing...</div>
 		{/if}
 
-		{#if chat.error}
-			<div class="error">Error: {chat.error.message}</div>
-		{/if}
-	</div>
+		<PromptInputTextarea placeholder="Ask me anything..." />
 
-	<form onsubmit={handleSubmit} class="message-input">
-		<input
-			bind:value={input}
-			onkeydown={handleKeydown}
-			placeholder="Type your message..."
-			disabled={chat.isLoading}
-		/>
-		<button type="submit" disabled={chat.isLoading || !input.trim()}>Send</button>
-		<button type="button" onclick={() => chat.clearHistory()}>Clear Chat</button>
-	</form>
+		<PromptInputActions class="flex items-center justify-between gap-2 pt-2">
+			<PromptInputAction>
+				{#snippet tooltip()}
+					Attach files
+				{/snippet}
+				<label
+					for="file-upload"
+					class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-2xl hover:bg-secondary-foreground/10"
+				>
+					<input
+						type="file"
+						multiple
+						onchange={handleFileChange}
+						class="hidden"
+						id="file-upload"
+						bind:this={uploadInputRef}
+					/>
+					<Paperclip class="size-5 text-primary" />
+				</label>
+			</PromptInputAction>
+
+			<PromptInputAction>
+				{#snippet tooltip()}
+					{chat.isLoading ? 'Stop generation' : 'Send message'}
+				{/snippet}
+				<Button variant="default" size="icon" class="h-8 w-8 rounded-full" onclick={handleSubmit}>
+					{#if chat.isLoading}
+						<Square class="size-5 fill-current" />
+					{:else}
+						<ArrowUp class="size-5" />
+					{/if}
+				</Button>
+			</PromptInputAction>
+		</PromptInputActions>
+	</PromptInput>
 </div>
-
-<style>
-	.chat-container {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-		max-width: 600px;
-		margin: 0 auto;
-		padding: 1rem;
-	}
-
-	.message-history {
-		flex: 1;
-		overflow-y: auto;
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		padding: 1rem;
-		border: 1px solid #e5e7eb;
-		border-radius: 0.5rem;
-		margin-bottom: 1rem;
-	}
-
-	.message {
-		padding: 0.75rem 1rem;
-		border-radius: 0.5rem;
-		max-width: 80%;
-	}
-
-	.message.user {
-		background: #3b82f6;
-		color: white;
-		align-self: flex-end;
-	}
-
-	.message.assistant {
-		background: #f3f4f6;
-		color: #1f2937;
-		align-self: flex-start;
-	}
-
-	.message.system {
-		background: #fef3c7;
-		color: #92400e;
-		align-self: center;
-		font-size: 0.875rem;
-	}
-
-	.loading {
-		color: #6b7280;
-		font-style: italic;
-		padding: 0.5rem;
-	}
-
-	.error {
-		color: #dc2626;
-		padding: 0.5rem;
-		background: #fef2f2;
-		border-radius: 0.25rem;
-	}
-
-	.message-input {
-		display: flex;
-		gap: 0.5rem;
-	}
-
-	.message-input input {
-		flex: 1;
-		padding: 0.75rem 1rem;
-		border: 1px solid #e5e7eb;
-		border-radius: 0.5rem;
-		font-size: 1rem;
-	}
-
-	.message-input input:focus {
-		outline: none;
-		border-color: #3b82f6;
-		box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-	}
-
-	.message-input input:disabled {
-		background: #f9fafb;
-		cursor: not-allowed;
-	}
-
-	.message-input button {
-		padding: 0.75rem 1.5rem;
-		border: none;
-		border-radius: 0.5rem;
-		font-size: 1rem;
-		cursor: pointer;
-		transition: background 0.2s;
-	}
-
-	.message-input button[type='submit'] {
-		background: #3b82f6;
-		color: white;
-	}
-
-	.message-input button[type='submit']:hover:not(:disabled) {
-		background: #2563eb;
-	}
-
-	.message-input button[type='button'] {
-		background: #e5e7eb;
-		color: #374151;
-	}
-
-	.message-input button[type='button']:hover {
-		background: #d1d5db;
-	}
-
-	.message-input button:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-</style>
-

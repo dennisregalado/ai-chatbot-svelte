@@ -1,11 +1,7 @@
-import type { ComponentProps } from 'svelte';
-import Root from './textarea.svelte';
-
-type TextareaProps = ComponentProps<typeof Root>;
+import Root from "./textarea.svelte";
 
 export {
 	Root,
 	//
 	Root as Textarea,
-	type TextareaProps
 };
