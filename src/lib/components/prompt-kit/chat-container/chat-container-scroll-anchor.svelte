@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn } from "$lib/utils";
+	import { cn } from '$lib/utils';
 
 	let {
 		class: className,
@@ -11,7 +11,7 @@
 </script>
 
 <div
-	class={cn("h-px w-full shrink-0 scroll-mt-4", className)}
+	class={cn('h-px w-full shrink-0 scroll-mt-4', className)}
 	aria-hidden="true"
 	{...restProps}
 ></div>

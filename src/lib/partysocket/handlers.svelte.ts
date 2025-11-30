@@ -48,4 +48,3 @@ export class WebSocketEventHandlers {
 		this.#options = options;
 	}
 }
-

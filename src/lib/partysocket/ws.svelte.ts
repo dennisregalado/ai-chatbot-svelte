@@ -14,11 +14,7 @@ export class WebSocketConnection {
 	#stableSocket: StableSocket<WebSocket, Options>;
 	#handlers: WebSocketEventHandlers;
 
-	constructor(
-		url: UrlProvider,
-		protocols?: ProtocolsProvider,
-		options: UseWebSocketOptions = {}
-	) {
+	constructor(url: UrlProvider, protocols?: ProtocolsProvider, options: UseWebSocketOptions = {}) {
 		this.#stableSocket = new StableSocket({
 			options,
 			createSocket: (opts) => new WebSocket(url, protocols, opts),
@@ -44,4 +40,3 @@ export class WebSocketConnection {
 		this.#handlers.updateHandlers(options);
 	}
 }
-

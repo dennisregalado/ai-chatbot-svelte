@@ -22,7 +22,6 @@ const workspaces = [
 ];
 
 export const getWorkspace = query(z.string(), async (slug) => {
-
 	const workspace = workspaces.find((workspace) => workspace.slug === slug);
 
 	if (!workspace) {

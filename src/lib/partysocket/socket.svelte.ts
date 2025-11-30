@@ -85,4 +85,3 @@ export class StableSocket<T extends WebSocket, TOpts extends Options> {
 		this.#options = options;
 	}
 }
-

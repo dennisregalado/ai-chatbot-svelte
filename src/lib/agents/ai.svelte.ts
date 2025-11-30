@@ -206,13 +206,11 @@ export class AgentChat<State = unknown, ChatMessage extends UIMessage = UIMessag
 		if (!rawUrl) {
 			throw new Error(
 				`[AgentChat] Cannot construct agent URL. Neither _url nor _pkurl is available on the socket. ` +
-				`Make sure the agent connection is properly established.`
+					`Make sure the agent connection is properly established.`
 			);
 		}
 
-		const agentUrl = new URL(
-			rawUrl.replace('ws://', 'http://').replace('wss://', 'https://')
-		);
+		const agentUrl = new URL(rawUrl.replace('ws://', 'http://').replace('wss://', 'https://'));
 		agentUrl.searchParams.delete('_pk');
 		this.#agentUrlString = agentUrl.toString();
 
@@ -546,14 +544,18 @@ export class AgentChat<State = unknown, ChatMessage extends UIMessage = UIMessag
 				} as ChatMessage['parts'][number]);
 				break;
 			case 'reasoning-delta': {
-				const lastReasoningPart = [...activeMsg.parts].reverse().find((p) => p.type === 'reasoning');
+				const lastReasoningPart = [...activeMsg.parts]
+					.reverse()
+					.find((p) => p.type === 'reasoning');
 				if (lastReasoningPart && lastReasoningPart.type === 'reasoning') {
 					(lastReasoningPart as { text: string }).text += chunkData.delta;
 				}
 				break;
 			}
 			case 'reasoning-end': {
-				const lastReasoningPart = [...activeMsg.parts].reverse().find((p) => p.type === 'reasoning');
+				const lastReasoningPart = [...activeMsg.parts]
+					.reverse()
+					.find((p) => p.type === 'reasoning');
 				if (lastReasoningPart && 'state' in lastReasoningPart) {
 					(lastReasoningPart as { state: string }).state = 'done';
 				}
@@ -649,7 +651,10 @@ export class AgentChat<State = unknown, ChatMessage extends UIMessage = UIMessag
 	/**
 	 * Send a message to the AI
 	 */
-	sendMessage(message?: Parameters<Chat<ChatMessage>['sendMessage']>[0], options?: Parameters<Chat<ChatMessage>['sendMessage']>[1]) {
+	sendMessage(
+		message?: Parameters<Chat<ChatMessage>['sendMessage']>[0],
+		options?: Parameters<Chat<ChatMessage>['sendMessage']>[1]
+	) {
 		return this.chat.sendMessage(message, options);
 	}
 
@@ -692,7 +697,8 @@ export class AgentChat<State = unknown, ChatMessage extends UIMessage = UIMessag
 	 * Set messages directly
 	 */
 	setMessages(messages: ChatMessage[] | ((messages: ChatMessage[]) => ChatMessage[])) {
-		const resolvedMessages = typeof messages === 'function' ? messages(this.chat.messages) : messages;
+		const resolvedMessages =
+			typeof messages === 'function' ? messages(this.chat.messages) : messages;
 		this.chat.messages = resolvedMessages;
 		// Only send array to agent - function updates are local only
 		this.#socket.send(

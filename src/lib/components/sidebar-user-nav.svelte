@@ -29,7 +29,7 @@
 			<span class="text-sm font-medium">{user?.name}</span>
 			<span class="text-xs font-medium text-muted-foreground">{user?.email}</span>
 		</DropdownMenu.Label>
-		<DropdownMenu.Separator />  
+		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
 			<DropdownMenu.Label class="text-xs font-medium text-muted-foreground"
 				>Preferences</DropdownMenu.Label
@@ -39,6 +39,6 @@
 				onSelect={() => (theme.selectedTheme = theme.resolvedTheme === 'light' ? 'dark' : 'light')}
 				>Toggle {theme.resolvedTheme === 'light' ? 'dark' : 'light'} mode</DropdownMenu.Item
 			>
-		</DropdownMenu.Group> 
+		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

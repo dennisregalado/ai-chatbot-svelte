@@ -77,7 +77,11 @@ function decrementCacheEntry(targetKey: unknown[]): boolean {
 	return false;
 }
 
-function createCacheKey(agentNamespace: string, name: string | undefined, deps: unknown[]): unknown[] {
+function createCacheKey(
+	agentNamespace: string,
+	name: string | undefined,
+	deps: unknown[]
+): unknown[] {
 	return [agentNamespace, name || 'default', ...deps];
 }
 
@@ -120,13 +124,16 @@ type RPCMethods<T> = {
 	[K in keyof T as T[K] extends RPCMethod<T[K]> ? K : never]: RPCMethod<T[K]>;
 };
 
-type OptionalParametersMethod<T extends RPCMethod> = AllOptional<Parameters<T>> extends true ? T : never;
+type OptionalParametersMethod<T extends RPCMethod> =
+	AllOptional<Parameters<T>> extends true ? T : never;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AgentMethods<T> = Omit<RPCMethods<T>, keyof AgentType<any, any>>;
 
 type OptionalAgentMethods<T> = {
-	[K in keyof AgentMethods<T> as AgentMethods<T>[K] extends OptionalParametersMethod<AgentMethods<T>[K]>
+	[K in keyof AgentMethods<T> as AgentMethods<T>[K] extends OptionalParametersMethod<
+		AgentMethods<T>[K]
+	>
 		? K
 		: never]: OptionalParametersMethod<AgentMethods<T>[K]>;
 };
@@ -134,9 +141,10 @@ type OptionalAgentMethods<T> = {
 type RequiredAgentMethods<T> = Omit<AgentMethods<T>, keyof OptionalAgentMethods<T>>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AgentPromiseReturnType<T, K extends keyof AgentMethods<T>> = ReturnType<AgentMethods<T>[K]> extends Promise<any>
-	? ReturnType<AgentMethods<T>[K]>
-	: Promise<ReturnType<AgentMethods<T>[K]>>;
+type AgentPromiseReturnType<T, K extends keyof AgentMethods<T>> =
+	ReturnType<AgentMethods<T>[K]> extends Promise<any>
+		? ReturnType<AgentMethods<T>[K]>
+		: Promise<ReturnType<AgentMethods<T>[K]>>;
 
 type OptionalArgsAgentMethodCall<AgentT> = <K extends keyof OptionalAgentMethods<AgentT>>(
 	method: K,
@@ -150,7 +158,8 @@ type RequiredArgsAgentMethodCall<AgentT> = <K extends keyof RequiredAgentMethods
 	streamOptions?: StreamOptions
 ) => AgentPromiseReturnType<AgentT, K>;
 
-type AgentMethodCall<AgentT> = OptionalArgsAgentMethodCall<AgentT> & RequiredArgsAgentMethodCall<AgentT>;
+type AgentMethodCall<AgentT> = OptionalArgsAgentMethodCall<AgentT> &
+	RequiredArgsAgentMethodCall<AgentT>;
 
 type UntypedAgentMethodCall = <T = unknown>(
 	method: string,
@@ -159,7 +168,9 @@ type UntypedAgentMethodCall = <T = unknown>(
 ) => Promise<T>;
 
 type AgentStub<T> = {
-	[K in keyof AgentMethods<T>]: (...args: Parameters<AgentMethods<T>[K]>) => AgentPromiseReturnType<AgentMethods<T>, K>;
+	[K in keyof AgentMethods<T>]: (
+		...args: Parameters<AgentMethods<T>[K]>
+	) => AgentPromiseReturnType<AgentMethods<T>, K>;
 };
 
 type UntypedAgentStub = Record<string, Method>;
@@ -194,10 +205,23 @@ export class Agent<State = unknown> {
 
 		// Warn if agent name isn't lowercase
 		if (this.agent !== this.agent.toLowerCase()) {
-			console.warn(`Agent name: ${this.agent} should probably be in lowercase. Received: ${this.agent}`);
+			console.warn(
+				`Agent name: ${this.agent} should probably be in lowercase. Received: ${this.agent}`
+			);
 		}
 
-		const { query, queryDeps, cacheTtl, onStateUpdate, onMcpUpdate, onOpen, onClose, onError, onMessage, ...socketOptions } = options;
+		const {
+			query,
+			queryDeps,
+			cacheTtl,
+			onStateUpdate,
+			onMcpUpdate,
+			onOpen,
+			onClose,
+			onError,
+			onMessage,
+			...socketOptions
+		} = options;
 
 		// Setup cache key for async queries
 		this.#cacheKey = createCacheKey(this.agent, this.name, queryDeps || []);
@@ -395,4 +419,3 @@ export class Agent<State = unknown> {
 
 // Re-export types
 export type { AgentMethodCall, AgentStub, UntypedAgentMethodCall, UntypedAgentStub };
-

@@ -1,8 +1,8 @@
-import { watch } from "runed";
-import { setContext, getContext } from "svelte";
-import { browser } from "$app/environment";
+import { watch } from 'runed';
+import { setContext, getContext } from 'svelte';
+import { browser } from '$app/environment';
 
-const SCROLL_CONTEXT_KEY = Symbol("scroll-context");
+const SCROLL_CONTEXT_KEY = Symbol('scroll-context');
 
 class ScrollContext {
 	#element: HTMLElement | null = $state(null);
@@ -31,12 +31,12 @@ class ScrollContext {
 		}
 	}
 
-	scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+	scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
 		if (!browser || !this.#element) return;
 
 		this.#element.scrollTo({
 			top: this.#element.scrollHeight,
-			behavior,
+			behavior
 		});
 	};
 
@@ -53,8 +53,8 @@ class ScrollContext {
 	#setupScrollListener() {
 		if (!this.#element) return;
 
-		this.#element.addEventListener("scroll", this.#handleScroll, {
-			passive: true,
+		this.#element.addEventListener('scroll', this.#handleScroll, {
+			passive: true
 		});
 
 		// Initial check
@@ -63,7 +63,7 @@ class ScrollContext {
 
 	#cleanup() {
 		if (this.#element) {
-			this.#element.removeEventListener("scroll", this.#handleScroll);
+			this.#element.removeEventListener('scroll', this.#handleScroll);
 		}
 	}
 }
@@ -78,7 +78,7 @@ export function getScrollContext(): ScrollContext {
 	const context = getContext<ScrollContext>(SCROLL_CONTEXT_KEY);
 	if (!context) {
 		throw new Error(
-			"ScrollContext not found. Make sure to call setScrollContext() in a parent component."
+			'ScrollContext not found. Make sure to call setScrollContext() in a parent component.'
 		);
 	}
 	return context;

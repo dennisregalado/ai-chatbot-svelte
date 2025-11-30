@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { cn } from "$lib/utils";
-	import type { Snippet } from "svelte";
-	import type { HTMLAttributes } from "svelte/elements";
-	import Markdown from "$lib/components/prompt-kit/markdown/Markdown.svelte";
+	import { cn } from '$lib/utils';
+	import type { Snippet } from 'svelte';
+	import type { HTMLAttributes } from 'svelte/elements';
+	import Markdown from '$lib/components/prompt-kit/markdown/Markdown.svelte';
 
 	let {
 		markdown = false,
@@ -18,7 +18,7 @@
 	} & HTMLAttributes<HTMLDivElement> = $props();
 
 	const classNames = cn(
-		"text-foreground bg-secondary prose rounded-lg p-2 break-words whitespace-normal",
+		'text-foreground bg-secondary prose rounded-lg p-2 break-words whitespace-normal',
 		className
 	);
 </script>

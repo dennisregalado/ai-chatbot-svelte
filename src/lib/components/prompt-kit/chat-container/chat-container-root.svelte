@@ -2,19 +2,19 @@
 	import {
 		setChatContainerContext,
 		type ResizeMode,
-		type InitialMode,
-	} from "./chat-container-context.svelte";
-	import { cn } from "$lib/utils";
-	import { watch } from "runed";
+		type InitialMode
+	} from './chat-container-context.svelte';
+	import { cn } from '$lib/utils';
+	import { watch } from 'runed';
 
 	let {
 		children,
 		class: className,
-		resize = "smooth",
-		initial = "instant",
+		resize = 'smooth',
+		initial = 'instant',
 		...restProps
 	}: {
-		children?: import("svelte").Snippet;
+		children?: import('svelte').Snippet;
 		class?: string;
 		resize?: ResizeMode;
 		initial?: InitialMode;
@@ -37,7 +37,7 @@
 
 <div
 	bind:this={containerElement}
-	class={cn("flex overflow-y-auto", className)}
+	class={cn('flex overflow-y-auto', className)}
 	role="log"
 	{...restProps}
 >

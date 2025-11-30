@@ -45,7 +45,7 @@
 			"binding": "R2_BUCKET",
 			"bucket_name": "ai-sass"
 		}
-	],
+	]
 	// "durable_objects": {
 	// 	"bindings": [
 	// 		{

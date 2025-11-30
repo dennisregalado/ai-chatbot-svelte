@@ -37,7 +37,6 @@
 		<Collapsible.Content>
 			<SidebarGroupContent>
 				<SidebarMenu>
-
 					{#if chats.length > 0}
 						{@render favoriteChats(chats)}
 					{:else}
@@ -66,4 +65,3 @@
 		>
 	{/if}
 {/snippet}
-

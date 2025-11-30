@@ -21,9 +21,7 @@ export class PartySocketConnection {
 		const { host, ...otherOptions } = options;
 
 		const socketOptions: PartySocketOptions = {
-			host:
-				host ||
-				(typeof window !== 'undefined' ? window.location.host : 'dummy-domain.com'),
+			host: host || (typeof window !== 'undefined' ? window.location.host : 'dummy-domain.com'),
 			...otherOptions
 		};
 
@@ -65,4 +63,3 @@ export { WebSocketConnection } from './ws.svelte';
 
 // Re-export types
 export type { EventHandlerOptions } from './handlers.svelte';
-

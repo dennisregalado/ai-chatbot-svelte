@@ -115,7 +115,7 @@
 					updateChatTitle({
 						chatId: chat.id,
 						title: chatTitle
-					})
+					});
 				}
 
 				// Clear any previous follow-up suggestions when signaled
@@ -403,8 +403,8 @@
 		{/if}
 	</Conversation>
 	{#if !readonly}
-		<div class="mx-auto max-w-3xl pb-3 w-full">
-			<Suggestions class="overflow-x-auto hidden">
+		<div class="mx-auto w-full max-w-3xl pb-3">
+			<Suggestions class="hidden overflow-x-auto">
 				{#if followups.length > 0}
 					{#each followups as suggestion (suggestion)}
 						<Suggestion onclick={() => handleSuggestionClick(suggestion)} {suggestion} />

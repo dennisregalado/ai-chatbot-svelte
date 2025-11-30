@@ -39,7 +39,7 @@ export const signInMagicLink = form(
 				headers: request.headers,
 				body: {
 					email,
-					callbackURL: '/workspace',
+				//	callbackURL: '/workspace',
 					newUserCallbackURL: '/welcome'
 				}
 			});
@@ -61,11 +61,12 @@ export const signInGoogle = form('unchecked', async () => {
 			headers: request.headers,
 			body: {
 				provider: 'google',
-				callbackURL: "/workspace",
-				newUserCallbackURL: "/welcome",
+			//	callbackURL: '/workspace',
+				newUserCallbackURL: '/welcome'
 			}
 		});
 	} catch (e) {
+		
 		error(500, 'Failed to sign in with Google');
 	} finally {
 		if (response && response.redirect && response.url) {

@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { sveltekitCookies } from 'better-auth/svelte-kit'; 
+import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 import { PUBLIC_GOOGLE_CLIENT_ID } from '$env/static/public';
 import { magicLink, organization, lastLoginMethod, oneTap } from 'better-auth/plugins';
@@ -8,14 +8,13 @@ import { onboarding, createOnboardingStep } from '@better-auth-extended/onboardi
 import { preferences, createPreferenceScope } from '@better-auth-extended/preferences';
 import { z } from 'zod';
 import { resend } from './resend';
-import type { D1Database, KVNamespace } from '@cloudflare/workers-types'; 
+import type { D1Database, KVNamespace } from '@cloudflare/workers-types';
 import { withCloudflare } from 'better-auth-cloudflare';
 import { env as dynamicEnv } from '$env/dynamic/private';
 import type { DrizzleClient } from './server/db';
 
 // Single auth configuration that handles both CLI and runtime scenarios
-function createAuth(env?: Env, cf?: CfProperties, db?: DrizzleClient) { 
-
+function createAuth(env?: Env, cf?: CfProperties, db?: DrizzleClient) {
 	// Base URL for auth callbacks (magic links, OAuth redirects, etc.)
 	const baseURL = 'http://localhost:5173';
 
@@ -28,12 +27,12 @@ function createAuth(env?: Env, cf?: CfProperties, db?: DrizzleClient) {
 				cf: cf || {},
 				d1: env
 					? {
-						db,
-						options: {
-							usePlural: true,
-							debugLogs: true
+							db,
+							options: {
+								usePlural: true,
+								debugLogs: true
+							}
 						}
-					}
 					: undefined,
 				kv: env?.KV as KVNamespace,
 				r2: {
@@ -208,12 +207,12 @@ function createAuth(env?: Env, cf?: CfProperties, db?: DrizzleClient) {
 		...(env
 			? {}
 			: {
-				database: drizzleAdapter({} as D1Database, {
-					provider: 'sqlite',
-					usePlural: true,
-					debugLogs: true
+					database: drizzleAdapter({} as D1Database, {
+						provider: 'sqlite',
+						usePlural: true,
+						debugLogs: true
+					})
 				})
-			})
 	});
 }
 

@@ -46,17 +46,25 @@
 	import RefreshCcwIcon from '@lucide/svelte/icons/refresh-cw';
 
 	let { id, messages: initialMessages = [] } = $props();
+
+	let title = $state();
+
 	// Connect to the chat agent
 	const agent = new Agent({
-	
 		host: 'https://localhost:5174',
-		agent: 'chat'
+		agent: 'chat',
+		onStateUpdate(newState) {
+			console.log(newState)
+			if (newState?.chatId === chatId && newState?.title != null) {
+				title = newState.title;
+			}
+		}
 	});
 
 	// Use the AgentChat class with the agent connection
 	const chat = new AgentChat({
-		agent,
-	//	messages: initialMessages
+		agent
+		//	messages: initialMessages
 	});
 
 	let input = $state('');
@@ -111,10 +119,10 @@
 	}
 </script>
 
-<div class="flex h-full flex-col max-h-screen pb-10">
-	<Conversation class="max-h-full h-full">
+<div class="flex h-full max-h-screen flex-col pb-10">
+	<Conversation class="h-full max-h-full">
 		<ConversationContent>
-			{#each chat.messages as message (message.id)}
+			{#each chat.messages as message, messageIndex (message.id)}
 				<div class="mx-auto max-w-(--breakpoint-sm)">
 					{#if message.role === 'assistant' && message.parts.filter((part) => part.type === 'source-url').length > 0}
 						<Sources>
@@ -142,7 +150,16 @@
 									</MessageContent>
 									{#if message.role === 'assistant' && i === message.parts.length - 1 && message.id === chat.messages[chat.messages.length - 1]?.id}
 										<Actions>
-											<Action onclick={handleRegenerate} label="Retry">
+											<Action
+												onclick={() => {
+													const previousMessage = chat.messages[messageIndex - 1];
+
+													chat.regenerate({
+														messageId: previousMessage.id
+													});
+												}}
+												label="Retry"
+											>
 												<RefreshCcwIcon class="size-3" />
 											</Action>
 											<Action
@@ -182,7 +199,7 @@
 		onValueChange={handleValueChange}
 		isLoading={chat.isLoading}
 		onSubmit={handleSubmit}
-		class="w-full mx-auto max-w-(--breakpoint-sm) mt-auto"
+		class="mx-auto mt-auto w-full max-w-(--breakpoint-sm)"
 	>
 		{#if files.length > 0}
 			<div class="flex flex-wrap gap-2 pb-2">
@@ -228,8 +245,6 @@
 					<Paperclip class="size-5 text-primary" />
 				</label>
 			</PromptInputAction>
-
-			 
 		</PromptInputActions>
 	</PromptInput>
 </div>

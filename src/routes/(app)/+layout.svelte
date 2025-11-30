@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { createAIContext } from '@ai-sdk/svelte';
 	import * as Sidebar from '$components/ui/sidebar/index.js';
- 	import { getSidebarState } from '$remote/sidebar.remote';
- 	import DataStreamProvider from '$components/data-stream-provider.svelte';
+	import { getSidebarState } from '$remote/sidebar.remote';
+	import DataStreamProvider from '$components/data-stream-provider.svelte';
 	import Header from '$components/header.svelte';
- 
+
 	let { children } = $props();
 
-	let isCollapsed = $derived(await getSidebarState()); 
+	let isCollapsed = $derived(await getSidebarState());
 
 	//	createAIContext();
 	// all hooks created after this or in components that are children of this component

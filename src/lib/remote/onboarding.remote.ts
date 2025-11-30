@@ -1,8 +1,8 @@
-import { getRequestEvent, query } from "$app/server";
+import { getRequestEvent, query } from '$app/server';
 
 export const shouldOnboard = query(async () => {
-    const { request, locals } = getRequestEvent();
-    const { auth } = locals; 
+	const { request, locals } = getRequestEvent();
+	const { auth } = locals;
 
-    return false
+	return false;
 });

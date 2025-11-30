@@ -108,8 +108,8 @@
 	}
 </script>
 
-<div class="flex h-full flex-col max-h-screen pb-10">
-	<Conversation class="max-h-full h-full">
+<div class="flex h-full max-h-screen flex-col pb-10">
+	<Conversation class="h-full max-h-full">
 		<ConversationContent>
 			{#each chat.messages as message (message.id)}
 				<div class="mx-auto max-w-(--breakpoint-sm)">
@@ -179,7 +179,7 @@
 		onValueChange={handleValueChange}
 		isLoading={chat.isLoading}
 		onSubmit={handleSubmit}
-		class="w-full mx-auto max-w-(--breakpoint-sm) mt-auto"
+		class="mx-auto mt-auto w-full max-w-(--breakpoint-sm)"
 	>
 		{#if files.length > 0}
 			<div class="flex flex-wrap gap-2 pb-2">

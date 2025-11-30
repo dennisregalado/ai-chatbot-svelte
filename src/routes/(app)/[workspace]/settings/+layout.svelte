@@ -6,9 +6,9 @@
 	import ChevronLeftIcon from '@lucide/svelte/icons/chevron-left';
 
 	let { children } = $props();
-	
-	const sidebar = Sidebar.useSidebar();	
-	const isMobile = new IsMobile(); 
+
+	const sidebar = Sidebar.useSidebar();
+	const isMobile = new IsMobile();
 </script>
 
 <Sidebar.Root variant="inset" collapsible="offcanvas">
@@ -34,9 +34,7 @@
 			</Sidebar.MenuButton>
 		</Sidebar.Menu>
 	</Sidebar.Header>
-	<Sidebar.Content>
-		
-	</Sidebar.Content>
+	<Sidebar.Content></Sidebar.Content>
 	<Sidebar.Rail />
 </Sidebar.Root>
 <Sidebar.Inset>

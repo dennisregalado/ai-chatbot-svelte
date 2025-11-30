@@ -48,7 +48,7 @@
 			</SidebarGroupContent>
 		</Collapsible.Content>
 	</SidebarGroup>
-</Collapsible.Root> 
+</Collapsible.Root>
 
 {#snippet favoriteChats(chats: Chat[])}
 	{@const filteredChats = chats.filter((chat) => chat.favorite)}
@@ -64,4 +64,4 @@
 			>Favorite chats and projects that you use often.</Empty.Description
 		>
 	{/if}
-{/snippet} 
+{/snippet}
