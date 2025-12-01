@@ -7,10 +7,11 @@
 	import ChatSearch from '$components/chat-search.svelte';
 	import SearchIcon from '@lucide/svelte/icons/search';
 	import HomeIcon from '@lucide/svelte/icons/home';
-	import InboxIcon from '@lucide/svelte/icons/inbox';
-	import SidebarFavorites from '$components/sidebar-favorites.svelte';
+	import BookIcon from '@lucide/svelte/icons/book';
+	import SidebarRecords from '$components/sidebar-records.svelte';
 	import SidebarAgents from '$components/sidebar-agents.svelte';
 	import SidebarHistory from '$components/sidebar-history.svelte';
+	import SidebarInboxes from '$components/sidebar-inboxes.svelte';
 	import * as Kbd from '$components/ui/kbd';
 	let { children } = $props();
 
@@ -37,13 +38,14 @@
 				<span>Home</span>
 			</Sidebar.MenuButton>
 			<Sidebar.MenuButton class="group/button" onclick={() => goto('/')}>
-				<InboxIcon />
-				<span>Inbox</span>
+				<BookIcon />
+				<span>Knowledge</span>
 			</Sidebar.MenuButton>
 		</Sidebar.Menu>
 	</Sidebar.Header>
 	<Sidebar.Content>
-		<SidebarFavorites />
+		<SidebarInboxes />
+		<SidebarRecords />
 		<SidebarAgents />
 		<SidebarHistory />
 	</Sidebar.Content>

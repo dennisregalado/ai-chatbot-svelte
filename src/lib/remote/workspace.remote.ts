@@ -7,16 +7,19 @@ const workspaces = [
 	{
 		name: 'Evil Corp.',
 		plan: 'Trial',
+		members: 1,
 		slug: 'evil-corp'
 	},
 	{
 		name: 'Acme Corp.',
 		plan: 'Business',
+		members: 5,
 		slug: 'acme-corp'
 	},
 	{
 		name: 'Acme Inc',
 		plan: 'Enterprise',
+		members: 10,
 		slug: 'acme-inc'
 	}
 ];

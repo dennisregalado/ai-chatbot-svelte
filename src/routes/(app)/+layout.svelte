@@ -2,7 +2,6 @@
 	import { createAIContext } from '@ai-sdk/svelte';
 	import * as Sidebar from '$components/ui/sidebar/index.js';
 	import { getSidebarState } from '$remote/sidebar.remote';
-	import DataStreamProvider from '$components/data-stream-provider.svelte';
 	import Header from '$components/header.svelte';
 
 	let { children } = $props();
@@ -18,17 +17,12 @@
 	class="flex max-h-dvh min-h-dvh w-full flex-col overflow-auto bg-sidebar"
 	data-vaul-drawer-wrapper
 >
-	<DataStreamProvider>
-		<Sidebar.Provider
-			open={!isCollapsed}
-			class="max-h-[calc(100dvh-50px)] min-h-[calc(100dvh-50px)]"
-		>
-			{#snippet header()}
-				<Header />
-			{/snippet}
-			{#snippet inset()}
-				{@render children?.()}
-			{/snippet}
-		</Sidebar.Provider>
-	</DataStreamProvider>
+	<Sidebar.Provider open={!isCollapsed} class="max-h-[calc(100dvh-50px)] min-h-[calc(100dvh-50px)]">
+		{#snippet header()}
+			<Header />
+		{/snippet}
+		{#snippet inset()}
+			{@render children?.()}
+		{/snippet}
+	</Sidebar.Provider>
 </div>

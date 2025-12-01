@@ -11,17 +11,15 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import SettingsIcon from '@lucide/svelte/icons/settings';
-	import { getUser } from '$remote/auth.remote';
-	import SparklesIcon from '@lucide/svelte/icons/sparkles';
+	import { getUser } from '$remote/auth.remote'; 
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
 	import { signOut } from '$remote/auth.remote';
 	import { cn } from '$lib/utils';
-	import * as Kbd from '$lib/components/ui/kbd/index.js';
-	import SettingsDialog from './settings-dialog.svelte';
+	import * as Kbd from '$lib/components/ui/kbd/index.js'; 
 
 	const sidebar = useSidebar();
 
-	const activeWorkspace = $derived(await getActiveWorkspace());
+	const activeWorkspace = $derived(page.params.workspace ? await getWorkspace(page.params.workspace as string) : await getActiveWorkspace());
 	let user = $derived(await getUser());
 </script>
 
@@ -73,7 +71,7 @@
 							</Avatar.Root>
 							<div class="grid flex-1 text-start text-sm leading-tight">
 								<span class="truncate font-medium">{activeWorkspace?.name}</span>
-								<span class="text-xs text-muted-foreground"> 8 members</span>
+								<span class="text-xs text-muted-foreground"> {activeWorkspace?.members} members</span>
 							</div>
 							<Badge variant="secondary" class="w-fit truncate text-xs"
 								>{activeWorkspace?.plan}</Badge
@@ -121,7 +119,7 @@
 					<DropdownMenu.Separator />
 					<DropdownMenu.Item class="group/button">
 						{#snippet child({ props })}
-							<a href="{activeWorkspace?.slug}/settings" {...props}>
+							<a href="/{activeWorkspace?.slug}/settings" {...props}>
 								<SettingsIcon />
 								Settings
 								<Kbd.Root class="ml-auto opacity-0 transition-opacity group-hover/button:opacity-100">⌘S</Kbd.Root>	 

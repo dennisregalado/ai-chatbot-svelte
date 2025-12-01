@@ -3,7 +3,7 @@
 	import * as Sidebar from '$components/ui/sidebar/index.js';
 	import { Button } from '$components/ui/button';
 	import SidebarHistory from '$components/sidebar-history.svelte';
-	import SidebarFavorites from '$components/sidebar-favorites.svelte';
+	import SidebarRecords from '$components/sidebar-records.svelte';
 	import ChatSearch from '$components/chat-search.svelte';
 	import SearchIcon from '@lucide/svelte/icons/search';
 	import WorkspaceSwitcher from './workspace-switcher.svelte';
@@ -49,13 +49,13 @@
 			</Sidebar.MenuButton>
 			<Sidebar.MenuButton class="group/button" onclick={() => goto('/')}>
 				<InboxIcon />
-				<span>Inbox</span>
+				<span>Knowledge</span>
 				<Kbd.Root class="ml-auto">⌘2</Kbd.Root>
 			</Sidebar.MenuButton>
 		</Sidebar.Menu>
 	</Sidebar.Header>
 	<Sidebar.Content>
-		<SidebarFavorites />
+		<SidebarRecords />
 		<SidebarAgents />
 		<SidebarHistory />
 	</Sidebar.Content>
