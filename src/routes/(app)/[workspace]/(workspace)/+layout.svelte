@@ -6,13 +6,15 @@
 	import { Button } from '$components/ui/button';
 	import ChatSearch from '$components/chat-search.svelte';
 	import SearchIcon from '@lucide/svelte/icons/search';
-	import HomeIcon from '@lucide/svelte/icons/home';
+	import MessageIcon from '@lucide/svelte/icons/message-circle';
 	import BookIcon from '@lucide/svelte/icons/book';
 	import SidebarRecords from '$components/sidebar-records.svelte';
 	import SidebarAgents from '$components/sidebar-agents.svelte';
 	import SidebarHistory from '$components/sidebar-history.svelte';
 	import SidebarInboxes from '$components/sidebar-inboxes.svelte';
 	import * as Kbd from '$components/ui/kbd';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	let { children } = $props();
 
 	const isMobile = new IsMobile();
@@ -33,11 +35,11 @@
 					</Sidebar.MenuButton>
 				{/snippet}
 			</ChatSearch>
-			<Sidebar.MenuButton class="group/button" onclick={() => goto('/')}>
-				<HomeIcon />
-				<span>Home</span>
+			<Sidebar.MenuButton class="group/button" onclick={() => goto(`/${page.params.workspace}/chat`)}>
+				<MessageIcon />
+				<span>Chat</span>
 			</Sidebar.MenuButton>
-			<Sidebar.MenuButton class="group/button" onclick={() => goto('/')}>
+			<Sidebar.MenuButton class="group/button" onclick={() => goto(`/${page.params.workspace}/knowledge`)}>
 				<BookIcon />
 				<span>Knowledge</span>
 			</Sidebar.MenuButton>

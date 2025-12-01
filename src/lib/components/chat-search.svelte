@@ -55,7 +55,7 @@
 {@render children?.({ toggle })}
 
 <Command.Dialog bind:open>
-	<Command.Input placeholder="Search chats..." />
+	<Command.Input placeholder="Search for files, chats, and people..." />
 	<Command.List>
 		<Command.Empty>No chats found.</Command.Empty>
 

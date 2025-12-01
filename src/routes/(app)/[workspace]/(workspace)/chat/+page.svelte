@@ -2,7 +2,8 @@
 	import Chat from '$components/chat.svelte';
 	import { generateChatId } from '$remote/chat.remote';
 
-	let id = await generateChatId();
+	let { params } = $props();
+//	let id = await generateChatId();
 </script>
 
-<Chat {id} />
+<Chat id={params.workspace} />

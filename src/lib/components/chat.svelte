@@ -45,19 +45,16 @@
 	import CopyIcon from '@lucide/svelte/icons/copy';
 	import RefreshCcwIcon from '@lucide/svelte/icons/refresh-cw';
 
-	let { id, messages: initialMessages = [] } = $props();
+	let { id = '', messages: initialMessages = [] } = $props();
 
-	let title = $state();
-
+	$inspect(id);
 	// Connect to the chat agent
 	const agent = new Agent({
+		name: id,
 		host: 'https://localhost:5174',
 		agent: 'chat',
 		onStateUpdate(newState) {
-			console.log(newState)
-			if (newState?.chatId === chatId && newState?.title != null) {
-				title = newState.title;
-			}
+			console.log(newState);
 		}
 	});
 
@@ -117,6 +114,8 @@
 		// TODO: Implement regeneration
 		chat.regenerate?.();
 	}
+
+	$inspect(chat.status);
 </script>
 
 <div class="flex h-full max-h-screen flex-col pb-10">
@@ -144,12 +143,21 @@
 						{#key `${message.id}-${i}`}
 							{#if part.type === 'text'}
 								{@const textContent = (part as { text: string }).text}
-								<Message from={message.role}>
+								<Message from={message.role} class="group">
 									<MessageContent>
 										<Response content={textContent} />
 									</MessageContent>
-									{#if message.role === 'assistant' && i === message.parts.length - 1 && message.id === chat.messages[chat.messages.length - 1]?.id}
-										<Actions>
+									{#if message.role === 'assistant' && i === message.parts.length - 1}
+										<Actions
+											class={{
+												'opacity-0 transition-opacity': true,
+												'group-hover:opacity-100':
+												// is last message and streaming
+													message.id === chat.messages[chat.messages.length - 1]?.id
+														? chat.status !== 'streaming'
+														: true
+											}}
+										>
 											<Action
 												onclick={() => {
 													const previousMessage = chat.messages[messageIndex - 1];
@@ -192,7 +200,6 @@
 				<Loader />
 			{/if}
 		</ConversationContent>
-		<ConversationScrollButton />
 	</Conversation>
 	<PromptInput
 		value={input}

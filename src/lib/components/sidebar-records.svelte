@@ -27,16 +27,16 @@
 		href: 'records',
 		items: [
 			{
+				name: 'Companies',
+				href: 'companies'
+			},
+			{
+				name: 'People',
+				href: 'people'
+			},
+			{
 				name: 'Accounts',
 				href: 'accounts'
-			},
-			{
-				name: 'Contacts',
-				href: 'contacts'
-			},
-			{
-				name: 'Opportunities',
-				href: 'opportunities'
 			}
 		]
 	};

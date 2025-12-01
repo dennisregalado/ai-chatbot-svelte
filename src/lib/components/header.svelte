@@ -162,8 +162,8 @@
 		<WorkspaceSwitcher />
 	</div>
 	<div class="flex flex-1 items-center justify-end gap-1.5">
-		<Upgrade variant="outline" size="sm">Upgrade</Upgrade>
-		<Feedback variant="outline" size="sm">Feedback</Feedback>
+		<!-- <Upgrade variant="outline" size="sm">Upgrade</Upgrade>
+		<Feedback variant="outline" size="sm">Feedback</Feedback> -->
 		<SettingsDialog>
 			{#snippet children({ ...props })}
 				<Button {...props}>
