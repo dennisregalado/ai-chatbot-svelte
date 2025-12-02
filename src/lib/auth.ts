@@ -17,7 +17,7 @@ import { passkey } from "@better-auth/passkey"
 // Single auth configuration that handles both CLI and runtime scenarios
 function createAuth(env?: Env, cf?: CfProperties, db?: DrizzleClient) {
 	// Base URL for auth callbacks (magic links, OAuth redirects, etc.)
-	const baseURL = 'http://localhost:5173';
+	const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:5173' : 'https://ai.dennisregalado.com';
 
 	return betterAuth({
 		baseURL,

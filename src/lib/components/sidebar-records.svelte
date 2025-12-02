@@ -1,14 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/state';
-
-	import { getChatHistory } from '$remote/chat.remote';
-	import type { Chat } from '$server/db/schema';
-
-	import ChatItem from '$components/sidebar-history-item.svelte';
 	import * as Collapsible from '$components/ui/collapsible';
-	import * as Empty from '$lib/components/ui/empty/index.js';
-	import * as Sidebar from '$components/ui/sidebar/index.js';
-	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import {
 		SidebarGroup,
 		SidebarGroupContent,
@@ -19,8 +10,9 @@
 	} from '$components/ui/sidebar';
 
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
-
-	let chats = $derived(await getChatHistory());
+	import BuildingIcon from '@lucide/svelte/icons/building';
+	import UserIcon from '@lucide/svelte/icons/user';
+	import CreditCardIcon from '@lucide/svelte/icons/credit-card';
 
 	const data = {
 		name: 'Records',
@@ -28,15 +20,18 @@
 		items: [
 			{
 				name: 'Companies',
-				href: 'companies'
+				href: 'companies',
+				icon: BuildingIcon
 			},
 			{
 				name: 'People',
-				href: 'people'
+				href: 'people',
+				icon: UserIcon
 			},
 			{
 				name: 'Accounts',
-				href: 'accounts'
+				href: 'accounts',
+				icon: CreditCardIcon
 			}
 		]
 	};
@@ -59,8 +54,10 @@
 				<SidebarMenu>
 					{#each data.items as item}
 						<SidebarMenuItem>
-							<SidebarMenuButton href={item.href}>{item.name}</SidebarMenuButton>
-						</SidebarMenuItem>
+							<SidebarMenuButton href={item.href}>
+								<item.icon/>	
+								{item.name}</SidebarMenuButton>
+						</SidebarMenuItem>	
 					{/each}
 				</SidebarMenu>
 			</SidebarGroupContent>

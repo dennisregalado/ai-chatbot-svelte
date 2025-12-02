@@ -1,5 +1,5 @@
-import type { PartySocket, PartySocketOptions } from '$lib/partysocket';
-import { PartySocketConnection } from '$lib/partysocket/index.svelte';
+import type { PartySocket, PartySocketOptions } from '$lib/agents/partysocket';
+import { PartySocketConnection } from '$lib/agents/partysocket/index.svelte';
 import type { Agent as AgentType, MCPServersState, RPCRequest, RPCResponse } from 'agents';
 import type { StreamOptions } from 'agents/client';
 import { MessageType } from 'agents/ai-types';

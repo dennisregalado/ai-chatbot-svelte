@@ -1,16 +1,13 @@
 <script lang="ts">
-	import AppSidebar from '$components/app-sidebar.svelte';
 	import * as Sidebar from '$components/ui/sidebar/index.js';
 	import WorkspaceSwitcher from '$components/workspace-switcher.svelte';
 	import { IsMobile } from '$hooks/is-mobile.svelte';
-	import { Button } from '$components/ui/button';
 	import ChatSearch from '$components/chat-search.svelte';
 	import SearchIcon from '@lucide/svelte/icons/search';
 	import MessageIcon from '@lucide/svelte/icons/message-circle';
 	import BookIcon from '@lucide/svelte/icons/book';
 	import SidebarRecords from '$components/sidebar-records.svelte';
 	import SidebarAgents from '$components/sidebar-agents.svelte';
-	import SidebarHistory from '$components/sidebar-history.svelte';
 	import SidebarInboxes from '$components/sidebar-inboxes.svelte';
 	import * as Kbd from '$components/ui/kbd';
 	import { goto } from '$app/navigation';
@@ -47,9 +44,9 @@
 	</Sidebar.Header>
 	<Sidebar.Content>
 		<SidebarInboxes />
-		<SidebarRecords />
+
 		<SidebarAgents />
-		<SidebarHistory />
+		<SidebarRecords />
 	</Sidebar.Content>
 	<Sidebar.Rail />
 </Sidebar.Root>

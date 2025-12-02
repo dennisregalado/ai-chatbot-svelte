@@ -1,9 +1,6 @@
 <script lang="ts">
 	import { getUser, signOut } from '$remote/auth.remote';
 	import WorkspaceSwitcher from './workspace-switcher.svelte';
-	import Upgrade from './upgrade.svelte';
-	import Feedback from './feedback.svelte';
-	import SidebarUserNav from './sidebar-user-nav.svelte';
 	import { buttonVariants } from './ui/button/button.svelte';
 	import SettingsDialog from './settings-dialog.svelte';
 	import * as Field from '$lib/components/ui/field';
