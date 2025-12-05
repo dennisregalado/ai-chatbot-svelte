@@ -17,8 +17,8 @@
 		<Dialog.Header>
 			<Dialog.Title>Add Files</Dialog.Title>
 			<Dialog.Description>
-				Upload files to add them to your knowledge base. Supported formats include PDF,
-				DOCX, TXT, and more.
+				Upload files to add them to your knowledge base. Supported formats include PDF, DOCX, TXT,
+				and more.
 			</Dialog.Description>
 		</Dialog.Header>
 		<div class="py-4">

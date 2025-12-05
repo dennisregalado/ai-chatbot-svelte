@@ -5,11 +5,10 @@
 	import { Separator } from '$components/ui/separator/index.js';
 	import * as Breadcrumb from '$components/ui/breadcrumb/index.js';
 
-    let { params } = $props();
+	let { params } = $props();
 
-    $inspect(params);
+	$inspect(params);
 </script>
-
 
 <div class="h-full px-5 py-4">
 	<Files />

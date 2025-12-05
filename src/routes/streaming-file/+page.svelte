@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {  } from '$remote/file.remote';
+	import {} from '$remote/file.remote';
 </script>
 
 <!-- <form {...streamUploadFile} enctype="multipart/form-data">

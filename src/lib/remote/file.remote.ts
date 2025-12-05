@@ -115,7 +115,7 @@ export const uploadFileForm = form(
 		try {
 			// Convert File to ArrayBuffer for the API
 			const arrayBuffer = await file.arrayBuffer();
-			
+
 			// Prepare metadata
 			const metadata: UploadMetadata = {};
 			if (category) metadata.category = category;
@@ -176,7 +176,7 @@ export const uploadFile = command(
 			} else {
 				arrayBuffer = data.buffer;
 			}
-			
+
 			// Prepare metadata
 			const metadata: UploadMetadata = {};
 			if (category) metadata.category = category;

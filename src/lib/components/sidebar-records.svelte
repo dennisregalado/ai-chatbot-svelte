@@ -55,9 +55,10 @@
 					{#each data.items as item}
 						<SidebarMenuItem>
 							<SidebarMenuButton href={item.href}>
-								<item.icon/>	
-								{item.name}</SidebarMenuButton>
-						</SidebarMenuItem>	
+								<item.icon />
+								{item.name}</SidebarMenuButton
+							>
+						</SidebarMenuItem>
 					{/each}
 				</SidebarMenu>
 			</SidebarGroupContent>

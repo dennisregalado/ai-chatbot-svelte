@@ -58,7 +58,7 @@
 		</Sidebar.Menu>
 	</Sidebar.Header>
 	<Sidebar.Content>
-		<SidebarInboxes /> 
+		<SidebarInboxes />
 		<SidebarAgents />
 	</Sidebar.Content>
 	<Sidebar.Rail />

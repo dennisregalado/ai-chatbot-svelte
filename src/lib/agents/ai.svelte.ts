@@ -65,8 +65,10 @@ function getAgentUrl<State>(agent: AgentConnection<State>): string | undefined {
 	return socket._url ?? socket._pkurl;
 }
 
-export interface AgentChatOptions<State = unknown, ChatMessage extends UIMessage = UIMessage>
-	extends Omit<ChatInit<ChatMessage>, 'transport'> {
+export interface AgentChatOptions<
+	State = unknown,
+	ChatMessage extends UIMessage = UIMessage
+> extends Omit<ChatInit<ChatMessage>, 'transport'> {
 	agent: AgentConnection<State>;
 	getInitialMessages?:
 		| undefined

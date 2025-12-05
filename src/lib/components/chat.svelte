@@ -1,47 +1,37 @@
 <script lang="ts">
 	import { Agent } from '$lib/agents/index.svelte';
 	import { AgentChat } from '$lib/agents/ai.svelte';
-
 	import {
 		Conversation,
 		ConversationContent,
 		ConversationScrollButton
 	} from '$lib/components/ai-elements/conversation';
-
 	import { Message, MessageContent } from '$lib/components/ai-elements/message';
-
 	import { Response } from '$lib/components/ai-elements/response';
 	import { Actions, Action } from '$lib/components/ai-elements/actions';
-
 	import {
 		Sources,
 		SourcesTrigger,
 		SourcesContent,
 		Source
 	} from '$lib/components/ai-elements/source';
-
 	import {
 		Reasoning,
 		ReasoningTrigger,
 		ReasoningContent
 	} from '$lib/components/ai-elements/reasoning';
-
 	import { Loader } from '$lib/components/ai-elements/loader';
-
 	import {
 		PromptInput,
 		PromptInputAction,
 		PromptInputActions,
 		PromptInputTextarea
 	} from '$lib/components/prompt-kit/prompt-input';
-
 	import { Button } from '$lib/components/ui/button/index.js';
-
 	import ArrowUp from '@lucide/svelte/icons/arrow-up';
 	import Paperclip from '@lucide/svelte/icons/paperclip';
 	import Square from '@lucide/svelte/icons/square';
 	import X from '@lucide/svelte/icons/x';
-
 	import CopyIcon from '@lucide/svelte/icons/copy';
 	import RefreshCcwIcon from '@lucide/svelte/icons/refresh-cw';
 	import { dev } from '$app/environment';
