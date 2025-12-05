@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '../app.css';
+	import './layout.css';
 	import { ThemeProvider } from '@sejohnson/svelte-themes';
 	import { Toaster } from '$components/ui/sonner';
 

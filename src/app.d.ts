@@ -1,6 +1,5 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
-import type { Session, User } from '$lib/auth';
-import type { BetterAuth } from '$lib/auth';
+import type { BetterAuth, Session, User } from '$lib/auth';
 import type { DrizzleClient } from '$lib/server/db';
 
 declare global {
