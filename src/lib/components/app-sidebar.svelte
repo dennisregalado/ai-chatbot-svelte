@@ -3,7 +3,7 @@
 	import * as Sidebar from '$components/ui/sidebar/index.js';
 	import { Button } from '$components/ui/button';
 	import SidebarHistory from '$components/sidebar-history.svelte';
-	import SidebarRecords from '$components/sidebar-records.svelte';
+	import SidebarChat from '$components/sidebar-chat.svelte';
 	import ChatSearch from '$components/chat-search.svelte';
 	import SearchIcon from '@lucide/svelte/icons/search';
 	import WorkspaceSwitcher from './workspace-switcher.svelte';

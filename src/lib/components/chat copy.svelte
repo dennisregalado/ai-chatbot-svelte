@@ -16,17 +16,12 @@
 		updateVoteByChatId
 	} from '$remote/chat.remote';
 	import { Actions, Action } from '$components/ai-elements/actions';
-	import { Conversation, ConversationScrollButton } from '$components/ai-elements/conversation';
+	import { Conversation } from '$components/ai-elements/conversation';
 	import { Loader } from '$components/ai-elements/loader';
 	import { Message, MessageContent } from '$components/ai-elements/message';
 	import {
 		PromptInput,
 		PromptInputButton,
-		PromptInputModelSelect,
-		PromptInputModelSelectContent,
-		PromptInputModelSelectItem,
-		PromptInputModelSelectTrigger,
-		PromptInputModelSelectValue,
 		PromptInputSubmit,
 		PromptInputTextarea,
 		PromptInputToolbar,
@@ -48,7 +43,6 @@
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { useDataStream } from '$components/data-stream-provider.svelte';
 	import { AutoResume } from '$hooks/auto-resume.svelte';
-	import { Button } from '$lib/components/ui/button';
 	import { getUser } from '$remote/auth.remote';
 	// Fallback suggestions shown when we have none streamed yet
 	const fallbackSuggestions = [

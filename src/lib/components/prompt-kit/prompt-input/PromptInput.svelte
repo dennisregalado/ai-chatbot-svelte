@@ -71,7 +71,10 @@
 
 <TooltipPrimitive.Provider>
 	<div
-		class={cn('cursor-text rounded-md border border-input bg-background pt-0  p-2 shadow-xs', className)}
+		class={cn(
+			'cursor-text rounded-md border border-input bg-background p-2  pt-0 shadow-xs',
+			className
+		)}
 		onclick={handleClick}
 		onkeydown={handleKeyDown}
 		role="button"

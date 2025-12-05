@@ -6,12 +6,12 @@
 	import SearchIcon from '@lucide/svelte/icons/search';
 	import MessageIcon from '@lucide/svelte/icons/message-circle';
 	import BookIcon from '@lucide/svelte/icons/book';
-	import SidebarRecords from '$components/sidebar-records.svelte';
 	import SidebarAgents from '$components/sidebar-agents.svelte';
 	import SidebarInboxes from '$components/sidebar-inboxes.svelte';
 	import * as Kbd from '$components/ui/kbd';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import UsersIcon from '@lucide/svelte/icons/users';
 	let { children } = $props();
 
 	const isMobile = new IsMobile();
@@ -28,25 +28,38 @@
 					<Sidebar.MenuButton class="group/button" onclick={toggle}>
 						<SearchIcon />
 						<span>Search</span>
-						<Kbd.Root class="ml-auto opacity-0 transition-opacity group-hover/button:opacity-100">⌘K</Kbd.Root>	 
+						<Kbd.Root class="ml-auto opacity-0 transition-opacity group-hover/button:opacity-100"
+							>⌘K</Kbd.Root
+						>
 					</Sidebar.MenuButton>
 				{/snippet}
 			</ChatSearch>
-			<Sidebar.MenuButton class="group/button" onclick={() => goto(`/${page.params.workspace}/chat`)}>
+			<Sidebar.MenuButton
+				class="group/button"
+				onclick={() => goto(`/${page.params.workspace}/chat`)}
+			>
 				<MessageIcon />
 				<span>Chat</span>
 			</Sidebar.MenuButton>
-			<Sidebar.MenuButton class="group/button" onclick={() => goto(`/${page.params.workspace}/knowledge`)}>
+			<Sidebar.MenuButton
+				class="group/button"
+				onclick={() => goto(`/${page.params.workspace}/knowledge`)}
+			>
 				<BookIcon />
 				<span>Knowledge</span>
+			</Sidebar.MenuButton>
+			<Sidebar.MenuButton
+				class="group/button"
+				onclick={() => goto(`/${page.params.workspace}/people`)}
+			>
+				<UsersIcon />
+				<span>People</span>
 			</Sidebar.MenuButton>
 		</Sidebar.Menu>
 	</Sidebar.Header>
 	<Sidebar.Content>
-		<SidebarInboxes />
-
+		<SidebarInboxes /> 
 		<SidebarAgents />
-		<SidebarRecords />
 	</Sidebar.Content>
 	<Sidebar.Rail />
 </Sidebar.Root>

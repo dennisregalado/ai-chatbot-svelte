@@ -24,7 +24,10 @@
 			<WorkspaceSwitcher />
 		{/if}
 		<Sidebar.Menu>
-			<Sidebar.MenuButton class="group/button" onclick={() => goto('/' + params.workspace, { invalidateAll: true })}>
+			<Sidebar.MenuButton
+				class="group/button"
+				onclick={() => goto('/' + params.workspace, { invalidateAll: true })}
+			>
 				<ChevronLeftIcon />
 				<span>Back to Home</span>
 				<Kbd.Root class="ml-auto opacity-0 transition-opacity group-hover/button:opacity-100"

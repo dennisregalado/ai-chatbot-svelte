@@ -3,7 +3,7 @@
 	import { generateChatId } from '$remote/chat.remote';
 
 	let { params } = $props();
-//	let id = await generateChatId();
+	//	let id = await generateChatId();
 </script>
 
 <Chat id={params.workspace} />

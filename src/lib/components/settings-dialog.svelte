@@ -28,7 +28,11 @@
 	} = $props();
 
 	const user = $derived(await getUser());
-	const activeWorkspace = $derived(page.params.workspace ? await getWorkspace(page.params.workspace as string) : await getActiveWorkspace());
+	const activeWorkspace = $derived(
+		page.params.workspace
+			? await getWorkspace(page.params.workspace as string)
+			: await getActiveWorkspace()
+	);
 
 	let open = $state(false);
 

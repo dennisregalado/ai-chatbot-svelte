@@ -45,7 +45,20 @@
 			"binding": "R2_BUCKET",
 			"bucket_name": "ai-sass"
 		}
-	]
+	],
+	"routes": [
+		{
+			"pattern": "ai.dennisregalado.com",
+			"zone_name": "dennisregalado.com",
+			"custom_domain": true
+		}
+	],
+	"vars": {
+		"GOOGLE_CLIENT_ID": "332657827300-edhvoha93sdvhanrhbmd1frn1oqa051d.apps.googleusercontent.com",
+		"GOOGLE_CLIENT_SECRET": "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",
+		"PUBLIC_GOOGLE_CLIENT_ID": "332657827300-edhvoha93sdvhanrhbmd1frn1oqa051d.apps.googleusercontent.com",
+		"RESEND_API_KEY": "re_R8VJQkbq_PDyCBZpoFkzmL5cDMpGHusY7"
+	}
 	// "durable_objects": {
 	// 	"bindings": [
 	// 		{

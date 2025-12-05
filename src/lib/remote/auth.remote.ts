@@ -35,7 +35,7 @@ export const signInMagicLink = form(
 		const { auth } = locals;
 		try {
 			// sleep
-			await new Promise(resolve => setTimeout(resolve, 500));
+			await new Promise((resolve) => setTimeout(resolve, 500));
 			const response = await (auth.api as any).signInMagicLink({
 				headers: request.headers,
 				body: {
@@ -44,12 +44,12 @@ export const signInMagicLink = form(
 					newUserCallbackURL: '/welcome'
 				}
 			});
-			 console.log('response', response);
+			console.log('response', response);
 		} catch (e) {
 			console.log('e', e.message);
 			invalid(issue.email('test'));
 		} finally {
-		//	redirect(307, `/verify/${email}`);
+			//	redirect(307, `/verify/${email}`);
 		}
 	}
 );
@@ -69,7 +69,6 @@ export const signInGoogle = form('unchecked', async () => {
 			}
 		});
 	} catch (e) {
-
 		error(500, 'Failed to sign in with Google');
 	} finally {
 		if (response && response.redirect && response.url) {

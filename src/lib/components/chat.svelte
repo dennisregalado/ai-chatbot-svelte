@@ -44,14 +44,16 @@
 
 	import CopyIcon from '@lucide/svelte/icons/copy';
 	import RefreshCcwIcon from '@lucide/svelte/icons/refresh-cw';
+	import { dev } from '$app/environment';
 
 	let { id = '', messages: initialMessages = [] } = $props();
 
-	$inspect(id);
 	// Connect to the chat agent
 	const agent = new Agent({
-		name: id,
-		host: 'https://localhost:5174',
+		get name() {
+			return id;
+		},
+		host: dev ? 'https://localhost:5174' : 'https://sveltekit-agent.dennisregalad.workers.dev',
 		agent: 'chat',
 		onStateUpdate(newState) {
 			console.log(newState);
@@ -60,7 +62,19 @@
 
 	// Use the AgentChat class with the agent connection
 	const chat = new AgentChat({
-		agent
+		agent,
+		onData: (dataPart) => {
+			console.log(dataPart);
+		},
+		onError: (error) => {
+			console.error(error);
+		},
+		onFinish: (message) => {
+			console.log(message);
+		},
+		onToolCall: (toolCall) => {
+			console.log(toolCall);
+		}
 		//	messages: initialMessages
 	});
 
@@ -152,7 +166,7 @@
 											class={{
 												'opacity-0 transition-opacity': true,
 												'group-hover:opacity-100':
-												// is last message and streaming
+													// is last message and streaming
 													message.id === chat.messages[chat.messages.length - 1]?.id
 														? chat.status !== 'streaming'
 														: true
@@ -229,9 +243,7 @@
 				{/each}
 			</div>
 		{/if}
-
 		<PromptInputTextarea placeholder="Ask me anything (or use @agent or /tool)" />
-
 		<PromptInputActions class="flex items-center justify-between gap-2 pt-2">
 			<PromptInputAction>
 				{#snippet tooltip()}
