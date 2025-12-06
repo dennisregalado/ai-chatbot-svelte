@@ -9,7 +9,6 @@
 	import WorkflowIcon from '@lucide/svelte/icons/workflow';
 	import { page } from '$app/state';
 	import { getWorkspace } from '$remote/workspace.remote';
-	import type { Snippet } from 'svelte';
 
 	let {
 		user,
@@ -24,7 +23,7 @@
 	const activePath = $derived(currentPath ?? page.url.pathname);
 	const activeWorkspace = $derived(await getWorkspace(page.params.workspace as string));
 
-	const data = {
+	const data = $derived({
 		groups: [
 			{
 				label: 'Account',
@@ -43,7 +42,7 @@
 				]
 			}
 		]
-	};
+	});
 </script>
 
 {#each data.groups as group (group.label)}

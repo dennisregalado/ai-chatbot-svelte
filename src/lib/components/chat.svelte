@@ -27,14 +27,10 @@
 		PromptInputActions,
 		PromptInputTextarea
 	} from '$lib/components/prompt-kit/prompt-input';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import ArrowUp from '@lucide/svelte/icons/arrow-up';
 	import Paperclip from '@lucide/svelte/icons/paperclip';
-	import Square from '@lucide/svelte/icons/square';
 	import X from '@lucide/svelte/icons/x';
 	import CopyIcon from '@lucide/svelte/icons/copy';
 	import RefreshCcwIcon from '@lucide/svelte/icons/refresh-cw';
-	import { dev } from '$app/environment';
 
 	let { id = '', messages: initialMessages = [] } = $props();
 
@@ -43,7 +39,8 @@
 		get name() {
 			return id;
 		},
-		host: dev ? 'https://localhost:5174' : 'https://sveltekit-agent.dennisregalad.workers.dev',
+		// dev ? 'https://localhost:5174' :
+		host: 'https://sveltekit-agent.dennisregalad.workers.dev',
 		agent: 'chat',
 		onStateUpdate(newState) {
 			console.log(newState);
@@ -114,11 +111,6 @@
 		}
 	}
 
-	function handleRegenerate() {
-		// TODO: Implement regeneration
-		chat.regenerate?.();
-	}
-
 	$inspect(chat.status);
 </script>
 
@@ -164,11 +156,9 @@
 										>
 											<Action
 												onclick={() => {
-													const previousMessage = chat.messages[messageIndex - 1];
+													const previousMessage = chat.messages[messageIndex];
 
-													chat.regenerate({
-														messageId: previousMessage.id
-													});
+													chat.regenerate();
 												}}
 												label="Retry"
 											>
@@ -186,7 +176,6 @@
 							{:else if part.type === 'reasoning'}
 								{@const reasoningText = (part as { text: string }).text}
 								<Reasoning
-									class="w-full"
 									isStreaming={chat.status === 'streaming' &&
 										i === message.parts.length - 1 &&
 										message.id === chat.messages[chat.messages.length - 1]?.id}
