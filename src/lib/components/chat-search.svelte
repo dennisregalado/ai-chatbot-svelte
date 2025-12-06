@@ -6,7 +6,7 @@
 	import * as Command from '$components/ui/command';
 	import { useSidebar } from '$components/ui/sidebar';
 
-	import { MessageIcon } from '$components/icons.svelte';
+	import MessageIcon from '@lucide/svelte/icons/message-circle';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 
 	import { formatDistanceToNow } from 'date-fns';
@@ -72,7 +72,7 @@
 					<Command.Group heading="Chats">
 						{#each [1, 2, 3] as item (item)}
 							<Command.Item disabled>
-								{@render MessageIcon(14)}
+								<MessageIcon class="mr-2 size-3.5" />
 								<div class="flex flex-1">
 									<div class="h-4 flex-1 animate-pulse rounded bg-gray-200"></div>
 								</div>
@@ -85,7 +85,7 @@
 		{:else}
 			<Command.Group heading="Authentication">
 				<Command.Item disabled>
-					{@render MessageIcon(14)}
+					<MessageIcon class="mr-2 size-3.5" />
 					<span>Login to access your chat history</span>
 				</Command.Item>
 			</Command.Group>
@@ -98,7 +98,7 @@
 		<Command.Group heading="Chats">
 			{#each chats as chat (chat.id)}
 				<Command.Item onSelect={() => selectChat(chat)} value={chat.title}>
-					{@render MessageIcon(14)}
+					<MessageIcon class="mr-2 size-3.5" />
 					<div
 						class="flex w-full flex-wrap items-center justify-between max-md:flex-col max-md:items-start"
 					>

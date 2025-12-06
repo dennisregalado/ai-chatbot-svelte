@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils.js';
-	import { CopyIcon, CheckCircleFillIcon } from '$lib/components/icons.svelte';
+	import CopyIcon from '@lucide/svelte/icons/copy';
+	import CheckCircleFillIcon from '@lucide/svelte/icons/check-circle-2';
 	import { getCodeBlockContext } from './code-block-context.svelte.js';
 	import type { ButtonProps } from '$lib/components/ui/button';
 	import type { Snippet } from 'svelte';
@@ -46,7 +47,7 @@
 		}
 	}
 
-	const Icon = $derived(isCopied ? CheckCircleFillIcon : CopyIcon);
+	const Icon = $derived.by(() => (isCopied ? CheckCircleFillIcon : CopyIcon));
 </script>
 
 <Button
@@ -59,6 +60,6 @@
 	{#if children}
 		{@render children()}
 	{:else}
-		{@render Icon(14)}
+		<Icon class="size-3.5" />
 	{/if}
 </Button>

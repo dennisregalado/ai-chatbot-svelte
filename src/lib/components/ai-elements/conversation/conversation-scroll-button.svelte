@@ -2,7 +2,7 @@
 	import { getContext } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils';
-	import { ChevronDownIcon } from '$lib/components/icons.svelte';
+	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
 	import type { ClassValue } from 'svelte/elements';
 	import type { StickToBottom } from 'stick-to-bottom-svelte';
 
@@ -36,6 +36,6 @@
 		{variant}
 		{...restProps}
 	>
-		{@render ChevronDownIcon(16)}
+		<ChevronDownIcon class="size-4" />
 	</Button>
 {/if}

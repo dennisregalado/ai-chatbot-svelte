@@ -6,7 +6,7 @@
 		CollapsibleTrigger
 	} from '$lib/components/ui/collapsible';
 	import { cn } from '$lib/utils';
-	import { ChevronDownIcon } from '$lib/components/icons.svelte';
+	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
 	import { useWebPreview } from './web-preview-context';
 
 	export type LogEntry = {
@@ -42,7 +42,7 @@
 		>
 			Console
 			<div class={cn('h-4 w-4 transition-transform duration-200', consoleOpen && 'rotate-180')}>
-				{@render ChevronDownIcon(16)}
+				<ChevronDownIcon class="size-4" />
 			</div>
 		</Button>
 	</CollapsibleTrigger>

@@ -35,16 +35,13 @@
 	import { useSidebar } from './ui/sidebar';
 	import { IsMobile } from '$hooks/is-mobile.svelte';
 
-	import {
-		MoreHorizontalIcon,
-		PencilEditIcon,
-		ShareIcon,
-		TrashIcon,
-		MessageIcon
-	} from '$components/icons.svelte';
-
 	import { toast } from 'svelte-sonner';
 
+	import MoreHorizontalIcon from '@lucide/svelte/icons/more-horizontal';
+	import PencilEditIcon from '@lucide/svelte/icons/pencil';
+	import ShareIcon from '@lucide/svelte/icons/share';
+	import TrashIcon from '@lucide/svelte/icons/trash-2';
+	import MessageIcon from '@lucide/svelte/icons/message-circle';
 	import StarFillIcon from '@lucide/svelte/icons/star-off';
 	import StarIcon from '@lucide/svelte/icons/star';
 	let {
@@ -117,7 +114,7 @@
 		{#snippet child({ props })}
 			<a {...props} href={`/chat/${chat.id}`} onclick={() => sidebar.setOpenMobile(false)}>
 				{#if favorite}
-					{@render MessageIcon(14)}
+					<MessageIcon class="size-3.5" />
 				{/if}
 				<span>{chat.title}</span>
 			</a>
@@ -131,7 +128,7 @@
 					class="mr-0.5 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 					showOnHover={!active}
 				>
-					{@render MoreHorizontalIcon()}
+					<MoreHorizontalIcon class="size-4" />
 					<span class="sr-only">More</span>
 				</SidebarMenuAction>
 			{/snippet}
@@ -158,7 +155,7 @@
 					}
 				}}
 			>
-				{@render ShareIcon()}
+				<ShareIcon class="mr-2 size-4" />
 				<span>Share</span>
 			</DropdownMenuItem>
 			<DropdownMenuItem
@@ -167,7 +164,7 @@
 					isEditing = true;
 				}}
 			>
-				{@render PencilEditIcon()}
+				<PencilEditIcon class="mr-2 size-4" />
 				<span>Rename</span>
 			</DropdownMenuItem>
 			<DropdownMenuItem
@@ -194,7 +191,7 @@
 				class="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
 				onclick={() => (isDeleting = true)}
 			>
-				{@render TrashIcon()}
+				<TrashIcon class="mr-2 size-4" />
 				<span>Delete</span>
 			</DropdownMenuItem>
 		</DropdownMenuContent>
