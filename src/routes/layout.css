@@ -112,6 +112,13 @@
 	--color-sidebar-ring: var(--sidebar-ring);
 }
 
+@font-face {
+	font-family: 'Gerstner Programm';
+	font-weight: 500;
+	font-display: swap;
+	src: url('$lib/assets/fonts/') format('woff2');
+}
+
 @layer base {
 	* {
 		scrollbar-width: thin;

@@ -206,7 +206,7 @@
 />
 <form
 	class={cn(
-		"bg-sidebar w-full divide-y overflow-hidden rounded-xl shadow-none shrink-0",
+		"bg-sidebar w-full shadow-sm overflow-hidden rounded-2xl shrink-0",
 		className
 	)}
 	onsubmit={handleSubmit}

@@ -1,6 +1,6 @@
 import type { Snippet } from 'svelte';
 import type { ButtonPropsWithoutHTML } from '$lib/components/ui/button';
-import type { UseClipboard } from '$lib/hooks/use-clipboard.svelte';
+import type { UseClipboard } from '$hooks/use-clipboard.svelte';
 import type { HTMLAttributes } from 'svelte/elements';
 import type { WithChildren, WithoutChildren } from 'bits-ui';
 

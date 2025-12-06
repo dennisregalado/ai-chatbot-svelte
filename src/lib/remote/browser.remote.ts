@@ -15,10 +15,6 @@ export const getBrowserTabs = query(async () => {
             label: 'People',
         },
         {
-            pathname: '/data-model',
-            label: 'Data Model',
-        },
-        {
             pathname: '/agents',
             label: 'Agents',
         },

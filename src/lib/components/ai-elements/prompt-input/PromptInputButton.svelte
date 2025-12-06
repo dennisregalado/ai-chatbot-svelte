@@ -2,9 +2,10 @@
 	import { cn } from "$lib/utils";
 	import { Button } from "$lib/components/ui/button";
 	import type { ButtonProps } from "$lib/components/ui/button/index.js";
+	import type { ClassValue } from "svelte/elements";
 
 	interface Props extends ButtonProps {
-		class?: string;
+		class?: ClassValue;
 		children?: import("svelte").Snippet;
 	}
 

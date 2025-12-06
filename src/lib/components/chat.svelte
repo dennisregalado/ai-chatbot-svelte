@@ -20,12 +20,11 @@
 		ReasoningTrigger,
 		ReasoningContent
 	} from '$lib/components/ai-elements/reasoning';
-	import { Loader } from '$lib/components/ai-elements/loader';
-	import {} from '$lib/components/prompt-kit/prompt-input';
 	import RefreshCcwIcon from '@lucide/svelte/icons/refresh-cw';
 	import { untrack } from 'svelte';
 	import MicIcon from '@lucide/svelte/icons/mic';
 	import { CopyButton } from '$lib/components/ui/copy-button';
+	import * as UnderlineTabs from '$lib/components/ui/underline-tabs';
 
 	import {
 		PromptInput,
@@ -44,6 +43,9 @@
 	} from '$lib/components/ai-elements/prompt-input';
 	import { PlusIcon } from '@lucide/svelte';
 	import HistoryIcon from '@lucide/svelte/icons/history';
+	import { replaceState } from '$app/navigation';
+	import { page } from '$app/state';
+	import Spinner from './ui/spinner/spinner.svelte';
 
 	let { id = '', messages: initialMessages = [] } = $props();
 
@@ -59,28 +61,27 @@
 		agent,
 		messages: untrack(() => initialMessages),
 		onData: (dataPart) => {
-			console.log(dataPart);
+			console.log('onData', dataPart);
 		},
 		onError: (error) => {
-			console.error(error);
+			console.error('onError', error);
 		},
 		onFinish: (message) => {
-			console.log(message);
+			console.log('onFinish', message);
 		},
 		onToolCall: (toolCall) => {
-			console.log(toolCall);
+			console.log('onToolCall', toolCall);
 		}
-		//	messages: initialMessages
 	});
 
 	let text = $state<string>('');
 	let useMicrophone = $state<boolean>(false);
-
 	let files = $state<File[]>([]);
 	let uploadInputRef: HTMLInputElement | undefined = $state();
 
 	function handleSubmit() {
 		if (text.trim() || files.length > 0) {
+		//	replaceState(page.params.workspace + '/chat/' + id, {});
 			chat.sendMessage({
 				role: 'user',
 				parts: [
@@ -172,9 +173,9 @@
 					{/each}
 				</div>
 			{/each}
-
+			
 			{#if chat.status === 'submitted'}
-				<Loader />
+				<Spinner />
 			{/if}
 		</ConversationContent>
 	</Conversation>
@@ -198,24 +199,26 @@
 						<PromptInputActionAddAttachments />
 					</PromptInputActionMenuContent>
 				</PromptInputActionMenu> -->
-				<PromptInputButton>
-					<PlusIcon size={16} />
-				</PromptInputButton>
-				<PromptInputButton>
-					<HistoryIcon size={16} />
-				</PromptInputButton>
+				<UnderlineTabs.Root>
+					<UnderlineTabs.List>
+						<UnderlineTabs.Trigger class="px-2" value={'attachments'}>
+							<PlusIcon />
+						</UnderlineTabs.Trigger>
+						<UnderlineTabs.Trigger class="px-2" value={'history'}>
+							<HistoryIcon />
+						</UnderlineTabs.Trigger>
+					</UnderlineTabs.List>
+				</UnderlineTabs.Root>
 			</PromptInputTools>
 			<PromptInputTools>
 				<PromptInputButton
-					onClick={() => (useMicrophone = !useMicrophone)}
+					onclick={() => (useMicrophone = !useMicrophone)}
 					variant={useMicrophone ? 'default' : 'ghost'}
 				>
 					<MicIcon size={16} />
 					<span class="sr-only">Microphone</span>
-				</PromptInputButton> 
-				<PromptInputSubmit status={chat?.status}>
-					
-				</PromptInputSubmit>
+				</PromptInputButton>
+				<PromptInputSubmit status={chat?.status}></PromptInputSubmit>
 			</PromptInputTools>
 		</PromptInputToolbar>
 	</PromptInput>

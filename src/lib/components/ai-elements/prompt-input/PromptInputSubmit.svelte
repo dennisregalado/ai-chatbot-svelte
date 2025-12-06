@@ -3,11 +3,11 @@
 	import { Button } from "$lib/components/ui/button";
 	import type { ButtonProps } from "$lib/components/ui/button/index.js";
 	import type { ChatStatus } from "./attachments-context.svelte.js";
-	import SendIcon from "./SendIcon.svelte";
 	import Loader2Icon from "./Loader2Icon.svelte";
 	import SquareIcon from "./SquareIcon.svelte";
 	import XIcon from "./XIcon.svelte";
 	import CornerDownLeftIcon from "@lucide/svelte/icons/corner-down-left";
+
 	interface Props extends ButtonProps {
 		class?: string;
 		status?: ChatStatus;
