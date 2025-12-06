@@ -1,12 +1,8 @@
 <script lang="ts">
 	import * as Sidebar from '$components/ui/sidebar/index.js';
 	import Header from '$components/header.svelte';
-	import { getUser } from '$remote/auth.remote';
 
 	let { children } = $props();
-	//	createAIContext();
-	// all hooks created after this or in components that are children of this component
-	// will have synchronized state
 </script>
 
 <div
