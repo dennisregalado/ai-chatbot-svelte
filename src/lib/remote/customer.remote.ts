@@ -5,41 +5,6 @@ import z from 'zod';
 
 const SENTIMENTS = new Set(['sad', 'neutral', 'happy']);
 
-export const getCustomer = query(async () => {
-	const { locals, request } = getRequestEvent();
-	const { user, auth } = locals;
-
-	if (!user) {
-		error(401, 'Unauthorized');
-	}
-
-	return await (auth.api as any).state({
-		headers: request.headers
-	});
-});
-
-export const getMonthlyCredits = query(async () => {
-	const { locals, request } = getRequestEvent();
-	const { user } = locals;
-
-	if (!user) {
-		error(401, 'Unauthorized');
-	}
-
-	return '4.93';
-});
-
-export const getSubscription = query(async () => {
-	const { locals } = getRequestEvent();
-	const { user } = locals;
-
-	if (!user) {
-		error(401, 'Unauthorized');
-	}
-
-	return 'pro';
-});
-
 export const submitFeedback = form(
 	z.object({
 		message: z.string().min(1, 'Message is required'),

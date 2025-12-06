@@ -22,9 +22,5 @@ export const getBrowserTabs = query(async () => {
             pathname: '/inboxes',
             label: 'Inboxes',
         },
-        {
-            pathname: '/settings',
-            label: 'Settings',
-        },
 	];
 });

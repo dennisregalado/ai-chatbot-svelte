@@ -26,9 +26,8 @@
 	);
 	let user = $derived(await getUser());
 </script>
-
-<div class="w-max">
-	<Sidebar.Menu>
+ 
+	<Sidebar.Menu class="w-max">
 		<Sidebar.MenuItem>
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger>
@@ -152,5 +151,4 @@
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
 		</Sidebar.MenuItem>
-	</Sidebar.Menu>
-</div>
+	</Sidebar.Menu> 
