@@ -42,7 +42,7 @@
 			id: 2,
 			role: 'assistant',
 			content:
-				"Of course! I'd be happy to help with your coding question. What would you like to know?"
+				"Of course! I'd be happy to help with your coding question. Ask anything"
 		},
 		{
 			id: 3,

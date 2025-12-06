@@ -12,6 +12,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import UsersIcon from '@lucide/svelte/icons/users';
+	import HomeIcon from '@lucide/svelte/icons/home';
 	let { children } = $props();
 
 	const isMobile = new IsMobile();
@@ -34,6 +35,10 @@
 					</Sidebar.MenuButton>
 				{/snippet}
 			</ChatSearch>
+			<Sidebar.MenuButton class="group/button" onclick={() => goto(`/${page.params.workspace}`)}>
+				<HomeIcon />
+				<span>Home</span>
+			</Sidebar.MenuButton>
 			<Sidebar.MenuButton
 				class="group/button"
 				onclick={() => goto(`/${page.params.workspace}/chat`)}

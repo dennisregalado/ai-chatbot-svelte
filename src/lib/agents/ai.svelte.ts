@@ -4,7 +4,6 @@ import type { ChatInit, ChatTransport, UIMessage } from 'ai';
 import { DefaultChatTransport } from 'ai';
 import { nanoid } from 'nanoid';
 import { MessageType, type OutgoingMessage } from 'agents/ai-types';
-import { untrack } from 'svelte';
 
 // Use a more flexible socket type that works with both our PartySocket and node_modules version
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -221,7 +220,7 @@ export class AgentChat<State = unknown, ChatMessage extends UIMessage = UIMessag
 		const socketPk = (this.#socket as unknown as { _pk?: string })._pk;
 		this.chat = new Chat<ChatMessage>({
 			...chatOptions,
-			messages: untrack(() => initialMessages),
+			messages: initialMessages,
 			transport: this.#createTransport(),
 			id: socketPk
 		});

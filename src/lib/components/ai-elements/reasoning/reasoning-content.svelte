@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn, sanitizeText } from '$lib/utils.js';
+	import { cn } from '$lib/utils.js';
 	import { CollapsibleContent } from '$lib/components/ui/collapsible';
 	import Response from '../response/response.svelte';
 
@@ -14,5 +14,5 @@
 		className
 	)}
 >
-	<Response class="grid gap-2" content={sanitizeText(content)} />
+	<Response class="grid gap-2" content={content} />
 </CollapsibleContent>

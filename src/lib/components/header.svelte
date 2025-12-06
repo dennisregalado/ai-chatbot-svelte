@@ -15,7 +15,7 @@
 	import CircleIcon from '@lucide/svelte/icons/circle';
 	import CircleCheckIcon from '@lucide/svelte/icons/circle-check';
 	import { page } from '$app/state';
-
+	import BrowserTabs from './browser-tabs.svelte';
 	type ListItemProps = HTMLAttributes<HTMLAnchorElement> & {
 		title: string;
 		href: string;
@@ -157,6 +157,11 @@
 {#snippet privateHeader({ user }: { user: User })}
 	<div class="flex min-w-0 flex-1 items-center">
 		<WorkspaceSwitcher />
+	</div>
+	<div class="flex flex-1 items-center justify-end">
+		<div class="relative w-full pl-10">
+			<BrowserTabs />
+		</div>
 	</div>
 	<div class="flex flex-1 items-center justify-end gap-1.5">
 		<!-- <Upgrade variant="outline" size="sm">Upgrade</Upgrade>

@@ -14,7 +14,7 @@
 <div
 	class={cn(
 		'flex flex-col gap-2 overflow-hidden rounded-lg px-4 py-3 text-sm text-foreground',
-		'group-[.is-user]:bg-sidebar group-[.is-user]:text-sidebar-primary-foreground',
+		'group-[.is-user]:bg-sidebar',
 		'group-[.is-assistant]:py-1 group-[.is-assistant]:pl-0',
 		'is-user:dark',
 		className

@@ -72,7 +72,7 @@
 <TooltipPrimitive.Provider>
 	<div
 		class={cn(
-			'cursor-text rounded-md border border-input bg-background p-2  pt-0 shadow-xs',
+			'cursor-text rounded-md border border-input bg-sidebar p-2 pt-0 shadow-xs',
 			className
 		)}
 		onclick={handleClick}

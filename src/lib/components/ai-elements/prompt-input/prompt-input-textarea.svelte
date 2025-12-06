@@ -10,7 +10,7 @@
 
 	let {
 		class: className,
-		placeholder = 'What would you like to know?',
+		placeholder = 'Ask anything',
 		minHeight = 48,
 		maxHeight = 164,
 		value = $bindable(),

@@ -21,35 +21,43 @@
 		ReasoningContent
 	} from '$lib/components/ai-elements/reasoning';
 	import { Loader } from '$lib/components/ai-elements/loader';
+	import {} from '$lib/components/prompt-kit/prompt-input';
+	import RefreshCcwIcon from '@lucide/svelte/icons/refresh-cw';
+	import { untrack } from 'svelte';
+	import MicIcon from '@lucide/svelte/icons/mic';
+	import { CopyButton } from '$lib/components/ui/copy-button';
+
 	import {
 		PromptInput,
-		PromptInputAction,
-		PromptInputActions,
-		PromptInputTextarea
-	} from '$lib/components/prompt-kit/prompt-input';
-	import Paperclip from '@lucide/svelte/icons/paperclip';
-	import X from '@lucide/svelte/icons/x';
-	import CopyIcon from '@lucide/svelte/icons/copy';
-	import RefreshCcwIcon from '@lucide/svelte/icons/refresh-cw';
+		PromptInputBody,
+		PromptInputAttachments,
+		PromptInputAttachment,
+		PromptInputTextarea,
+		PromptInputToolbar,
+		PromptInputTools,
+		PromptInputActionMenu,
+		PromptInputActionMenuTrigger,
+		PromptInputActionMenuContent,
+		PromptInputActionAddAttachments,
+		PromptInputButton,
+		PromptInputSubmit
+	} from '$lib/components/ai-elements/prompt-input';
+	import { PlusIcon } from '@lucide/svelte';
+	import HistoryIcon from '@lucide/svelte/icons/history';
 
 	let { id = '', messages: initialMessages = [] } = $props();
 
 	// Connect to the chat agent
+	// Dev: Vite proxies /agents/* to Workers (see vite.config.ts)
+	// Prod: Uses window.location.host (deploy to same domain as Workers)
 	const agent = new Agent({
-		get name() {
-			return id;
-		},
-		// dev ? 'https://localhost:5174' :
-		host: 'https://sveltekit-agent.dennisregalad.workers.dev',
-		agent: 'chat',
-		onStateUpdate(newState) {
-			console.log(newState);
-		}
+		agent: 'chat'
 	});
 
 	// Use the AgentChat class with the agent connection
 	const chat = new AgentChat({
 		agent,
+		messages: untrack(() => initialMessages),
 		onData: (dataPart) => {
 			console.log(dataPart);
 		},
@@ -65,12 +73,14 @@
 		//	messages: initialMessages
 	});
 
-	let input = $state('');
+	let text = $state<string>('');
+	let useMicrophone = $state<boolean>(false);
+
 	let files = $state<File[]>([]);
 	let uploadInputRef: HTMLInputElement | undefined = $state();
 
 	function handleSubmit() {
-		if (input.trim() || files.length > 0) {
+		if (text.trim() || files.length > 0) {
 			chat.sendMessage({
 				role: 'user',
 				parts: [
@@ -80,41 +90,20 @@
 						name: file.name,
 						mediaType: file.type
 					})),
-					{ type: 'text', text: input || 'Sent with attachments' }
+					{ type: 'text', text: text || 'Sent with attachments' }
 				]
 			});
 
-			input = '';
+			text = '';
 			files = [];
 			if (uploadInputRef) {
 				uploadInputRef.value = '';
 			}
 		}
 	}
-
-	function handleValueChange(value: string) {
-		input = value;
-	}
-
-	function handleFileChange(event: Event) {
-		const target = event.target as HTMLInputElement;
-		if (target.files) {
-			const newFiles = Array.from(target.files);
-			files = [...files, ...newFiles];
-		}
-	}
-
-	function handleRemoveFile(index: number) {
-		files = files.filter((_, i) => i !== index);
-		if (uploadInputRef) {
-			uploadInputRef.value = '';
-		}
-	}
-
-	$inspect(chat.status);
 </script>
 
-<div class="flex h-full max-h-screen flex-col pb-10">
+<div class="flex h-full max-h-screen flex-col pb-10 relative">
 	<Conversation class="h-full max-h-full">
 		<ConversationContent>
 			{#each chat.messages as message, messageIndex (message.id)}
@@ -164,12 +153,7 @@
 											>
 												<RefreshCcwIcon class="size-3" />
 											</Action>
-											<Action
-												onclick={() => navigator.clipboard.writeText(textContent)}
-												label="Copy"
-											>
-												<CopyIcon class="size-3" />
-											</Action>
+											<CopyButton text={textContent} />
 										</Actions>
 									{/if}
 								</Message>
@@ -194,55 +178,45 @@
 			{/if}
 		</ConversationContent>
 	</Conversation>
-	<PromptInput
-		value={input}
-		onValueChange={handleValueChange}
-		isLoading={chat.isLoading}
-		onSubmit={handleSubmit}
-		class="mx-auto mt-auto w-full max-w-(--breakpoint-sm)"
-	>
-		{#if files.length > 0}
-			<div class="flex flex-wrap gap-2 pb-2">
-				{#each files as file, index}
-					<!-- svelte-ignore a11y_click_events_have_key_events -->
-					<!-- svelte-ignore a11y_no_static_element_interactions -->
-					<div
-						class="flex items-center gap-2 rounded-lg bg-secondary px-3 py-2 text-sm"
-						onclick={(e) => e.stopPropagation()}
-					>
-						<Paperclip class="size-4" />
-						<span class="max-w-[120px] truncate">{file.name}</span>
-						<button
-							onclick={() => handleRemoveFile(index)}
-							class="rounded-full p-1 hover:bg-secondary/50"
-						>
-							<X class="size-4" />
-						</button>
-					</div>
-				{/each}
-			</div>
-		{/if}
-		<PromptInputTextarea placeholder="Ask me anything (or use @agent or /tool)" />
-		<PromptInputActions class="flex items-center justify-between gap-2 pt-2">
-			<PromptInputAction>
-				{#snippet tooltip()}
-					Attach files
+	<PromptInput onSubmit={handleSubmit} globalDrop class="max-w-2xl mx-auto" multiple>
+		<PromptInputBody class="border-none">
+			<PromptInputAttachments>
+				{#snippet children(attachment)}
+					<PromptInputAttachment data={attachment} />
 				{/snippet}
-				<label
-					for="file-upload"
-					class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-2xl hover:bg-secondary-foreground/10"
+			</PromptInputAttachments>
+			<PromptInputTextarea
+				bind:value={text}
+				onchange={(e) => (text = (e.target as HTMLTextAreaElement).value)}
+			/>
+		</PromptInputBody>
+		<PromptInputToolbar>
+			<PromptInputTools>
+				<!-- <PromptInputActionMenu>
+					<PromptInputActionMenuTrigger />
+					<PromptInputActionMenuContent>
+						<PromptInputActionAddAttachments />
+					</PromptInputActionMenuContent>
+				</PromptInputActionMenu> -->
+				<PromptInputButton>
+					<PlusIcon size={16} />
+				</PromptInputButton>
+				<PromptInputButton>
+					<HistoryIcon size={16} />
+				</PromptInputButton>
+			</PromptInputTools>
+			<PromptInputTools>
+				<PromptInputButton
+					onClick={() => (useMicrophone = !useMicrophone)}
+					variant={useMicrophone ? 'default' : 'ghost'}
 				>
-					<input
-						type="file"
-						multiple
-						onchange={handleFileChange}
-						class="hidden"
-						id="file-upload"
-						bind:this={uploadInputRef}
-					/>
-					<Paperclip class="size-5 text-primary" />
-				</label>
-			</PromptInputAction>
-		</PromptInputActions>
+					<MicIcon size={16} />
+					<span class="sr-only">Microphone</span>
+				</PromptInputButton> 
+				<PromptInputSubmit status={chat?.status}>
+					
+				</PromptInputSubmit>
+			</PromptInputTools>
+		</PromptInputToolbar>
 	</PromptInput>
 </div>
