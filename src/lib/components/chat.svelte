@@ -194,12 +194,12 @@
 		</PromptInputBody>
 		<PromptInputToolbar>
 			<PromptInputTools>
-				<!-- <PromptInputActionMenu>
+				<PromptInputActionMenu>
 					<PromptInputActionMenuTrigger />
 					<PromptInputActionMenuContent>
 						<PromptInputActionAddAttachments />
 					</PromptInputActionMenuContent>
-				</PromptInputActionMenu> -->
+				</PromptInputActionMenu>
 				<UnderlineTabs.Root>
 					<UnderlineTabs.List>
 						<UnderlineTabs.Trigger class="px-2" value={'attachments'}>
