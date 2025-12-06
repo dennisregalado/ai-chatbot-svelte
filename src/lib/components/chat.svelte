@@ -178,6 +178,7 @@
 				<Spinner />
 			{/if}
 		</ConversationContent>
+		<ConversationScrollButton />
 	</Conversation>
 	<PromptInput onSubmit={handleSubmit} globalDrop class="max-w-2xl mx-auto" multiple>
 		<PromptInputBody class="border-none">

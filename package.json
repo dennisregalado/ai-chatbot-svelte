@@ -24,7 +24,6 @@
 	},
 	"devDependencies": {
 		"@ai-sdk/svelte": "^3.0.107",
-		"@ai-sdk/xai": "^2.0.35",
 		"@eslint/compat": "^2.0.0",
 		"@eslint/js": "^9.39.1",
 		"@internationalized/date": "^3.8.1",

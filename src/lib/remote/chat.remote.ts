@@ -1,10 +1,7 @@
 import { command, getRequestEvent, query } from '$app/server';
 import { z } from 'zod';
-import * as db from '$server/db/queries';
-import { generateText } from 'ai';
-import { myProvider } from '$ai/providers';
+import * as db from '$server/db/queries'; 
 import { error, redirect } from '@sveltejs/kit';
-import { generateUUID } from '$lib/utils';
 
 export const getChatHistory = query(async () => {
 	const {
@@ -23,7 +20,7 @@ export const getChatHistory = query(async () => {
 });
 
 export const generateChatId = query(async () => {
-	return generateUUID();
+	return crypto.randomUUID();
 });
 
 export const getChatById = query(z.string(), async (id) => {
@@ -144,17 +141,17 @@ export const generateTitleFromUserMessage = query(
 		message: z.string()
 	}),
 	async ({ message }) => {
-		const { text: title } = await generateText({
-			model: myProvider.languageModel('title-model'),
-			system: `\n
-        - you will generate a short title based on the first message a user begins a conversation with
-        - ensure it is not more than 80 characters long
-        - the title should be a summary of the user's message
-        - do not use quotes or colons`,
-			prompt: JSON.stringify(message)
-		});
+		// const { text: title } = await generateText({
+		// 	model: myProvider.languageModel('title-model'),
+		// 	system: `\n
+		//         - you will generate a short title based on the first message a user begins a conversation with
+		//         - ensure it is not more than 80 characters long
+		//         - the title should be a summary of the user's message
+		//         - do not use quotes or colons`,
+		// 	prompt: JSON.stringify(message)
+		// });
 
-		return title;
+		// return title;
 	}
 );
 
