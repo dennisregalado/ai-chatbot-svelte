@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { LiveWaveform } from '$lib/components/ai-elements/live-waveform';
 	import { Button } from '$lib/components/ui/button';
-	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
+	import {
+		Card,
+		CardContent,
+		CardDescription,
+		CardHeader,
+		CardTitle
+	} from '$lib/components/ui/card';
 
 	let active = $state(false);
 	let processing = $state(false);
@@ -62,4 +68,3 @@
 		</div>
 	</CardContent>
 </Card>
-

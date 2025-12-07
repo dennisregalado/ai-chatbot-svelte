@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { cn } from "$lib/utils";
-	import { watch } from "runed";
-	import { Collapsible } from "$lib/components/ui/collapsible/index.js";
-	import { ReasoningContext, setReasoningContext } from "./reasoning-context.svelte";
+	import { cn } from '$lib/utils';
+	import { watch } from 'runed';
+	import { Collapsible } from '$lib/components/ui/collapsible/index.js';
+	import { ReasoningContext, setReasoningContext } from './reasoning-context.svelte';
 
 	interface Props {
 		class?: string;
@@ -11,11 +11,11 @@
 		defaultOpen?: boolean;
 		onOpenChange?: (open: boolean) => void;
 		duration?: number;
-		children?: import("svelte").Snippet;
+		children?: import('svelte').Snippet;
 	}
 
 	let {
-		class: className = "",
+		class: className = '',
 		isStreaming = false,
 		open = $bindable(),
 		defaultOpen = true,
@@ -32,7 +32,7 @@
 	let reasoningContext = new ReasoningContext({
 		isStreaming,
 		isOpen: open ?? defaultOpen,
-		duration: duration ?? 0,
+		duration: duration ?? 0
 	});
 
 	// Set up controllable state for open
@@ -112,7 +112,7 @@
 </script>
 
 <Collapsible
-	class={cn("not-prose mb-4", className)}
+	class={cn('not-prose mb-4', className)}
 	bind:open={isOpen}
 	onOpenChange={handleOpenChange}
 	{...props}

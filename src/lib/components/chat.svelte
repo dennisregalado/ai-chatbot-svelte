@@ -172,7 +172,9 @@
 						{/each}
 					</MessageContent>
 					{#if message.role === 'assistant'}
-						<UnderlineTabs.Root class="group-hover:opacity-100 opacity-0 transition-opacity ease-out duration-200">
+						<UnderlineTabs.Root
+							class="group-hover:opacity-100 opacity-0 transition-opacity ease-out duration-200"
+						>
 							<UnderlineTabs.List class="gap-1 h-7">
 								<UnderlineTabs.Trigger
 									class="p-0 size-7"

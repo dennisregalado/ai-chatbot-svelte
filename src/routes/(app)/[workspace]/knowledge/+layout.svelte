@@ -164,7 +164,6 @@
 			{:else}
 				<Sidebar.GroupContent>
 					<Sidebar.Menu>
-						
 						{#each data.tree as item, index (item.path)}
 							{@render Tree({ item, workspace: params.workspace })}
 						{/each}

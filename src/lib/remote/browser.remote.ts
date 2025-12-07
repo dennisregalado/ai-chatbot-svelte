@@ -1,26 +1,26 @@
-import { query } from "$app/server";
+import { query } from '$app/server';
 
 export const getBrowserTabs = query(async () => {
 	return [
 		{
 			pathname: '/knowledge',
-			label: 'Knowledge',
+			label: 'Knowledge'
 		},
 		{
 			pathname: '/chat',
-			label: 'Chat',
+			label: 'Chat'
 		},
-        {
-            pathname: '/people',
-            label: 'People',
-        },
-        {
-            pathname: '/agents',
-            label: 'Agents',
-        },
-        {
-            pathname: '/inboxes',
-            label: 'Inboxes',
-        },
+		{
+			pathname: '/people',
+			label: 'People'
+		},
+		{
+			pathname: '/agents',
+			label: 'Agents'
+		},
+		{
+			pathname: '/inboxes',
+			label: 'Inboxes'
+		}
 	];
 });

@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { cn } from "$lib/utils";
-	import { Button } from "$lib/components/ui/button/index.js";
-	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
-	import Paperclip from "@lucide/svelte/icons/paperclip";
-	import X from "@lucide/svelte/icons/x";
-	import type { HTMLAttributes } from "svelte/elements";
+	import { cn } from '$lib/utils';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import Paperclip from '@lucide/svelte/icons/paperclip';
+	import X from '@lucide/svelte/icons/x';
+	import type { HTMLAttributes } from 'svelte/elements';
 
 	// FileUIPart type from AI SDK
 	interface FileUIPart {
-		type: "file";
+		type: 'file';
 		filename?: string;
 		mediaType?: string;
 		url?: string;
@@ -22,10 +22,10 @@
 
 	let { data, class: className, onRemove, ...restProps }: Props = $props();
 
-	let filename = $derived(data.filename || "");
-	let mediaType = $derived(data.mediaType?.startsWith("image/") && data.url ? "image" : "file");
-	let isImage = $derived(mediaType === "image");
-	let attachmentLabel = $derived(filename || (isImage ? "Image" : "Attachment"));
+	let filename = $derived(data.filename || '');
+	let mediaType = $derived(data.mediaType?.startsWith('image/') && data.url ? 'image' : 'file');
+	let isImage = $derived(mediaType === 'image');
+	let attachmentLabel = $derived(filename || (isImage ? 'Image' : 'Attachment'));
 
 	function handleRemove(e: MouseEvent) {
 		e.stopPropagation();
@@ -33,10 +33,10 @@
 	}
 </script>
 
-<div class={cn("group relative size-24 overflow-hidden rounded-lg", className)} {...restProps}>
+<div class={cn('group relative size-24 overflow-hidden rounded-lg', className)} {...restProps}>
 	{#if isImage}
 		<img
-			alt={filename || "attachment"}
+			alt={filename || 'attachment'}
 			class="size-full object-cover"
 			height={100}
 			src={data.url}

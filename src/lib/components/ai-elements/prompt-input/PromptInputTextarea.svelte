@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { cn } from "$lib/utils";
-	import { Textarea } from "$lib/components/ui/textarea/index.js";
-	import { getAttachmentsContext } from "./attachments-context.svelte.js";
+	import { cn } from '$lib/utils';
+	import { Textarea } from '$lib/components/ui/textarea/index.js';
+	import { getAttachmentsContext } from './attachments-context.svelte.js';
 
 	interface Props {
 		class?: string;
@@ -12,8 +12,8 @@
 
 	let {
 		class: className,
-		placeholder = "Ask anything",
-		value = $bindable(""),
+		placeholder = 'Ask anything',
+		value = $bindable(''),
 		onchange,
 		...props
 	}: Props = $props();
@@ -21,7 +21,7 @@
 	let attachments = getAttachmentsContext();
 
 	let handleKeyDown = (e: KeyboardEvent) => {
-		if (e.key === "Enter") {
+		if (e.key === 'Enter') {
 			// Don't submit if IME composition is in progress
 			if (e.isComposing) {
 				return;
@@ -51,7 +51,7 @@
 		let files: File[] = [];
 
 		for (let item of items) {
-			if (item.kind === "file") {
+			if (item.kind === 'file') {
 				let file = item.getAsFile();
 				if (file) {
 					files.push(file);
@@ -68,10 +68,10 @@
 
 <Textarea
 	class={cn(
-		"w-full resize-none rounded-none border-none p-3 shadow-none ring-0 outline-none",
-		"field-sizing-content bg-transparent dark:bg-transparent",
-		"max-h-48 min-h-16",
-		"focus-visible:ring-0",
+		'w-full resize-none rounded-none border-none p-3 shadow-none ring-0 outline-none',
+		'field-sizing-content bg-transparent dark:bg-transparent',
+		'max-h-48 min-h-16',
+		'focus-visible:ring-0',
 		className
 	)}
 	onpaste={handlePaste}

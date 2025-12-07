@@ -1,4 +1,4 @@
-import type { HTMLImgAttributes } from "svelte/elements";
+import type { HTMLImgAttributes } from 'svelte/elements';
 
 export type Experimental_GeneratedImage = {
 	base64: string;

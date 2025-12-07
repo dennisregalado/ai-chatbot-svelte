@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { cn } from "$lib/utils";
-	import type { ImageProps } from "./types";
+	import { cn } from '$lib/utils';
+	import type { ImageProps } from './types';
 
 	let {
 		ref = $bindable(null),
@@ -16,7 +16,7 @@
 <img
 	bind:this={ref}
 	{alt}
-	class={cn("h-auto max-w-full overflow-hidden rounded-md", className)}
+	class={cn('h-auto max-w-full overflow-hidden rounded-md', className)}
 	src={`data:${mediaType};base64,${base64}`}
 	{...rest}
 />

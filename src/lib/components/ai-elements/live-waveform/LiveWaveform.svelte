@@ -474,7 +474,11 @@
 	class={cn('relative h-full w-full', className)}
 	bind:this={containerEl}
 	style:height={heightStyle}
-	aria-label={active ? 'Live audio waveform' : processing ? 'Processing audio' : 'Audio waveform idle'}
+	aria-label={active
+		? 'Live audio waveform'
+		: processing
+			? 'Processing audio'
+			: 'Audio waveform idle'}
 	role="img"
 	{...restProps}
 >
@@ -485,4 +489,3 @@
 	{/if}
 	<canvas class="block h-full w-full" bind:this={canvasEl} aria-hidden="true"></canvas>
 </div>
-

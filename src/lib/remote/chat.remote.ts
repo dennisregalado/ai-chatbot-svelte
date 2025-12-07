@@ -1,6 +1,6 @@
 import { command, getRequestEvent, query } from '$app/server';
 import { z } from 'zod';
-import * as db from '$server/db/queries'; 
+import * as db from '$server/db/queries';
 import { error, redirect } from '@sveltejs/kit';
 
 export const getChatHistory = query(async () => {
@@ -150,7 +150,6 @@ export const generateTitleFromUserMessage = query(
 		//         - do not use quotes or colons`,
 		// 	prompt: JSON.stringify(message)
 		// });
-
 		// return title;
 	}
 );

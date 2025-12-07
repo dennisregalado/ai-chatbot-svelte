@@ -11,8 +11,5 @@ export default defineConfig({
 		action: '$lib/actions',
 		util: '$lib/utils',
 		lib: '$lib'
-	},
+	}
 });
-
-
-

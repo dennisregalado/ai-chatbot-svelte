@@ -88,7 +88,10 @@ function createCacheKey(
 /**
  * Options for the Agent class
  */
-export type AgentOptions<State = unknown> = Omit<PartySocketOptions, 'party' | 'room' | 'query' | 'host'> & {
+export type AgentOptions<State = unknown> = Omit<
+	PartySocketOptions,
+	'party' | 'room' | 'query' | 'host'
+> & {
 	/** Name of the agent to connect to */
 	agent: string;
 	/** Host - defaults to window.location.host in browser */

@@ -81,7 +81,7 @@
 
 	function handleSubmit() {
 		if (text.trim() || files.length > 0) {
-		//	replaceState(page.params.workspace + '/chat/' + id, {});
+			//	replaceState(page.params.workspace + '/chat/' + id, {});
 			chat.sendMessage({
 				role: 'user',
 				parts: [
@@ -173,7 +173,7 @@
 					{/each}
 				</div>
 			{/each}
-			
+
 			{#if chat.status === 'submitted'}
 				<Spinner />
 			{/if}
