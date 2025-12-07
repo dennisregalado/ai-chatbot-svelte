@@ -54,7 +54,7 @@
 			out:send={{ key: `${state.rootState.opts.id.current}-tab-hover`, duration }}
 		></div>
 	{/if}
-	{#if state.rootState.opts.value.current === value}
+	{#if !state.rootState.opts.hoverOnly.current && state.rootState.opts.value.current === value}
 		<div
 			class="bg-accent absolute top-0 z-1 h-[calc(100%-2px)] w-full rounded-md"
 			in:receive={{ key: `${state.rootState.opts.id.current}-tab-active-border`, duration }}

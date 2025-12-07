@@ -274,6 +274,7 @@
 						{/each}
 					</MessageContent>
 					<UnderlineTabs.Root
+						hoverOnly
 						class={{
 							'opacity-0 transition-opacity ease-out duration-200': true,
 							'group-hover:opacity-100': !(
@@ -341,7 +342,7 @@
 			/>
 		</PromptInputBody>
 		<PromptInputToolbar>
-			<UnderlineTabs.Root>
+			<UnderlineTabs.Root hoverOnly>
 				<UnderlineTabs.List>
 					<UnderlineTabs.Trigger class="text-sm" value="attachments">
 						<PlusIcon />

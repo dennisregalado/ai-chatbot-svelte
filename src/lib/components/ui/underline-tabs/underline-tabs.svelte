@@ -10,16 +10,18 @@
 		ref = $bindable(null),
 		value = $bindable(''),
 		id = uid,
+		hoverOnly = false,
 		class: className,
 		...restProps
-	}: Omit<TabsPrimitive.RootProps, 'orientation' | 'id'> & { id?: string } = $props();
+	}: Omit<TabsPrimitive.RootProps, 'orientation' | 'id'> & { id?: string; hoverOnly?: boolean } = $props();
 
 	useUnderlineTabs({
 		value: box.with(
 			() => value,
 			(v) => (value = v)
 		),
-		id: box.with(() => id)
+		id: box.with(() => id),
+		hoverOnly: box.with(() => hoverOnly)
 	});
 </script>
 

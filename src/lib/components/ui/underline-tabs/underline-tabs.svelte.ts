@@ -12,6 +12,7 @@ type UnderlineTabsRootProps = WritableBoxedValues<{
 }> &
 	ReadableBoxedValues<{
 		id: string;
+		hoverOnly: boolean;
 	}>;
 
 class UnderlineTabsRootState {
