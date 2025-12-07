@@ -16,6 +16,13 @@
 	import * as UnderlineTabs from '$lib/components/ui/underline-tabs';
 	import { dayjs } from 'svelte-time';
 
+	type VoteType = 'upvote' | 'downvote';
+	type MessageVotes = {
+		userVote?: VoteType;
+		upvotes?: number;
+		downvotes?: number;
+	};
+
 	// Helper to format date separators like "Today", "Yesterday", "Monday", "Last Saturday"
 	function formatDateSeparator(date: Date | string): string {
 		const d = dayjs(date);
@@ -79,20 +86,25 @@
 	import { MessageAttachments, MessageAttachment } from '$lib/components/ai-elements/new-message';
 	import { Button } from '$components/ui/button';
 	import TrashIcon from '@lucide/svelte/icons/trash';
+	import type { UIMessage } from 'ai';
 
-	let { id = '', messages: initialMessages = [] } = $props();
+	type ChatMessage = UIMessage<{ createdAt: string }>;
+
+	let { id = '', messages: initialMessages = [] }: { id?: string; messages?: ChatMessage[] } =
+		$props();
 
 	// Connect to the chat agent
 	// Dev: Vite proxies /agents/* to Workers (see vite.config.ts)
 	// Prod: Uses window.location.host (deploy to same domain as Workers)
 	const agent = new Agent({
+		name: 'test-agent',
 		agent: 'chat'
 	});
 
 	// Use the AgentChat class with the agent connection
-	const chat = new AgentChat({
+	const chat = new AgentChat<unknown, ChatMessage>({
 		agent,
-		messages: untrack(() => initialMessages),
+		messages: untrack(() => initialMessages as ChatMessage[]),
 		onData: (dataPart) => {
 			console.log('onData', dataPart);
 		},
@@ -111,6 +123,9 @@
 	let useMicrophone = $state<boolean>(false);
 	let files = $state<File[]>([]);
 	let uploadInputRef: HTMLInputElement | undefined = $state();
+
+	// Votes state
+	let votes = $state<Record<string, MessageVotes>>({});
 
 	function handleSubmit() {
 		if (text.trim() || files.length > 0) {
@@ -136,7 +151,51 @@
 		}
 	}
 
-	$inspect(chat.messages);
+	// Handle voting using the agent RPC calls
+	async function handleVote(messageId: string, voteType: VoteType) {
+		if (!agent) return;
+
+		const currentVote = votes[messageId]?.userVote;
+
+		try {
+			// If clicking the same vote, remove it
+			if (currentVote === voteType) {
+				const result = (await agent.call('removeVote', [messageId])) as MessageVotes;
+				votes = {
+					...votes,
+					[messageId]: result
+				};
+			} else {
+				// Otherwise, set the new vote
+				const result = (await agent.call('vote', [messageId, voteType])) as MessageVotes;
+				votes = {
+					...votes,
+					[messageId]: result
+				};
+			}
+		} catch (error) {
+			console.error('Error voting:', error);
+		}
+	}
+
+	// Load initial votes when agent connects
+	$effect(() => {
+		if (agent && chat.messages.length > 0) {
+			agent
+				.call('getAllVotes', [])
+				.then((result) => {
+					if (result) {
+						console.log('result', result);
+						votes = result as Record<string, MessageVotes>;
+					}
+				})
+				.catch(() => {
+					// Agent may not be ready yet, that's ok
+				});
+		}
+	});
+
+	$inspect(chat);
 </script>
 
 <section class="flex h-full max-h-screen flex-col pb-5 relative">
@@ -216,13 +275,33 @@
 					</MessageContent>
 					<UnderlineTabs.Root
 						class={{
-							'group-hover:opacity-100 opacity-0 transition-opacity ease-out duration-200': true,
-							'opacity-0!': chat.status === 'streaming',
+							'opacity-0 transition-opacity ease-out duration-200': true,
+							'group-hover:opacity-100': !(
+								chat.status === 'streaming' && message.role === 'assistant'
+							),
 							'ml-auto': message.role === 'user'
 						}}
 					>
-						<UnderlineTabs.List class="gap-1 h-7">
+						<UnderlineTabs.List class="h-7">
 							{#if message.role === 'assistant'}
+								{@const messageVotes = votes[message.id]}
+
+								<UnderlineTabs.Trigger
+									class="p-0 size-7"
+									value="upvotes"
+									disabled={messageVotes?.userVote === 'upvote'}
+									onclick={() => handleVote(message.id, 'upvote')}
+								>
+									<ThumbsUp />
+								</UnderlineTabs.Trigger>
+								<UnderlineTabs.Trigger
+									class="p-0 size-7"
+									value="downvotes"
+									disabled={messageVotes?.userVote === 'downvote'}
+									onclick={() => handleVote(message.id, 'downvote')}
+								>
+									<ThumbsDown />
+								</UnderlineTabs.Trigger>
 								<UnderlineTabs.Trigger
 									class="p-0 size-7"
 									value="response"
@@ -233,15 +312,8 @@
 								>
 									<RefreshCcw />
 								</UnderlineTabs.Trigger>
-								<UnderlineTabs.Trigger class="p-0 size-7" value="upvotes">
-									<ThumbsUp />
-								</UnderlineTabs.Trigger>
-								<UnderlineTabs.Trigger class="p-0 size-7" value="downvotes">
-									<ThumbsDown />
-								</UnderlineTabs.Trigger>
 							{/if}
-							<CopyButton text={message.content} size="icon" variant="ghost" class="size-7"
-							></CopyButton>
+							<CopyButton text={message.content} size="icon" variant="ghost" class="size-7" />
 						</UnderlineTabs.List>
 					</UnderlineTabs.Root>
 				</Message>
@@ -263,20 +335,21 @@
 				{/snippet}
 			</PromptInputAttachments>
 			<PromptInputTextarea
+				placeholder="Ask anything..."
 				bind:value={text}
 				onchange={(e) => (text = (e.target as HTMLTextAreaElement).value)}
 			/>
 		</PromptInputBody>
 		<PromptInputToolbar>
 			<UnderlineTabs.Root>
-				<UnderlineTabs.List class="h-8">
-					<UnderlineTabs.Trigger class="p-0 size-8" value="attachments">
+				<UnderlineTabs.List>
+					<UnderlineTabs.Trigger class="text-sm" value="attachments">
 						<PlusIcon />
 					</UnderlineTabs.Trigger>
 					{#if !page.route?.id?.includes('welcome')}
 						<ChatHistory>
 							{#snippet children({ toggle })}
-								<UnderlineTabs.Trigger class="p-0 size-8" value="history" onclick={toggle}>
+								<UnderlineTabs.Trigger value="history" onclick={toggle}>
 									<HistoryIcon />
 								</UnderlineTabs.Trigger>
 							{/snippet}
@@ -285,8 +358,8 @@
 				</UnderlineTabs.List>
 			</UnderlineTabs.Root>
 			<UnderlineTabs.Root class="ml-auto pr-1.5">
-				<UnderlineTabs.List class="gap-1 h-8">
-					<UnderlineTabs.Trigger class="p-0 size-8 ml-auto" value="microphone">
+				<UnderlineTabs.List>
+					<UnderlineTabs.Trigger class="ml-auto" value="microphone">
 						<MicIcon />
 					</UnderlineTabs.Trigger>
 				</UnderlineTabs.List>

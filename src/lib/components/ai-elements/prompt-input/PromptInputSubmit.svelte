@@ -7,10 +7,11 @@
 	import SquareIcon from './SquareIcon.svelte';
 	import XIcon from './XIcon.svelte';
 	import CornerDownLeftIcon from '@lucide/svelte/icons/corner-down-left';
+	import { Chat } from '@ai-sdk/svelte';
 
 	interface Props extends ButtonProps {
 		class?: string;
-		status?: ChatStatus;
+		status?: Chat['status'];
 		children?: import('svelte').Snippet;
 	}
 
