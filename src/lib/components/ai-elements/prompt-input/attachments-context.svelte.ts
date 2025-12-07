@@ -142,8 +142,10 @@ export class PromptInputController {
 	}
 }
 
-const ATTACHMENTS_CONTEXT_KEY = Symbol("attachments");
-const PROVIDER_CONTEXT_KEY = Symbol("prompt-input-provider");
+// Using string keys instead of Symbols to survive HMR (Vite hot module reloading)
+// Symbols get recreated on each HMR update, breaking context lookup
+const ATTACHMENTS_CONTEXT_KEY = "prompt-input-attachments";
+const PROVIDER_CONTEXT_KEY = "prompt-input-provider";
 
 export function setAttachmentsContext(context: AttachmentsContext) {
 	setContext(ATTACHMENTS_CONTEXT_KEY, context);

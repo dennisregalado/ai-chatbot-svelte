@@ -1,126 +1,121 @@
 <script lang="ts">
-	import { cn } from '$lib/utils.js';
-	import { Collapsible } from '$lib/components/ui/collapsible';
-	import type { HTMLAttributes } from 'svelte/elements';
-	import type { Snippet } from 'svelte';
-	import { setContext } from 'svelte';
-
-	// Types
-	interface ReasoningContextValue {
-		isStreaming: boolean;
-		isOpen: boolean;
-		setIsOpen: (open: boolean) => void;
-		duration: number;
-	}
+	import { cn } from "$lib/utils";
+	import { watch } from "runed";
+	import { Collapsible } from "$lib/components/ui/collapsible/index.js";
+	import { ReasoningContext, setReasoningContext } from "./reasoning-context.svelte";
 
 	interface Props {
-		isStreaming?: boolean; // Match React version naming
+		class?: string;
+		isStreaming?: boolean;
 		open?: boolean;
 		defaultOpen?: boolean;
 		onOpenChange?: (open: boolean) => void;
 		duration?: number;
-		children?: Snippet;
-		class?: string;
-		// Allow other HTML attributes but exclude those that conflict with Collapsible
-		[key: string]: any;
+		children?: import("svelte").Snippet;
 	}
 
-	// Constants
-	const AUTO_CLOSE_DELAY = 1000;
-	const MS_IN_S = 1000;
-	const REASONING_CONTEXT_KEY = 'reasoning';
-
-	// Props with bindable
 	let {
-		class: className,
+		class: className = "",
 		isStreaming = false,
-		open = $bindable<boolean>(),
-		defaultOpen = false,
+		open = $bindable(),
+		defaultOpen = true,
 		onOpenChange,
-		duration: durationProp = $bindable<number>(),
+		duration = $bindable(),
 		children,
-		// Extract HTML attributes, excluding Collapsible-specific props
-		id,
-		style,
-		...restProps
+		...props
 	}: Props = $props();
 
-	// State
-	let duration = $state(durationProp ?? 0);
+	let AUTO_CLOSE_DELAY = 1000;
+	let MS_IN_S = 1000;
+
+	// Create the reasoning context
+	let reasoningContext = new ReasoningContext({
+		isStreaming,
+		isOpen: open ?? defaultOpen,
+		duration: duration ?? 0,
+	});
+
+	// Set up controllable state for open
 	let isOpen = $state(open ?? defaultOpen);
-	let hasAutoClosedRef = $state(false);
+	let currentDuration = $state(duration ?? 0);
+	let hasAutoClosed = $state(false);
 	let startTime = $state<number | null>(null);
 
-	// Keep internal state in sync with controlled props (if provided)
+	// Sync external props to context and local state
 	$effect(() => {
-		if (open !== undefined && isOpen !== open) {
+		reasoningContext.isStreaming = isStreaming;
+	});
+
+	$effect(() => {
+		if (open !== undefined) {
 			isOpen = open;
-		}
-		if (durationProp !== undefined && duration !== durationProp) {
-			duration = durationProp;
+			reasoningContext.isOpen = open;
 		}
 	});
 
-	// Functions
-	const setIsOpen = (newOpen: boolean) => {
+	$effect(() => {
+		if (duration !== undefined) {
+			currentDuration = duration;
+			reasoningContext.duration = duration;
+		}
+	});
+
+	// Track duration when streaming starts and ends
+	watch(
+		() => isStreaming,
+		(isStreamingValue) => {
+			if (isStreamingValue) {
+				if (startTime === null) {
+					startTime = Date.now();
+				}
+			} else if (startTime !== null) {
+				let newDuration = Math.ceil((Date.now() - startTime) / MS_IN_S);
+				currentDuration = newDuration;
+				reasoningContext.duration = newDuration;
+				if (duration !== undefined) {
+					duration = newDuration;
+				}
+				startTime = null;
+			}
+		}
+	);
+
+	// Auto-open when streaming starts, auto-close when streaming ends (once only)
+	watch(
+		() => [isStreaming, isOpen, defaultOpen, hasAutoClosed] as const,
+		([isStreamingValue, isOpenValue, defaultOpenValue, hasAutoClosedValue]) => {
+			if (defaultOpenValue && !isStreamingValue && isOpenValue && !hasAutoClosedValue) {
+				// Add a small delay before closing to allow user to see the content
+				let timer = setTimeout(() => {
+					handleOpenChange(false);
+					hasAutoClosed = true;
+				}, AUTO_CLOSE_DELAY);
+
+				return () => clearTimeout(timer);
+			}
+		}
+	);
+
+	let handleOpenChange = (newOpen: boolean) => {
+		isOpen = newOpen;
+		reasoningContext.setIsOpen(newOpen);
+
 		if (open !== undefined) {
 			open = newOpen;
-		} else {
-			isOpen = newOpen;
 		}
+
 		onOpenChange?.(newOpen);
 	};
 
-	const setDuration = (newDuration: number) => {
-		if (durationProp !== undefined) {
-			durationProp = newDuration;
-		} else {
-			duration = newDuration;
-		}
-	};
-
-	// Effects for duration tracking
-	$effect(() => {
-		if (isStreaming) {
-			if (startTime === null) {
-				startTime = Date.now();
-			}
-		} else if (startTime !== null) {
-			const calculatedDuration = Math.ceil((Date.now() - startTime) / MS_IN_S);
-			setDuration(calculatedDuration);
-			startTime = null;
-		}
-	});
-
-	// Auto-open when streaming starts
-	// Auto-close effect
-	$effect(() => {
-		if (defaultOpen && !isStreaming && isOpen && !hasAutoClosedRef) {
-			const timer = setTimeout(() => {
-				setIsOpen(false);
-				hasAutoClosedRef = true;
-			}, AUTO_CLOSE_DELAY);
-
-			return () => clearTimeout(timer);
-		}
-	});
-
-	// Fire onOpenChange when internal open state changes (mirror React onChange)
-	$effect(() => {
-		onOpenChange?.(isOpen);
-	});
-
-	// Create reactive context using derived
-	const contextValue = $derived({
-		isStreaming,
-		isOpen,
-		setIsOpen,
-		duration
-	});
-
-	setContext(REASONING_CONTEXT_KEY, () => contextValue);
+	// Set the context for child components
+	setReasoningContext(reasoningContext);
 </script>
 
-<Collapsible class={cn('not-prose mb-4', className)} bind:open={isOpen} {id} {style} {...restProps}>
+<Collapsible
+	class={cn("not-prose mb-4", className)}
+	bind:open={isOpen}
+	onOpenChange={handleOpenChange}
+	{...props}
+>
 	{@render children?.()}
 </Collapsible>

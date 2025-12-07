@@ -1,19 +1,22 @@
 <script lang="ts">
-	import { cn } from '$lib/utils';
-	import type { Experimental_GeneratedImage } from 'ai';
-	import type { ClassValue } from 'svelte/elements';
+	import { cn } from "$lib/utils";
+	import type { ImageProps } from "./types";
 
-	export interface ImageProps extends Experimental_GeneratedImage {
-		className?: ClassValue;
-		alt?: string;
-	}
-
-	let { base64, uint8Array, mediaType, className, alt, ...restProps }: ImageProps = $props();
+	let {
+		ref = $bindable(null),
+		base64,
+		uint8Array,
+		mediaType,
+		alt,
+		class: className,
+		...rest
+	}: ImageProps = $props();
 </script>
 
 <img
-	{...restProps}
+	bind:this={ref}
 	{alt}
-	class={cn('h-auto max-w-full overflow-hidden rounded-md', className)}
-	src="data:{mediaType};base64,{base64}"
+	class={cn("h-auto max-w-full overflow-hidden rounded-md", className)}
+	src={`data:${mediaType};base64,${base64}`}
+	{...rest}
 />

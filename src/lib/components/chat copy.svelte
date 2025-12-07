@@ -5,13 +5,22 @@
 		Conversation,
 		ConversationContent,
 		ConversationScrollButton
-	} from '$lib/components/ai-elements/conversation/index.js';
+	} from '$lib/components/ai-elements/conversation';
+	import { Message, MessageContent } from '$lib/components/ai-elements/message';
 	import { Response } from '$lib/components/ai-elements/response';
+	import { Actions, Action } from '$lib/components/ai-elements/actions';
+	import {
+		Sources,
+		SourcesTrigger,
+		SourcesContent,
+		Source
+	} from '$lib/components/ai-elements/source';
 	import {
 		Reasoning,
 		ReasoningTrigger,
 		ReasoningContent
 	} from '$lib/components/ai-elements/reasoning';
+	import RefreshCcwIcon from '@lucide/svelte/icons/refresh-cw';
 	import { untrack } from 'svelte';
 	import MicIcon from '@lucide/svelte/icons/mic';
 	import { CopyButton } from '$lib/components/ui/copy-button';
@@ -37,20 +46,6 @@
 	import { replaceState } from '$app/navigation';
 	import { page } from '$app/state';
 	import Spinner from './ui/spinner/spinner.svelte';
-	import {
-		Message,
-		MessageContent,
-		MessageResponse,
-		MessageActions,
-		MessageAction,
-		MessageToolbar
-	} from '$lib/components/ai-elements/new-message';
-	import Copy from '@lucide/svelte/icons/copy';
-	import RefreshCcw from '@lucide/svelte/icons/refresh-ccw';
-	import ThumbsUp from '@lucide/svelte/icons/thumbs-up';
-	import ThumbsDown from '@lucide/svelte/icons/thumbs-down';
-	import Check from '@lucide/svelte/icons/check';
-	import { MessageAttachments, MessageAttachment } from '$lib/components/ai-elements/new-message';
 
 	let { id = '', messages: initialMessages = [] } = $props();
 
@@ -86,7 +81,7 @@
 
 	function handleSubmit() {
 		if (text.trim() || files.length > 0) {
-			//	replaceState(page.params.workspace + '/chat/' + id, {});
+		//	replaceState(page.params.workspace + '/chat/' + id, {});
 			chat.sendMessage({
 				role: 'user',
 				parts: [
@@ -109,112 +104,84 @@
 	}
 </script>
 
-<div class="flex h-full max-h-screen flex-col pb-9 relative">
+<div class="flex h-full max-h-screen flex-col pb-10 relative">
 	<Conversation class="h-full max-h-full">
 		<ConversationContent>
 			{#each chat.messages as message, messageIndex (message.id)}
-				<Message
-					from={message.role}
-					class={{
-						'mx-auto max-w-(--breakpoint-sm) py-1.5 group': true,
-						'pb-20 min-h-[max(200px,30cqh)]': messageIndex === chat.messages.length - 1
-					}}
-				>
-					{#if message.role === 'user' && message.parts.filter((part) => part.type === 'file').length > 0}
-						<MessageAttachments>
-							<MessageAttachment
-								data={{
-									type: 'file',
-									url: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&h=400&fit=crop',
-									mediaType: 'image/jpeg',
-									filename: 'svelte-5-runes-demo.jpg'
-								}}
+				<div class="mx-auto max-w-(--breakpoint-sm)">
+					{#if message.role === 'assistant' && message.parts.filter((part) => part.type === 'source-url').length > 0}
+						<Sources>
+							<SourcesTrigger
+								count={message.parts.filter((part) => part.type === 'source-url').length}
 							/>
-							<MessageAttachment
-								data={{
-									type: 'file',
-									url: '',
-									mediaType: 'application/pdf',
-									filename: 'component-architecture.pdf'
-								}}
-							/>
-							<MessageAttachment
-								data={{
-									type: 'file',
-									url: '',
-									mediaType: 'text/plain',
-									filename: 'notes.txt'
-								}}
-							/>
-						</MessageAttachments>
+							{#each message.parts.filter((part) => part.type === 'source-url') as part, i}
+								<SourcesContent>
+									<Source
+										href={(part as { url: string }).url}
+										title={(part as { url: string }).url}
+									/>
+								</SourcesContent>
+							{/each}
+						</Sources>
 					{/if}
-					<MessageContent class="peer ">
-						{#each message.parts as part, i (i)}
+
+					{#each message.parts as part, i}
+						{#key `${message.id}-${i}`}
 							{#if part.type === 'text'}
-								<MessageResponse
-									animation={{
-										enabled: true,
-										type: 'fade'
-									}}
-									content={part.text}
-								/>
+								{@const textContent = (part as { text: string }).text}
+								<Message from={message.role} class="group">
+									<MessageContent>
+										<Response content={textContent} />
+									</MessageContent>
+									{#if message.role === 'assistant' && i === message.parts.length - 1}
+										<Actions
+											class={{
+												'opacity-0 transition-opacity': true,
+												'group-hover:opacity-100':
+													// is last message and streaming
+													message.id === chat.messages[chat.messages.length - 1]?.id
+														? chat.status !== 'streaming'
+														: true
+											}}
+										>
+											<Action
+												onclick={() => {
+													const previousMessage = chat.messages[messageIndex];
+
+													chat.regenerate();
+												}}
+												label="Retry"
+											>
+												<RefreshCcwIcon class="size-3" />
+											</Action>
+											<CopyButton text={textContent} />
+										</Actions>
+									{/if}
+								</Message>
 							{:else if part.type === 'reasoning'}
+								{@const reasoningText = (part as { text: string }).text}
 								<Reasoning
-									class="w-full"
 									isStreaming={chat.status === 'streaming' &&
 										i === message.parts.length - 1 &&
-										message.id === chat.messages.at(-1)?.id}
+										message.id === chat.messages[chat.messages.length - 1]?.id}
 								>
 									<ReasoningTrigger />
-									<ReasoningContent>{part.text}</ReasoningContent>
+									<ReasoningContent class="" content={reasoningText} />
 								</Reasoning>
 							{/if}
-						{/each}
-					</MessageContent>
-					{#if message.role === 'assistant'}
-						<UnderlineTabs.Root class="group-hover:opacity-100 opacity-0 transition-opacity ease-out duration-200">
-							<UnderlineTabs.List class="gap-1 h-7">
-								<UnderlineTabs.Trigger
-									class="p-0 size-7"
-									value="response"
-									onclick={() =>
-										chat.regenerate({
-											messageId: message.id
-										})}
-								>
-									<RefreshCcw />
-								</UnderlineTabs.Trigger>
-								<UnderlineTabs.Trigger class="p-0 size-7" value="upvotes">
-									<ThumbsUp />
-								</UnderlineTabs.Trigger>
-								<UnderlineTabs.Trigger class="p-0 size-7" value="downvotes">
-									<ThumbsDown />
-								</UnderlineTabs.Trigger>
-								<UnderlineTabs.Trigger
-									class="p-0 size-7"
-									value="copy"
-									onclick={() => {
-										navigator.clipboard.writeText(message.content || '');
-									}}
-								>
-									<Copy />
-								</UnderlineTabs.Trigger>
-							</UnderlineTabs.List>
-						</UnderlineTabs.Root>
-					{/if}
-				</Message>
-			{/each}
-
-			{#if chat.status === 'submitted'}
-				<div class="mx-auto max-w-(--breakpoint-sm)">
-					<Spinner />
+						{/key}
+					{/each}
 				</div>
+			{/each}
+			
+			{#if chat.status === 'submitted'}
+				<Spinner />
 			{/if}
 		</ConversationContent>
 		<ConversationScrollButton />
 	</Conversation>
-	<PromptInput onSubmit={handleSubmit} class="max-w-2xl mx-auto" globalDrop multiple>
-		<PromptInputBody>
+	<PromptInput onSubmit={handleSubmit} globalDrop class="max-w-2xl mx-auto" multiple>
+		<PromptInputBody class="border-none">
 			<PromptInputAttachments>
 				{#snippet children(attachment)}
 					<PromptInputAttachment data={attachment} />
@@ -227,6 +194,24 @@
 		</PromptInputBody>
 		<PromptInputToolbar>
 			<PromptInputTools>
+				<PromptInputActionMenu>
+					<PromptInputActionMenuTrigger />
+					<PromptInputActionMenuContent>
+						<PromptInputActionAddAttachments />
+					</PromptInputActionMenuContent>
+				</PromptInputActionMenu>
+				<UnderlineTabs.Root>
+					<UnderlineTabs.List>
+						<UnderlineTabs.Trigger class="px-2" value={'attachments'}>
+							<PlusIcon />
+						</UnderlineTabs.Trigger>
+						<UnderlineTabs.Trigger class="px-2" value={'history'}>
+							<HistoryIcon />
+						</UnderlineTabs.Trigger>
+					</UnderlineTabs.List>
+				</UnderlineTabs.Root>
+			</PromptInputTools>
+			<PromptInputTools>
 				<PromptInputButton
 					onclick={() => (useMicrophone = !useMicrophone)}
 					variant={useMicrophone ? 'default' : 'ghost'}
@@ -234,8 +219,8 @@
 					<MicIcon size={16} />
 					<span class="sr-only">Microphone</span>
 				</PromptInputButton>
+				<PromptInputSubmit status={chat?.status}></PromptInputSubmit>
 			</PromptInputTools>
-			<PromptInputSubmit status={chat.status} />
 		</PromptInputToolbar>
 	</PromptInput>
 </div>

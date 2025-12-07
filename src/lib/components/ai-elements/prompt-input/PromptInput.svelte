@@ -51,6 +51,9 @@
 		onError
 	);
 
+	// Set context immediately after creating it so child components can access it
+	setAttachmentsContext(attachmentsContext);
+
 	// Find nearest form to scope drag & drop
 	onMount(() => {
 		let root = anchorRef?.closest("form");
@@ -191,8 +194,6 @@
 			console.error("Submit failed:", error);
 		}
 	};
-
-	setAttachmentsContext(attachmentsContext);
 </script>
 
 <span aria-hidden="true" class="hidden" bind:this={anchorRef}></span>

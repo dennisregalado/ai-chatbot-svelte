@@ -1,1 +1,4 @@
-export { default as Image } from './image.svelte';
+import Image from "./Image.svelte";
+
+export { Image };
+export type { ImageProps } from "./types";

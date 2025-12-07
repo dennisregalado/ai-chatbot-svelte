@@ -1,7 +1,1 @@
-import Root from './response.svelte';
-
-export {
-	Root,
-	//
-	Root as Response
-};
+export { default as Response } from "./Response.svelte";

@@ -1,24 +1,19 @@
 <script lang="ts">
-	import { cn } from '$lib/utils.js';
-	import type { HTMLAttributes } from 'svelte/elements';
-	import type { Snippet } from 'svelte';
-	import { Streamdown } from 'svelte-streamdown';
+	import { Streamdown, type StreamdownProps } from "svelte-streamdown";
+	import { cn } from "$lib/utils";
+	import { mode } from "mode-watcher";
 
-	interface Props extends HTMLAttributes<HTMLDivElement> {
-		children?: Snippet;
+	type Props = StreamdownProps & {
 		class?: string;
-		content: string;
-	}
+	};
 
-	let { class: className, children, content, ...restProps }: Props = $props();
+	let { class: className, ...restProps }: Props = $props();
 </script>
 
-<div
-	class={cn(
-		'size-full [&_code]:break-words [&_code]:whitespace-pre-wrap [&_pre]:max-w-full [&_pre]:overflow-x-auto [&>*:first-child]:mt-0 [&>*:last-child]:mb-0',
-		className
-	)}
+<Streamdown
+	class={cn("size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0", className)}
+	shikiTheme={mode.current === "dark" ? "github-dark-default" : "github-light-default"}
+	shikiPreloadThemes={["github-dark-default", "github-light-default"]}
+	baseTheme="shadcn"
 	{...restProps}
->
-	<Streamdown {content} animation={{ enabled: true, type: 'fade' }} />
-</div>
+/>
