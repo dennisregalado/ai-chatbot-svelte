@@ -6,7 +6,6 @@
 		ConversationContent,
 		ConversationScrollButton
 	} from '$lib/components/ai-elements/conversation/index.js';
-	import { Response } from '$lib/components/ai-elements/response';
 	import {
 		Reasoning,
 		ReasoningTrigger,
@@ -14,7 +13,6 @@
 	} from '$lib/components/ai-elements/reasoning';
 	import { untrack } from 'svelte';
 	import MicIcon from '@lucide/svelte/icons/mic';
-	import { CopyButton } from '$lib/components/ui/copy-button';
 	import * as UnderlineTabs from '$lib/components/ui/underline-tabs';
 
 	import {
@@ -228,15 +226,23 @@
 			/>
 		</PromptInputBody>
 		<PromptInputToolbar>
-			<PromptInputTools>
-				<PromptInputButton
-					onclick={() => (useMicrophone = !useMicrophone)}
-					variant={useMicrophone ? 'default' : 'ghost'}
-				>
-					<MicIcon size={16} />
-					<span class="sr-only">Microphone</span>
-				</PromptInputButton>
-			</PromptInputTools>
+			<UnderlineTabs.Root>
+				<UnderlineTabs.List class="gap-1 h-8">
+					<UnderlineTabs.Trigger class="p-0 size-8" value="attachments">
+						<PlusIcon />
+					</UnderlineTabs.Trigger>
+					<UnderlineTabs.Trigger class="p-0 size-8" value="history">
+						<HistoryIcon />
+					</UnderlineTabs.Trigger>
+				</UnderlineTabs.List>
+			</UnderlineTabs.Root>
+			<UnderlineTabs.Root class="ml-auto pr-1.5">
+				<UnderlineTabs.List class="gap-1 h-8">
+					<UnderlineTabs.Trigger class="p-0 size-8 ml-auto" value="microphone">
+						<MicIcon />
+					</UnderlineTabs.Trigger>
+				</UnderlineTabs.List>
+			</UnderlineTabs.Root>
 			<PromptInputSubmit status={chat.status} />
 		</PromptInputToolbar>
 	</PromptInput>
