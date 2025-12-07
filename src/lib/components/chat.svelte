@@ -14,6 +14,33 @@
 	import { untrack } from 'svelte';
 	import MicIcon from '@lucide/svelte/icons/mic';
 	import * as UnderlineTabs from '$lib/components/ui/underline-tabs';
+	import { dayjs } from 'svelte-time';
+
+	// Helper to format date separators like "Today", "Yesterday", "Monday", "Last Saturday"
+	function formatDateSeparator(date: Date | string): string {
+		const d = dayjs(date);
+		const now = dayjs();
+		const diffDays = now.startOf('day').diff(d.startOf('day'), 'day');
+
+		if (diffDays === 0) return 'Today';
+		if (diffDays === 1) return 'Yesterday';
+		if (diffDays < 7) return d.format('dddd'); // "Monday", "Tuesday", etc.
+		if (diffDays < 14) return `Last ${d.format('dddd')}`; // "Last Saturday"
+		return d.format('MMMM D, YYYY'); // "December 6, 2025"
+	}
+
+	// Check if we should show a date separator between messages
+	function shouldShowDateSeparator(
+		currentMessage: { createdAt?: Date | string },
+		previousMessage?: { createdAt?: Date | string }
+	): boolean {
+		if (!previousMessage) return true;
+		if (!currentMessage.createdAt || !previousMessage.createdAt) return false;
+
+		const current = dayjs(currentMessage.createdAt).startOf('day');
+		const previous = dayjs(previousMessage.createdAt).startOf('day');
+		return !current.isSame(previous);
+	}
 
 	import {
 		PromptInput,
@@ -44,8 +71,8 @@
 		MessageAction,
 		MessageToolbar
 	} from '$lib/components/ai-elements/new-message';
-	import Copy from '@lucide/svelte/icons/copy';
 	import RefreshCcw from '@lucide/svelte/icons/refresh-ccw';
+	import CopyButton from '$lib/components/ui/copy-button/copy-button.svelte';
 	import ThumbsUp from '@lucide/svelte/icons/thumbs-up';
 	import ThumbsDown from '@lucide/svelte/icons/thumbs-down';
 	import Check from '@lucide/svelte/icons/check';
@@ -108,12 +135,27 @@
 			}
 		}
 	}
+
+	$inspect(chat.messages);
 </script>
 
 <section class="flex h-full max-h-screen flex-col pb-5 relative">
 	<Conversation class="h-full max-h-full">
 		<ConversationContent>
 			{#each chat.messages as message, messageIndex (message.id)}
+				{@const previousMessage = chat.messages[messageIndex - 1]}
+				{@const showSeparator = shouldShowDateSeparator(message, previousMessage)}
+
+				{#if showSeparator && message.createdAt}
+					<div class="mx-auto max-w-(--breakpoint-sm) flex items-center gap-4 py-4">
+						<div class="h-px flex-1 bg-border"></div>
+						<span class="text-sm text-muted-foreground font-medium">
+							{formatDateSeparator(message.createdAt)}
+						</span>
+						<div class="h-px flex-1 bg-border"></div>
+					</div>
+				{/if}
+
 				<Message
 					from={message.role}
 					class={{
@@ -172,14 +214,15 @@
 							{/if}
 						{/each}
 					</MessageContent>
-					{#if message.role === 'assistant'}
-						<UnderlineTabs.Root
-							class={{
-								'group-hover:opacity-100 opacity-0 transition-opacity ease-out duration-200': true,
-								'opacity-0!': chat.status === 'streaming'
-							}}
-						>
-							<UnderlineTabs.List class="gap-1 h-7">
+					<UnderlineTabs.Root
+						class={{
+							'group-hover:opacity-100 opacity-0 transition-opacity ease-out duration-200': true,
+							'opacity-0!': chat.status === 'streaming',
+							'ml-auto': message.role === 'user'
+						}}
+					>
+						<UnderlineTabs.List class="gap-1 h-7">
+							{#if message.role === 'assistant'}
 								<UnderlineTabs.Trigger
 									class="p-0 size-7"
 									value="response"
@@ -196,26 +239,19 @@
 								<UnderlineTabs.Trigger class="p-0 size-7" value="downvotes">
 									<ThumbsDown />
 								</UnderlineTabs.Trigger>
-								<UnderlineTabs.Trigger
-									class="p-0 size-7"
-									value="copy"
-									onclick={() => {
-										navigator.clipboard.writeText(message.content || '');
-									}}
-								>
-									<Copy />
-								</UnderlineTabs.Trigger>
-							</UnderlineTabs.List>
-						</UnderlineTabs.Root>
-					{/if}
+							{/if}
+							<CopyButton text={message.content} size="icon" variant="ghost" class="size-7"
+							></CopyButton>
+						</UnderlineTabs.List>
+					</UnderlineTabs.Root>
 				</Message>
 			{/each}
 
-			{#if chat.status === 'submitted'}
+			<!-- {#if chat.status === 'submitted'}
 				<div class="mx-auto max-w-(--breakpoint-sm)">
 					<Spinner />
 				</div>
-			{/if}
+			{/if} -->
 		</ConversationContent>
 		<ConversationScrollButton />
 	</Conversation>

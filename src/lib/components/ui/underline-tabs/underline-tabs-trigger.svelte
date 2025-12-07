@@ -16,6 +16,7 @@
 		...restProps
 	}: TabsPrimitive.TriggerProps = $props();
 
+
 	const state = useUnderlineTabsTrigger({
 		value: box.with(() => value),
 		onmouseenter: box.with(() => onmouseenter),

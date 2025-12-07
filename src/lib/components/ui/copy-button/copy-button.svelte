@@ -7,6 +7,7 @@
 	import XIcon from '@lucide/svelte/icons/x';
 	import { scale } from 'svelte/transition';
 	import type { CopyButtonProps } from './types';
+	import * as UnderlineTabs from '$lib/components/ui/underline-tabs';
 
 	let {
 		ref = $bindable(null),
@@ -30,21 +31,19 @@
 	const clipboard = new UseClipboard();
 </script>
 
-<Button
-	{...rest}
-	bind:ref
-	{variant}
-	{size}
-	{tabindex}
-	class={cn('flex items-center gap-2 size-8', className)}
-	type="button"
-	name="copy"
+<UnderlineTabs.Trigger
+	class="p-0 size-7"
+	value="copy"
 	onclick={async () => {
 		const status = await clipboard.copy(text);
 
 		onCopy?.(status);
 	}}
 >
+	{@render contents()}
+</UnderlineTabs.Trigger>
+
+{#snippet contents()}
 	{#if clipboard.status === 'success'}
 		<div in:scale={{ duration: animationDuration, start: 0.85 }}>
 			<CheckIcon size={8} tabindex={-1} />
@@ -65,5 +64,4 @@
 			<span class="sr-only">Copy</span>
 		</div>
 	{/if}
-	{@render children?.()}
-</Button>
+{/snippet}
