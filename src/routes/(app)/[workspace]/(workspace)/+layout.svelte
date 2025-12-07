@@ -13,6 +13,7 @@
 	import { page } from '$app/state';
 	import UsersIcon from '@lucide/svelte/icons/users';
 	import HomeIcon from '@lucide/svelte/icons/home';
+	import { PromptInputProvider } from '$components/ai-elements/prompt-input';
 	let { children } = $props();
 
 	const isMobile = new IsMobile();
@@ -69,5 +70,7 @@
 	<Sidebar.Rail />
 </Sidebar.Root>
 <Sidebar.Inset>
-	{@render children()}
+	<PromptInputProvider>
+		{@render children()}
+	</PromptInputProvider>
 </Sidebar.Inset>

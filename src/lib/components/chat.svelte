@@ -32,7 +32,8 @@
 	} from '$lib/components/ai-elements/prompt-input';
 	import { PlusIcon } from '@lucide/svelte';
 	import HistoryIcon from '@lucide/svelte/icons/history';
-	import { replaceState } from '$app/navigation';
+	import ChatHistory from './chat-history.svelte';
+	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/state';
 	import Spinner from './ui/spinner/spinner.svelte';
 	import {
@@ -49,6 +50,8 @@
 	import ThumbsDown from '@lucide/svelte/icons/thumbs-down';
 	import Check from '@lucide/svelte/icons/check';
 	import { MessageAttachments, MessageAttachment } from '$lib/components/ai-elements/new-message';
+	import { Button } from '$components/ui/button';
+	import TrashIcon from '@lucide/svelte/icons/trash';
 
 	let { id = '', messages: initialMessages = [] } = $props();
 
@@ -107,7 +110,7 @@
 	}
 </script>
 
-<div class="flex h-full max-h-screen flex-col pb-9 relative">
+<section class="flex h-full max-h-screen flex-col pb-5 relative">
 	<Conversation class="h-full max-h-full">
 		<ConversationContent>
 			{#each chat.messages as message, messageIndex (message.id)}
@@ -171,7 +174,10 @@
 					</MessageContent>
 					{#if message.role === 'assistant'}
 						<UnderlineTabs.Root
-							class="group-hover:opacity-100 opacity-0 transition-opacity ease-out duration-200"
+							class={{
+								'group-hover:opacity-100 opacity-0 transition-opacity ease-out duration-200': true,
+								'opacity-0!': chat.status === 'streaming'
+							}}
 						>
 							<UnderlineTabs.List class="gap-1 h-7">
 								<UnderlineTabs.Trigger
@@ -227,13 +233,19 @@
 		</PromptInputBody>
 		<PromptInputToolbar>
 			<UnderlineTabs.Root>
-				<UnderlineTabs.List class="gap-1 h-8">
+				<UnderlineTabs.List class="h-8">
 					<UnderlineTabs.Trigger class="p-0 size-8" value="attachments">
 						<PlusIcon />
 					</UnderlineTabs.Trigger>
-					<UnderlineTabs.Trigger class="p-0 size-8" value="history">
-						<HistoryIcon />
-					</UnderlineTabs.Trigger>
+					{#if !page.route?.id?.includes('welcome')}
+						<ChatHistory>
+							{#snippet children({ toggle })}
+								<UnderlineTabs.Trigger class="p-0 size-8" value="history" onclick={toggle}>
+									<HistoryIcon />
+								</UnderlineTabs.Trigger>
+							{/snippet}
+						</ChatHistory>
+					{/if}
 				</UnderlineTabs.List>
 			</UnderlineTabs.Root>
 			<UnderlineTabs.Root class="ml-auto pr-1.5">
@@ -246,4 +258,18 @@
 			<PromptInputSubmit status={chat.status} />
 		</PromptInputToolbar>
 	</PromptInput>
-</div>
+	<header class="absolute top-0 left-0 right-0 p-2.5 w-full flex items-center justify-between">
+		<div class="flex items-center gap-2 ml-auto">
+			<Button
+				variant="ghost"
+				size="sm"
+				onclick={() => {
+					chat.clearHistory();
+				}}
+			>
+				<PlusIcon />
+				New Chat
+			</Button>
+		</div>
+	</header>
+</section>

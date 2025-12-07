@@ -16,6 +16,7 @@
 	import CircleCheckIcon from '@lucide/svelte/icons/circle-check';
 	import { page } from '$app/state';
 	import BrowserTabs from './browser-tabs.svelte';
+	import * as UnderlineTabs from '$lib/components/ui/underline-tabs';
 	type ListItemProps = HTMLAttributes<HTMLAnchorElement> & {
 		title: string;
 		href: string;
@@ -184,18 +185,22 @@
 {#snippet welcomeHeader({ user }: { user: User })}
 	<div class="flex min-w-0 flex-1 items-center"></div>
 	<div class="flex flex-1 items-center justify-end gap-2.5">
-		<form {...signOut}>
-			<Field.Description>
-				Not {user.name}? <button type="submit" class="text-primary">Sign Out</button>
-			</Field.Description>
-		</form>
-		<Button variant="outline" size="icon" class="h-max w-max rounded-full">
-			<Avatar.Root class="size-6">
-				<Avatar.Image
-					src={user?.image || `https://avatar.vercel.sh/${user?.id}`}
-					alt={user?.name}
-				/>
-			</Avatar.Root>
-		</Button>
+		<UnderlineTabs.Root>
+			<UnderlineTabs.List>
+				<form {...signOut} class="contents">
+					<UnderlineTabs.Trigger value={'/welcome/1'}
+						>Not {user.name}? Sign Out</UnderlineTabs.Trigger
+					>
+				</form>
+				<UnderlineTabs.Trigger class="px-2" value={'/welcome/2'}>
+					<Avatar.Root class="size-6">
+						<Avatar.Image
+							src={user?.image || `https://avatar.vercel.sh/${user?.id}`}
+							alt={user?.name}
+						/>
+					</Avatar.Root>
+				</UnderlineTabs.Trigger>
+			</UnderlineTabs.List>
+		</UnderlineTabs.Root>
 	</div>
 {/snippet}

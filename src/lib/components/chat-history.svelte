@@ -55,7 +55,7 @@
 {@render children?.({ toggle })}
 
 <Command.Dialog bind:open>
-	<Command.Input placeholder="Search for files, chats, and people..." />
+	<Command.Input placeholder="Search chats" />
 	<Command.List>
 		<Command.Empty>No chats found.</Command.Empty>
 
@@ -66,30 +66,16 @@
 			</Command.Item>
 		</Command.Group>
 
-		{#if user}
-			<svelte:boundary>
-				{#snippet pending()}
-					<Command.Group heading="Chats">
-						{#each [1, 2, 3] as item (item)}
-							<Command.Item disabled>
-								<MessageIcon class="mr-2 size-3.5" />
-								<div class="flex flex-1">
-									<div class="h-4 flex-1 animate-pulse rounded bg-gray-200"></div>
-								</div>
-							</Command.Item>
-						{/each}
-					</Command.Group>
-				{/snippet}
-				{@render chatResults(await getChatHistory())}
-			</svelte:boundary>
-		{:else}
-			<Command.Group heading="Authentication">
+		<Command.Group heading="Chats">
+			{#each [1, 2, 3] as item (item)}
 				<Command.Item disabled>
 					<MessageIcon class="mr-2 size-3.5" />
-					<span>Login to access your chat history</span>
+					<div class="flex flex-1">
+						<div class="h-4 flex-1 animate-pulse rounded bg-gray-200"></div>
+					</div>
 				</Command.Item>
-			</Command.Group>
-		{/if}
+			{/each}
+		</Command.Group>
 	</Command.List>
 </Command.Dialog>
 
