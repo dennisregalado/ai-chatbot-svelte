@@ -3,8 +3,6 @@
 	import { AgentChat } from '$lib/agents/ai.svelte';
 	import {
 		Conversation,
-		ConversationContent,
-		ConversationScrollButton
 	} from '$lib/components/ai-elements/conversation/index.js';
 	import {
 		Reasoning,
@@ -200,7 +198,6 @@
 
 <section class="flex h-full max-h-screen flex-col pb-5 relative">
 	<Conversation class="h-full max-h-full">
-		<ConversationContent>
 			{#each chat.messages as message, messageIndex (message.id)}
 				{@const previousMessage = chat.messages[messageIndex - 1]}
 				{@const showSeparator = shouldShowDateSeparator(message, previousMessage)}
@@ -250,7 +247,7 @@
 							/>
 						</MessageAttachments>
 					{/if}
-					<MessageContent class="peer ">
+					<MessageContent class="peer">
 						{#each message.parts as part, i (i)}
 							{#if part.type === 'text'}
 								<MessageResponse
@@ -314,7 +311,7 @@
 									<RefreshCcw />
 								</UnderlineTabs.Trigger>
 							{/if}
-							<CopyButton text={message.content} size="icon" variant="ghost" class="size-7" />
+							<CopyButton text={message.parts.find((part) => part.type === 'text')?.text || ''} size="icon" variant="ghost" class="size-7" />
 						</UnderlineTabs.List>
 					</UnderlineTabs.Root>
 				</Message>
@@ -325,8 +322,6 @@
 					<Spinner />
 				</div>
 			{/if} -->
-		</ConversationContent>
-		<ConversationScrollButton />
 	</Conversation>
 	<PromptInput onSubmit={handleSubmit} class="max-w-2xl mx-auto" globalDrop multiple>
 		<PromptInputBody>

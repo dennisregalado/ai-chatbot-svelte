@@ -1,59 +1,42 @@
-<script lang="ts" module>
-	import { cn } from '$lib/utils';
-	import type { ButtonProps } from '$lib/components/ui/button/index.js';
-
-	export interface ConversationScrollButtonProps extends ButtonProps {}
-</script>
-
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { ArrowDown } from '@lucide/svelte';
-	import { getStickToBottomContext } from './stick-to-bottom-context.svelte.js';
-	import { fade, fly, scale } from 'svelte/transition';
-	import { backOut } from 'svelte/easing';
+	import { cn } from '$lib/utils';
 
-	let { class: className, onclick, ...restProps }: ConversationScrollButtonProps = $props();
+	import type { ClassValue } from 'svelte/elements';
+	import type { StickToBottom } from 'stick-to-bottom-svelte';
+	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
 
-	const context = getStickToBottomContext();
+	interface Props {
+		class?: ClassValue;
+		size?: 'default' | 'sm' | 'lg' | 'icon';
+		variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+	}
 
-	const handleScrollToBottom = (event: MouseEvent) => {
-		context.scrollToBottom();
-		if (onclick) {
-			onclick(
-				event as MouseEvent & {
-					currentTarget: EventTarget & HTMLButtonElement;
-				}
-			);
-		}
-	};
+	let { class: className, size = 'icon', variant = 'outline', ...restProps }: Props = $props();
+
+	// Get the stick-to-bottom context from the parent Conversation component
+	const stickToBottom = getContext<StickToBottom>('stickToBottom');
+
+	if (!stickToBottom) {
+		throw new Error('ConversationScrollButton must be used within a Conversation component');
+	}
+
+	function handleScrollToBottom() {
+		const animation = { damping: 0.7, stiffness: 0.05, mass: 1.25 };
+		stickToBottom.scrollToBottom({ animation });
+	}
 </script>
 
-{#if !context.isAtBottom}
-	<div
-		in:fly={{
-			duration: 300,
-			y: 10,
-			easing: backOut
-		}}
-		out:fly={{
-			duration: 200,
-			y: 10,
-			easing: backOut
-		}}
-		class="absolute bottom-4 left-[50%] translate-x-[-50%]"
+{#if !stickToBottom.isNearBottom}
+	<Button
+		class={cn('sticky bottom-4 left-[50%] translate-x-[-50%] rounded-full', className)}
+		onclick={handleScrollToBottom}
+		{size}
+		type="button"
+		{variant}
+		{...restProps}
 	>
-		<Button
-			class={cn(
-				'bg-background/80 border-border/50 hover:bg-background/90 rounded-full shadow-lg backdrop-blur-sm hover:shadow-xl',
-				className
-			)}
-			onclick={handleScrollToBottom}
-			size="icon"
-			type="button"
-			variant="outline"
-			{...restProps}
-		>
-			<ArrowDown class="size-4" />
-		</Button>
-	</div>
+		<ChevronDownIcon />
+	</Button>
 {/if}
