@@ -5,4 +5,4 @@
 	let id = $state<string>('welcome');
 </script>
 
-<Chat />
+<Chat messages={[{ role: 'assistant', parts: [{ type: 'text', text: 'Welcome to the chat? How can I help you today?' }] }]} />

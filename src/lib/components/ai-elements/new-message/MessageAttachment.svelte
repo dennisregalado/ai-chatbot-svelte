@@ -33,7 +33,7 @@
 	}
 </script>
 
-<div class={cn('group relative size-24 overflow-hidden rounded-lg', className)} {...restProps}>
+<div class={cn('group relative size-10 overflow-hidden rounded-lg', className)} {...restProps}>
 	{#if isImage}
 		<img
 			alt={filename || 'attachment'}

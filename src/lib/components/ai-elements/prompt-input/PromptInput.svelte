@@ -5,10 +5,9 @@
 	import {
 		AttachmentsContext,
 		setAttachmentsContext,
-		type PromptInputMessage,
-		type FileUIPart
+		type PromptInputMessage
 	} from './attachments-context.svelte.js';
-
+ 
 	interface Props {
 		class?: string;
 		accept?: string;

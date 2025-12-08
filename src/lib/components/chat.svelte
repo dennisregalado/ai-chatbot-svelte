@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { Agent } from '$lib/agents/index.svelte';
 	import { AgentChat } from '$lib/agents/ai.svelte';
-	import {
-		Conversation,
-	} from '$lib/components/ai-elements/conversation/index.js';
+	import { Conversation } from '$lib/components/ai-elements/conversation/index.js';
 	import {
 		Reasoning,
 		ReasoningTrigger,
@@ -12,40 +10,7 @@
 	import { untrack } from 'svelte';
 	import MicIcon from '@lucide/svelte/icons/mic';
 	import * as UnderlineTabs from '$lib/components/ui/underline-tabs';
-	import { dayjs } from 'svelte-time';
-
-	type VoteType = 'upvote' | 'downvote';
-	type MessageVotes = {
-		userVote?: VoteType;
-		upvotes?: number;
-		downvotes?: number;
-	};
-
-	// Helper to format date separators like "Today", "Yesterday", "Monday", "Last Saturday"
-	function formatDateSeparator(date: Date | string): string {
-		const d = dayjs(date);
-		const now = dayjs();
-		const diffDays = now.startOf('day').diff(d.startOf('day'), 'day');
-
-		if (diffDays === 0) return 'Today';
-		if (diffDays === 1) return 'Yesterday';
-		if (diffDays < 7) return d.format('dddd'); // "Monday", "Tuesday", etc.
-		if (diffDays < 14) return `Last ${d.format('dddd')}`; // "Last Saturday"
-		return d.format('MMMM D, YYYY'); // "December 6, 2025"
-	}
-
-	// Check if we should show a date separator between messages
-	function shouldShowDateSeparator(
-		currentMessage: { createdAt?: Date | string },
-		previousMessage?: { createdAt?: Date | string }
-	): boolean {
-		if (!previousMessage) return true;
-		if (!currentMessage.createdAt || !previousMessage.createdAt) return false;
-
-		const current = dayjs(currentMessage.createdAt).startOf('day');
-		const previous = dayjs(previousMessage.createdAt).startOf('day');
-		return !current.isSame(previous);
-	}
+	import { Shimmer } from '$lib/components/ai-elements/shimmer';
 
 	import {
 		PromptInput,
@@ -54,53 +19,61 @@
 		PromptInputAttachment,
 		PromptInputTextarea,
 		PromptInputToolbar,
-		PromptInputTools,
-		PromptInputActionMenu,
-		PromptInputActionMenuTrigger,
-		PromptInputActionMenuContent,
-		PromptInputActionAddAttachments,
-		PromptInputButton,
 		PromptInputSubmit
 	} from '$lib/components/ai-elements/prompt-input';
 	import { PlusIcon } from '@lucide/svelte';
 	import HistoryIcon from '@lucide/svelte/icons/history';
 	import ChatHistory from './chat-history.svelte';
-	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/state';
-	import Spinner from './ui/spinner/spinner.svelte';
 	import {
 		Message,
 		MessageContent,
-		MessageResponse,
-		MessageActions,
-		MessageAction,
-		MessageToolbar
+		MessageResponse
 	} from '$lib/components/ai-elements/new-message';
 	import RefreshCcw from '@lucide/svelte/icons/refresh-ccw';
 	import CopyButton from '$lib/components/ui/copy-button/copy-button.svelte';
 	import ThumbsUp from '@lucide/svelte/icons/thumbs-up';
 	import ThumbsDown from '@lucide/svelte/icons/thumbs-down';
-	import Check from '@lucide/svelte/icons/check';
 	import { MessageAttachments, MessageAttachment } from '$lib/components/ai-elements/new-message';
 	import { Button } from '$components/ui/button';
-	import TrashIcon from '@lucide/svelte/icons/trash';
 	import type { UIMessage } from 'ai';
+	import type { PromptInputMessage } from '$lib/components/ai-elements/prompt-input/attachments-context.svelte.js';
+
+	type VoteType = 'upvote' | 'downvote';
+	type MessageVotes = {
+		userVote?: VoteType;
+		upvotes?: number;
+		downvotes?: number;
+	};
+
+	type SyncedState = {
+		isThinking: boolean;
+		currentAction: string;
+	};
 
 	type ChatMessage = UIMessage<{ createdAt: string }>;
 
 	let { id = '', messages: initialMessages = [] }: { id?: string; messages?: ChatMessage[] } =
 		$props();
 
+	let syncedState = $state<SyncedState>({
+		isThinking: false,
+		currentAction: ''
+	});
 	// Connect to the chat agent
 	// Dev: Vite proxies /agents/* to Workers (see vite.config.ts)
 	// Prod: Uses window.location.host (deploy to same domain as Workers)
-	const agent = new Agent({
+	const agent = new Agent<SyncedState>({
 		name: 'test-agent',
-		agent: 'chat'
+		agent: 'chat',
+		onStateUpdate: (state) => {
+			console.log('onStateUpdate', state);
+			syncedState = state;
+		}
 	});
 
 	// Use the AgentChat class with the agent connection
-	const chat = new AgentChat<unknown, ChatMessage>({
+	const chat = new AgentChat<SyncedState, ChatMessage>({
 		agent,
 		messages: untrack(() => initialMessages as ChatMessage[]),
 		onData: (dataPart) => {
@@ -117,35 +90,25 @@
 		}
 	});
 
-	let text = $state<string>('');
 	let useMicrophone = $state<boolean>(false);
-	let files = $state<File[]>([]);
-	let uploadInputRef: HTMLInputElement | undefined = $state();
 
 	// Votes state
 	let votes = $state<Record<string, MessageVotes>>({});
 
-	function handleSubmit() {
-		if (text.trim() || files.length > 0) {
+	function handleSubmit({ text, files }: PromptInputMessage, event: SubmitEvent) {
+		console.log('handleSubmit', text, files);
+		if (text?.trim() || (files && files.length > 0)) {
 			//	replaceState(page.params.workspace + '/chat/' + id, {});
 			chat.sendMessage({
 				role: 'user',
 				parts: [
-					...files.map((file) => ({
-						type: 'file' as const,
-						url: URL.createObjectURL(file),
-						name: file.name,
-						mediaType: file.type
-					})),
+					...(files?.map((file) => file) || []),
 					{ type: 'text', text: text || 'Sent with attachments' }
 				]
 			});
 
 			text = '';
 			files = [];
-			if (uploadInputRef) {
-				uploadInputRef.value = '';
-			}
 		}
 	}
 
@@ -183,7 +146,6 @@
 				.call('getAllVotes', [])
 				.then((result) => {
 					if (result) {
-						console.log('result', result);
 						votes = result as Record<string, MessageVotes>;
 					}
 				})
@@ -193,135 +155,110 @@
 		}
 	});
 
-	$inspect(chat);
+	$inspect(chat, agent);
 </script>
 
 <section class="flex h-full max-h-screen flex-col pb-5 relative">
 	<Conversation class="h-full max-h-full">
-			{#each chat.messages as message, messageIndex (message.id)}
-				{@const previousMessage = chat.messages[messageIndex - 1]}
-				{@const showSeparator = shouldShowDateSeparator(message, previousMessage)}
-
-				{#if showSeparator && message.createdAt}
-					<div class="mx-auto max-w-(--breakpoint-sm) flex items-center gap-4 py-4">
-						<div class="h-px flex-1 bg-border"></div>
-						<span class="text-sm text-muted-foreground font-medium">
-							{formatDateSeparator(message.createdAt)}
-						</span>
-						<div class="h-px flex-1 bg-border"></div>
-					</div>
+		{#each chat.messages as message, messageIndex (message.id)}
+			<Message
+				from={message.role}
+				class={{
+					'mx-auto max-w-(--breakpoint-sm) py-1.5 group': true,
+					'pb-20 min-h-[max(200px,30cqh)]': messageIndex === chat.messages.length - 1
+				}}
+			>
+				<MessageContent class="peer">
+					{#each message.parts as part, i (i)}
+						{#if part.type === 'text'}
+							<MessageResponse
+								animation={{
+									enabled: true,
+									type: 'fade'
+								}}
+								content={part.text}
+							/>
+						{:else if part.type === 'reasoning'}
+							<Reasoning
+								class="w-full"
+								isStreaming={chat.status === 'streaming' &&
+									i === message.parts.length - 1 &&
+									message.id === chat.messages.at(-1)?.id}
+							>
+								<ReasoningTrigger />
+								<ReasoningContent>{part.text}</ReasoningContent>
+							</Reasoning>
+						{/if}
+					{/each}
+				</MessageContent>
+				{#if message.role === 'user' && message.parts.filter((part) => part.type === 'file').length > 0}
+					{@const fileParts = message.parts.filter((part) => part.type === 'file')}
+					<MessageAttachments>
+						{#each fileParts as filePart}
+							<MessageAttachment data={filePart} />
+						{/each}
+					</MessageAttachments>
 				{/if}
-
-				<Message
-					from={message.role}
+				<UnderlineTabs.Root
+					hoverOnly
 					class={{
-						'mx-auto max-w-(--breakpoint-sm) py-1.5 group': true,
-						'pb-20 min-h-[max(200px,30cqh)]': messageIndex === chat.messages.length - 1
+						'opacity-0 transition-opacity ease-out duration-200': true,
+						'group-hover:opacity-100': !(
+							chat.status === 'streaming' && message.role === 'assistant'
+						),
+						'ml-auto': message.role === 'user'
 					}}
 				>
-					{#if message.role === 'user' && message.parts.filter((part) => part.type === 'file').length > 0}
-						<MessageAttachments>
-							<MessageAttachment
-								data={{
-									type: 'file',
-									url: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&h=400&fit=crop',
-									mediaType: 'image/jpeg',
-									filename: 'svelte-5-runes-demo.jpg'
-								}}
-							/>
-							<MessageAttachment
-								data={{
-									type: 'file',
-									url: '',
-									mediaType: 'application/pdf',
-									filename: 'component-architecture.pdf'
-								}}
-							/>
-							<MessageAttachment
-								data={{
-									type: 'file',
-									url: '',
-									mediaType: 'text/plain',
-									filename: 'notes.txt'
-								}}
-							/>
-						</MessageAttachments>
-					{/if}
-					<MessageContent class="peer">
-						{#each message.parts as part, i (i)}
-							{#if part.type === 'text'}
-								<MessageResponse
-									animation={{
-										enabled: true,
-										type: 'fade'
-									}}
-									content={part.text}
-								/>
-							{:else if part.type === 'reasoning'}
-								<Reasoning
-									class="w-full"
-									isStreaming={chat.status === 'streaming' &&
-										i === message.parts.length - 1 &&
-										message.id === chat.messages.at(-1)?.id}
-								>
-									<ReasoningTrigger />
-									<ReasoningContent>{part.text}</ReasoningContent>
-								</Reasoning>
-							{/if}
-						{/each}
-					</MessageContent>
-					<UnderlineTabs.Root
-						hoverOnly
-						class={{
-							'opacity-0 transition-opacity ease-out duration-200': true,
-							'group-hover:opacity-100': !(
-								chat.status === 'streaming' && message.role === 'assistant'
-							),
-							'ml-auto': message.role === 'user'
-						}}
-					>
-						<UnderlineTabs.List class="h-7">
-							{#if message.role === 'assistant'}
-								{@const messageVotes = votes[message.id]}
+					<UnderlineTabs.List class="h-7">
+						{#if message.role === 'assistant'}
+							{@const messageVotes = votes[message.id]}
 
-								<UnderlineTabs.Trigger
-									class="p-0 size-7"
-									value="upvotes"
-									disabled={messageVotes?.userVote === 'upvote'}
-									onclick={() => handleVote(message.id, 'upvote')}
-								>
-									<ThumbsUp />
-								</UnderlineTabs.Trigger>
-								<UnderlineTabs.Trigger
-									class="p-0 size-7"
-									value="downvotes"
-									disabled={messageVotes?.userVote === 'downvote'}
-									onclick={() => handleVote(message.id, 'downvote')}
-								>
-									<ThumbsDown />
-								</UnderlineTabs.Trigger>
-								<UnderlineTabs.Trigger
-									class="p-0 size-7"
-									value="response"
-									onclick={() =>
-										chat.regenerate({
-											messageId: message.id
-										})}
-								>
-									<RefreshCcw />
-								</UnderlineTabs.Trigger>
-							{/if}
-							<CopyButton text={message.parts.find((part) => part.type === 'text')?.text || ''} size="icon" variant="ghost" class="size-7" />
-						</UnderlineTabs.List>
-					</UnderlineTabs.Root>
-				</Message>
-			{/each}
-
-			<!-- {#if chat.status === 'submitted'}
-				<div class="mx-auto max-w-(--breakpoint-sm)">
-					<Spinner />
-				</div>
-			{/if} -->
+							<UnderlineTabs.Trigger
+								class="p-0 size-7"
+								value="upvotes"
+								disabled={messageVotes?.userVote === 'upvote'}
+								onclick={() => handleVote(message.id, 'upvote')}
+							>
+								<ThumbsUp />
+							</UnderlineTabs.Trigger>
+							<UnderlineTabs.Trigger
+								class="p-0 size-7"
+								value="downvotes"
+								disabled={messageVotes?.userVote === 'downvote'}
+								onclick={() => handleVote(message.id, 'downvote')}
+							>
+								<ThumbsDown />
+							</UnderlineTabs.Trigger>
+							<UnderlineTabs.Trigger
+								class="p-0 size-7"
+								value="response"
+								onclick={() =>
+									chat.regenerate({
+										messageId: message.id
+									})}
+							>
+								<RefreshCcw />
+							</UnderlineTabs.Trigger>
+						{/if}
+						<CopyButton
+							text={message.parts.find((part) => part.type === 'text')?.text || ''}
+							size="icon"
+							variant="ghost"
+							class="size-7"
+						/>
+					</UnderlineTabs.List>
+				</UnderlineTabs.Root>
+			</Message>
+		{/each}
+		{#if syncedState.currentAction}
+			<Message from="assistant">
+				<Shimmer content_length={syncedState.currentAction.length}>
+					{#snippet children()}
+						{syncedState.currentAction}
+					{/snippet}
+				</Shimmer>
+			</Message>
+		{/if}
 	</Conversation>
 	<PromptInput onSubmit={handleSubmit} class="max-w-2xl mx-auto" globalDrop multiple>
 		<PromptInputBody>
@@ -330,11 +267,7 @@
 					<PromptInputAttachment data={attachment} />
 				{/snippet}
 			</PromptInputAttachments>
-			<PromptInputTextarea
-				placeholder="Ask anything..."
-				bind:value={text}
-				onchange={(e) => (text = (e.target as HTMLTextAreaElement).value)}
-			/>
+			<PromptInputTextarea placeholder="Ask anything..." />
 		</PromptInputBody>
 		<PromptInputToolbar>
 			<UnderlineTabs.Root hoverOnly>
