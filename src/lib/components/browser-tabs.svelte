@@ -11,8 +11,6 @@
 	};
 
 	const tabs: BrowserTab[] = $derived(await getBrowserTabs());
-
-	$inspect(page.url.pathname, page.params.workspace + tabs[0].pathname);
 </script>
 
 <UnderlineTabs.Root value={'/' + page.params.workspace + page.url.pathname}>

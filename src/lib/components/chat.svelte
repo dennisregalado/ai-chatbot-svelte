@@ -8,6 +8,8 @@
 		ReasoningContent
 	} from '$lib/components/ai-elements/reasoning';
 	import { untrack } from 'svelte';
+	import { blur } from 'svelte/transition';
+	import { cubicInOut } from 'svelte/easing';
 	import MicIcon from '@lucide/svelte/icons/mic';
 	import * as UnderlineTabs from '$lib/components/ui/underline-tabs';
 	import { Shimmer } from '$lib/components/ai-elements/shimmer';
@@ -38,8 +40,11 @@
 	import { Button } from '$components/ui/button';
 	import type { UIMessage } from 'ai';
 	import type { PromptInputMessage } from '$lib/components/ai-elements/prompt-input/attachments-context.svelte.js';
+	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
+	import ChatStatus from '$lib/components/chat-status.svelte';
 
 	type VoteType = 'upvote' | 'downvote';
+
 	type MessageVotes = {
 		userVote?: VoteType;
 		upvotes?: number;
@@ -47,8 +52,9 @@
 	};
 
 	type SyncedState = {
-		isThinking: boolean;
-		currentAction: string;
+		title?: string;
+		votes: Record<string, MessageVotes>;
+		status?: string;
 	};
 
 	type ChatMessage = UIMessage<{ createdAt: string }>;
@@ -57,14 +63,15 @@
 		$props();
 
 	let syncedState = $state<SyncedState>({
-		isThinking: false,
-		currentAction: ''
+		title: '',
+		votes: {},
+		status: undefined
 	});
 	// Connect to the chat agent
 	// Dev: Vite proxies /agents/* to Workers (see vite.config.ts)
 	// Prod: Uses window.location.host (deploy to same domain as Workers)
 	const agent = new Agent<SyncedState>({
-		name: 'test-agent',
+		name: 'test-aget-sz1zz1',
 		agent: 'chat',
 		onStateUpdate: (state) => {
 			console.log('onStateUpdate', state);
@@ -91,8 +98,6 @@
 	});
 
 	let useMicrophone = $state<boolean>(false);
-
-	// Votes state
 	let votes = $state<Record<string, MessageVotes>>({});
 
 	function handleSubmit({ text, files }: PromptInputMessage, event: SubmitEvent) {
@@ -122,58 +127,58 @@
 			// If clicking the same vote, remove it
 			if (currentVote === voteType) {
 				const result = (await agent.call('removeVote', [messageId])) as MessageVotes;
-				votes = {
-					...votes,
-					[messageId]: result
-				};
+				agent.setState({
+					...syncedState,
+					votes: {
+						...syncedState.votes,
+						[messageId]: result
+					}
+				});
 			} else {
 				// Otherwise, set the new vote
 				const result = (await agent.call('vote', [messageId, voteType])) as MessageVotes;
-				votes = {
-					...votes,
-					[messageId]: result
-				};
+				agent.setState({
+					...syncedState,
+					votes: {
+						...syncedState.votes,
+						[messageId]: result
+					}
+				});
 			}
 		} catch (error) {
 			console.error('Error voting:', error);
 		}
 	}
 
-	// Load initial votes when agent connects
-	$effect(() => {
-		if (agent && chat.messages.length > 0) {
-			agent
-				.call('getAllVotes', [])
-				.then((result) => {
-					if (result) {
-						votes = result as Record<string, MessageVotes>;
-					}
-				})
-				.catch(() => {
-					// Agent may not be ready yet, that's ok
-				});
-		}
-	});
-
 	$inspect(chat, agent);
 </script>
 
 <section class="flex h-full max-h-screen flex-col pb-5 relative">
 	<Conversation class="h-full max-h-full">
-		{#each chat.messages as message, messageIndex (message.id)}
+		{#each chat.messages as message (message.id)}
 			<Message
 				from={message.role}
 				class={{
 					'mx-auto max-w-(--breakpoint-sm) py-1.5 group': true,
-					'pb-20 min-h-[max(200px,30cqh)]': messageIndex === chat.messages.length - 1
+					'pb-20 min-h-[max(200px,30cqh)]': message.id === chat.lastMessage?.id
 				}}
 			>
+				{#if syncedState.status && message.id === chat.lastMessage?.id}
+					<ChatStatus
+						status={chat.status}
+						agentStatus={{
+							status: 'executing',
+							agent: 'invoices'
+						}}
+						currentToolCall={syncedState.status}
+					/>
+				{/if}
 				<MessageContent class="peer">
 					{#each message.parts as part, i (i)}
 						{#if part.type === 'text'}
 							<MessageResponse
 								animation={{
-									enabled: true,
+									enabled: true, 
 									type: 'fade'
 								}}
 								content={part.text}
@@ -211,7 +216,7 @@
 				>
 					<UnderlineTabs.List class="h-7">
 						{#if message.role === 'assistant'}
-							{@const messageVotes = votes[message.id]}
+							{@const messageVotes = syncedState.votes[message.id]}
 
 							<UnderlineTabs.Trigger
 								class="p-0 size-7"
@@ -250,15 +255,6 @@
 				</UnderlineTabs.Root>
 			</Message>
 		{/each}
-		{#if syncedState.currentAction}
-			<Message from="assistant">
-				<Shimmer content_length={syncedState.currentAction.length}>
-					{#snippet children()}
-						{syncedState.currentAction}
-					{/snippet}
-				</Shimmer>
-			</Message>
-		{/if}
 	</Conversation>
 	<PromptInput onSubmit={handleSubmit} class="max-w-2xl mx-auto" globalDrop multiple>
 		<PromptInputBody>
@@ -297,6 +293,14 @@
 		</PromptInputToolbar>
 	</PromptInput>
 	<header class="absolute top-0 left-0 right-0 p-2.5 w-full flex items-center justify-between">
+		{#if syncedState.title}
+			<div in:blur={{ amount: 4, duration: 600, delay: 100, easing: cubicInOut }}>
+				<Button variant="ghost" size="sm">
+					<MessageCircleIcon />
+					{syncedState.title}
+				</Button>
+			</div>
+		{/if}
 		<div class="flex items-center gap-2 ml-auto">
 			<Button
 				variant="ghost"

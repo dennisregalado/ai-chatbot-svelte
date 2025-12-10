@@ -1,9 +1,7 @@
 import type { Reroute } from '@sveltejs/kit';
 
 const redirectTo: Record<string, string> = {
-	'/': '/home',
-	//	'/signup': '/signin',
-	'/welcome': '/welcome/profile'
+	'/': '/home'
 };
 
 export const reroute: Reroute = ({ url }) => {

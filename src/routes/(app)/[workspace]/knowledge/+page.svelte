@@ -7,7 +7,6 @@
 
 	let { params } = $props();
 
-	$inspect(params);
 </script>
 
 <div class="h-full px-5 py-4">

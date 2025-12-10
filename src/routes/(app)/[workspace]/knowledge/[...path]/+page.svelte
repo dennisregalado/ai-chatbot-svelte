@@ -1,7 +1,6 @@
 <script lang="ts">
 	let { params } = $props();
 
-	$inspect(params);
 </script>
 
 <div>

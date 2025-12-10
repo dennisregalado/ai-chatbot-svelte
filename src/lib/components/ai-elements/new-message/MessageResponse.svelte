@@ -13,7 +13,7 @@
 	let { content, class: className, ...restProps }: Props = $props();
 </script>
 
-<div class={cn('size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0', className)}>
+<div class={cn('size-full [&>*:first-child]:mt-0 [&>div]:space-y-3 [&>*:last-child]:mb-0', className)}>
 	<Streamdown
 		{content}
 		shikiTheme={mode.current === 'dark' ? 'github-dark-default' : 'github-light-default'}
