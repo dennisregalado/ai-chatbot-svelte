@@ -252,34 +252,3 @@ export const updateChatTitle = command(
 		});
 	}
 );
-
-export const getSuggestionsByDocumentId = query(
-	z.object({
-		documentId: z.string()
-	}),
-	async ({ documentId }) => {
-		const {
-			locals: { session }
-		} = getRequestEvent();
-
-		if (!session?.userId) {
-			error(401, 'Unauthorized');
-		}
-
-		const suggestions = await db.getSuggestionsByDocumentId({
-			documentId
-		});
-
-		const [suggestion] = suggestions;
-
-		if (!suggestion) {
-			return [];
-		}
-
-		if (suggestion.userId !== session.userId) {
-			error(403, 'Forbidden');
-		}
-
-		return suggestions;
-	}
-);

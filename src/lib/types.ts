@@ -1,11 +1,7 @@
 import { z } from 'zod';
 import type { getWeather } from '$ai/tools/get-weather';
-import type { createDocument } from '$ai/tools/create-document';
-import type { updateDocument } from '$ai/tools/update-document';
-import type { requestSuggestions } from '$ai/tools/request-suggestions';
 import type { InferUITool, UIMessage } from 'ai';
 import type { ArtifactKind } from '$components/artifact.svelte';
-import type { Suggestion } from '$server/db/schema';
 
 export type DataPart = { type: 'append-message'; message: string };
 
@@ -16,15 +12,9 @@ export const messageMetadataSchema = z.object({
 export type MessageMetadata = z.infer<typeof messageMetadataSchema>;
 
 type weatherTool = InferUITool<typeof getWeather>;
-type createDocumentTool = InferUITool<ReturnType<typeof createDocument>>;
-type updateDocumentTool = InferUITool<ReturnType<typeof updateDocument>>;
-type requestSuggestionsTool = InferUITool<ReturnType<typeof requestSuggestions>>;
 
 export type ChatTools = {
 	getWeather: weatherTool;
-	createDocument: createDocumentTool;
-	updateDocument: updateDocumentTool;
-	requestSuggestions: requestSuggestionsTool;
 };
 
 export type CustomUIDataTypes = {
@@ -32,7 +22,6 @@ export type CustomUIDataTypes = {
 	imageDelta: string;
 	sheetDelta: string;
 	codeDelta: string;
-	suggestion: Suggestion;
 	// Streaming next-question suggestions for chat
 	followup: string;
 	appendMessage: string;

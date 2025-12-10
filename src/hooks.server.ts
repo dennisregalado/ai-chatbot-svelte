@@ -13,6 +13,8 @@ export async function handle({ event, resolve }) {
 	event.locals.auth = auth;
 	event.locals.db = db;
 
+	console.log('db', db);
+
 	const session = await auth.api.getSession({
 		headers: event.request.headers
 	});
