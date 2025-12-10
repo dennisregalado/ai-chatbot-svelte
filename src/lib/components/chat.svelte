@@ -13,7 +13,6 @@
 	import MicIcon from '@lucide/svelte/icons/mic';
 	import * as UnderlineTabs from '$lib/components/ui/underline-tabs';
 	import { Shimmer } from '$lib/components/ai-elements/shimmer';
-
 	import {
 		PromptInput,
 		PromptInputBody,
@@ -42,6 +41,7 @@
 	import type { PromptInputMessage } from '$lib/components/ai-elements/prompt-input/attachments-context.svelte.js';
 	import MessageCircleIcon from '@lucide/svelte/icons/message-circle';
 	import ChatStatus from '$lib/components/chat-status.svelte';
+	import { replaceState } from '$app/navigation';
 
 	type VoteType = 'upvote' | 'downvote';
 
@@ -59,22 +59,32 @@
 
 	type ChatMessage = UIMessage<{ createdAt: string }>;
 
-	let { id = '', messages: initialMessages = [] }: { id?: string; messages?: ChatMessage[] } =
-		$props();
+	let {
+		id = undefined,
+		agent: propAgent = 'chat',
+		messages: initialMessages = [],
+		replaceState: propReplaceState = false
+	}: {
+		id?: string;
+		agent?: string;
+		messages?: Array<UIMessage>;
+		replaceState?: boolean;
+	} = $props();
 
 	let syncedState = $state<SyncedState>({
 		title: '',
 		votes: {},
 		status: undefined
 	});
-	// Connect to the chat agent
-	// Dev: Vite proxies /agents/* to Workers (see vite.config.ts)
-	// Prod: Uses window.location.host (deploy to same domain as Workers)
+	
 	const agent = new Agent<SyncedState>({
-		name: 'test-aget-sz1zz1',
-		agent: 'chat',
+		get name() {
+			return id;
+		},
+		get agent() {
+			return propAgent;
+		},
 		onStateUpdate: (state) => {
-			console.log('onStateUpdate', state);
 			syncedState = state;
 		}
 	});
@@ -82,28 +92,18 @@
 	// Use the AgentChat class with the agent connection
 	const chat = new AgentChat<SyncedState, ChatMessage>({
 		agent,
-		messages: untrack(() => initialMessages as ChatMessage[]),
-		onData: (dataPart) => {
-			console.log('onData', dataPart);
-		},
-		onError: (error) => {
-			console.error('onError', error);
-		},
-		onFinish: (message) => {
-			console.log('onFinish', message);
-		},
-		onToolCall: (toolCall) => {
-			console.log('onToolCall', toolCall);
-		}
+		messages: untrack(() => initialMessages as ChatMessage[])
 	});
 
 	let useMicrophone = $state<boolean>(false);
 	let votes = $state<Record<string, MessageVotes>>({});
 
-	function handleSubmit({ text, files }: PromptInputMessage, event: SubmitEvent) {
-		console.log('handleSubmit', text, files);
+	function handleSubmit({ text, files }: PromptInputMessage) {
 		if (text?.trim() || (files && files.length > 0)) {
-			//	replaceState(page.params.workspace + '/chat/' + id, {});
+			if (propReplaceState) {
+				replaceState(page.params.workspace + '/chat/' + id, {});
+			}
+
 			chat.sendMessage({
 				role: 'user',
 				parts: [
@@ -117,7 +117,6 @@
 		}
 	}
 
-	// Handle voting using the agent RPC calls
 	async function handleVote(messageId: string, voteType: VoteType) {
 		if (!agent) return;
 
@@ -149,8 +148,6 @@
 			console.error('Error voting:', error);
 		}
 	}
-
-	$inspect(chat, agent);
 </script>
 
 <section class="flex h-full max-h-screen flex-col pb-5 relative">
@@ -164,21 +161,14 @@
 				}}
 			>
 				{#if syncedState.status && message.id === chat.lastMessage?.id}
-					<ChatStatus
-						status={chat.status}
-						agentStatus={{
-							status: 'executing',
-							agent: 'invoices'
-						}}
-						currentToolCall={syncedState.status}
-					/>
+					<ChatStatus status={syncedState.status} />
 				{/if}
 				<MessageContent class="peer">
 					{#each message.parts as part, i (i)}
 						{#if part.type === 'text'}
 							<MessageResponse
 								animation={{
-									enabled: true, 
+									enabled: true,
 									type: 'fade'
 								}}
 								content={part.text}

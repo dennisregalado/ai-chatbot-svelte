@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, gt, gte, inArray } from 'drizzle-orm';
+import { and, asc, count, desc, eq, gte, inArray } from 'drizzle-orm';
 import {
 	chat,
 	message,

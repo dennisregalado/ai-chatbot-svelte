@@ -5,4 +5,4 @@
 	let user = await getUser();
 </script>
 
-<Chat id={`${user?.id}-welcome`} />
+<Chat id={`${user?.id}-welcome`}  />
