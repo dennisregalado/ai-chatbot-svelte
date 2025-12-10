@@ -14,6 +14,8 @@
 	import UsersIcon from '@lucide/svelte/icons/users';
 	import HomeIcon from '@lucide/svelte/icons/home';
 	import { PromptInputProvider } from '$components/ai-elements/prompt-input';
+	import SidebarHistory from '$components/sidebar-history.svelte';
+	
 	let { children } = $props();
 
 	const isMobile = new IsMobile();
@@ -66,6 +68,7 @@
 	<Sidebar.Content>
 		<SidebarInboxes />
 		<SidebarAgents />
+		<SidebarHistory />
 	</Sidebar.Content>
 	<Sidebar.Rail />
 </Sidebar.Root>
